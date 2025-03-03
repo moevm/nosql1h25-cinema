@@ -14,7 +14,7 @@ def index():
     tasks = list(tasks_collection.find())
     return render_template('index.html', tasks=tasks)
 
-@app.route('/add', methods=['POST'])
+@app.route('/ad', methods=['POST'])
 def add_task():
     task_title = request.form.get('task')
     if task_title:
