@@ -7,7 +7,13 @@ import json
 from bson.objectid import ObjectId
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/cinema_db"
+
+DB_LOGIN = "cinemaAdmin"
+DB_PASSWORD = "SecurePassword123!"
+DB_NAME = "cinema_db"
+
+
+app.config["MONGO_URI"] = f"mongodb://{DB_LOGIN}:{DB_PASSWORD}@localhost:27017/{DB_NAME}?authSource={DB_NAME}"
 mongo = PyMongo(app)
 
 
