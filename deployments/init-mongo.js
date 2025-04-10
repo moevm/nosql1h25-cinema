@@ -1,9 +1,9 @@
 db = db.getSiblingDB("cinema_db");
 
 // Создаем коллекции
-db.createCollection("films");
-db.createCollection("persons");
-db.createCollection("admins");
+db.createCollection("film");
+db.createCollection("person");
+db.createCollection("admin");
 
 // Создаем пользователя только для cinema_db
 db.createUser({
