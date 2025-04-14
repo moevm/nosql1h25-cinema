@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Вход в админ-панель</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+</head>
+<body>
+<div class="entrance">
+    <h2>Вход в панель администратора</h2>
+    <form id="loginForm">
+        <p>
+            <input type="text" id="login" name="login" placeholder="Логин" required />
+        </p>
+        <p>
+            <input type="password" id="password" name="password" placeholder="Пароль" required />
+        </p>
+        <button type="submit">Войти</button>
+    </form>
+</div>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        const login = document.getElementById("login").value;
+        const password = document.getElementById("password").value;
+
+        try {
+            const response = await fetch("http://localhost:5000/api/admin/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({
+                    login: login,
+                    password: password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // alert("Вход выполнен успешно!");
+                window.location.href = "statistics.html";
+            } else {
+                alert(data.error || "Неверный логин или пароль");
+            }
+        } catch (error) {
+            console.error("Ошибка запроса:", error);
+            alert("Ошибка подключения к серверу. Проверьте соединение.");
+        }
+    });
+</script>
+
+
+
+</body>
+</html>
