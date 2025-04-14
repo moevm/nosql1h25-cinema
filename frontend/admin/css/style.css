@@ -76,21 +76,21 @@ button:focus {
 }
 
 nav a {
-    text-decoration: none; /* Убираем подчеркивание */
-    color: inherit; /* Цвет будет таким же, как у родительского элемента */
+    text-decoration: none;
+    color: inherit;
 }
 
 nav a:visited {
-    color: inherit; /* Оставляем цвет неизменным после посещения */
+    color: inherit;
 }
 
 nav a:hover, nav a:active {
-    color: inherit; /* Не изменяем цвет при наведении или клике */
+    color: inherit;
 }
 
 .transfer{
     width: 50%;
-    margin: 15% auto;
+    margin: 10% auto;
     font-size: 1.2em;
 }
 
@@ -98,3 +98,42 @@ nav a:hover, nav a:active {
     color: #023370;
     background-color: white ;
 }
+
+.search-container {
+    width: 80%;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
+
+#movieSearch {
+    width: 100%;
+    max-width: none;
+    box-sizing: border-box;
+}
+
+#movieSearch,
+#addMovieBtn {
+    height: 40px;
+    box-sizing: border-box;
+    align-self: center;
+}
+
+#addMovieBtn {
+    border-radius: 1em;
+    background-color: rgba(17, 18, 21, 0.5);
+    border: none;
+    color: white;
+    min-width: 40px;
+    width: 40px;
+    font-size: 1.5em;
+    padding: 0;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
