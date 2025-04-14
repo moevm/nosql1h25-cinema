@@ -34,6 +34,17 @@ def add_film(title, year, directors, actors, description, country, duration, gen
     response.raise_for_status()
     print(f"Фильм '{title}' успешно добавлен!")
 
+def add_admin(login, password):
+    payload = {
+        "login": login,
+        "password": password
+    }
+    response = requests.post(f"{API_URL}/api/admin/register", json=payload)
+    response.raise_for_status()  # Проверка на успешность запроса
+    print(f"Администратор {login} успешно зарегистрирован!")
+    return login  # Можно вернуть login, или ID, если он возвращается в ответе
+
+
 if __name__ == "__main__":
     print("Добавляем режиссера...")
     director_id = add_person(
@@ -68,8 +79,15 @@ if __name__ == "__main__":
         video_path="/videos/inception.mp4"
     )
 
+    print("Добавляем администратора...")
+    admin_id = add_admin(
+        login="admin123@mail.ru",
+        password="123456"
+    )
+
     print("\nТестовые данные успешно добавлены!")
     print("-----------------------------------")
     print(f"Фильм: Inception (2010)")
     print(f"Режиссер: Christopher Nolan ({director_id})")
     print(f"Актер: Leonardo DiCaprio ({actor_id})")
+    print(f"Администратор добавлен с ID: {admin_id}")

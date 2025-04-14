@@ -1,0 +1,100 @@
+body {
+    text-align: center;
+    background-color: #023370;
+    color: white;
+    font-size: 16px;
+}
+
+.entrance{
+    padding-top: 10%;
+}
+
+form {
+    display: inline-block;
+    padding: 1.2em;
+}
+
+input {
+    font: 1em sans-serif;
+    font-size: 1.3em;
+    width: 100%;
+    max-width: 300px;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 1em;
+}
+
+input::placeholder {
+    color: #7F9FB8;
+    text-align: center;
+}
+
+input:focus {
+    outline: 2px solid #658cba;
+    box-shadow: 0 0 0 2px #658cba;
+    background-color: rgb(221, 236, 248);
+    color: black;
+}
+
+
+/* Стили для кнопки */
+button {
+    border-radius: 1em;
+    background-color: rgba(17, 18, 21, 0.5);
+    border: none;
+    color: white;
+    min-width: 100px;
+    box-sizing: border-box;
+    font-size: 1em;
+    margin-top: 1em;
+    width: 100%;
+    padding: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgba(17, 18, 21, 0.8);
+}
+
+button:focus {
+    outline: 1px solid #111215CC;
+    outline-offset: 2px;
+}
+
+.header {
+    width: 85%;
+    margin: 0 auto;
+    top: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.5em;
+    text-align: center;
+    padding: 15px 20px;
+
+}
+
+nav a {
+    text-decoration: none; /* Убираем подчеркивание */
+    color: inherit; /* Цвет будет таким же, как у родительского элемента */
+}
+
+nav a:visited {
+    color: inherit; /* Оставляем цвет неизменным после посещения */
+}
+
+nav a:hover, nav a:active {
+    color: inherit; /* Не изменяем цвет при наведении или клике */
+}
+
+.transfer{
+    width: 50%;
+    margin: 15% auto;
+    font-size: 1.2em;
+}
+
+#exportBtn{
+    color: #023370;
+    background-color: white ;
+}

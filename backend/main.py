@@ -5,8 +5,10 @@ import bcrypt
 from bson import json_util
 import json
 from bson.objectid import ObjectId
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 DB_LOGIN = "cinemaAdmin"
 DB_PASSWORD = "SecurePassword123!"
