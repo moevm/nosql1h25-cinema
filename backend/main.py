@@ -126,6 +126,24 @@ def handle_films():
             return jsonify({"error": str(e)}), 500
 
 
+# ==================== УДАЛЕНИЕ ФИЛЬМА ====================
+@app.route('/api/films/<film_id>', methods=['DELETE', 'OPTIONS'])
+def delete_film(film_id):
+    if request.method == 'OPTIONS':
+        return '', 204  # Для preflight запроса
+
+    try:
+        result = mongo.db.film.delete_one({'_id': ObjectId(film_id)})
+
+        if result.deleted_count == 0:
+            return jsonify({"error": "Film not found"}), 404
+
+        return jsonify({"message": "Film deleted"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ==================== АДМИНИСТРИРОВАНИЕ ====================
 @app.route('/api/admin/register', methods=['POST'])
 def register_admin():

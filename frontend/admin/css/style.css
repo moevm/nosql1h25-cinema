@@ -101,7 +101,7 @@ nav a:hover, nav a:active {
 
 .search-container {
     width: 80%;
-    margin: 0 auto;
+    margin: 2% auto;
     display: grid;
     grid-template-columns: 4fr 1fr;
     gap: 10px;
@@ -135,5 +135,46 @@ nav a:hover, nav a:active {
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+
+.films-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 80%;
+    margin: 0 auto;
+    gap: 20px;
+    padding: 20px;
+}
+.film-card {
+    border: none;
+    border-bottom: 1px solid #ddd;
+    padding: 15px;
+    text-align: left;
+}
+.film-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+.film-title-year {
+    margin: 0;
+    font-size: 1.2em;
+    flex-grow: 1;
+}
+.film-actions {
+    display: flex;
+    gap: 8px;
+}
+.btn {
+    border: none;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-edit .btn-delete {
+    color: white;
 }
 
