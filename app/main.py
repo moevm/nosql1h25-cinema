@@ -15,7 +15,7 @@ DB_PASSWORD = "SecurePassword123!"
 DB_NAME = "cinema_db"
 
 
-app.config["MONGO_URI"] = f"mongodb://{DB_LOGIN}:{DB_PASSWORD}@localhost:27017/{DB_NAME}?authSource={DB_NAME}"
+app.config["MONGO_URI"] = f"mongodb://{DB_LOGIN}:{DB_PASSWORD}@db:27017/{DB_NAME}?authSource={DB_NAME}"
 mongo = PyMongo(app)
 
 
