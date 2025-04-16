@@ -1,0 +1,25 @@
+version: '3.9'
+
+services:
+  web:
+    build: .
+    container_name: cinema-web
+    ports:
+      - "5001:5000"
+    depends_on:
+      - db
+
+  db:
+    image: mongo:6.0
+    container_name: cinema-db
+    volumes:
+      - mongo_data:/data/db
+      - ./app/deployments/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: cinema_db
+    command: [--auth, --bind_ip_all]
+
+volumes:
+  mongo_data:
