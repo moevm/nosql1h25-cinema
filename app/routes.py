@@ -1,4 +1,4 @@
-from flask import render_template, jsonify
+from flask import render_template, jsonify, redirect, url_for
 import os
 
 def register_main_routes(app):
@@ -12,9 +12,8 @@ def register_main_routes(app):
     
     @app.errorhandler(404)
     def not_found(error):
-        return jsonify({"error": "Resource not found"}), 404
+        return redirect(url_for('home'))
     
     @app.errorhandler(405)
     def method_not_allowed(error):
         return jsonify({"error": "Method not allowed"}), 405
-    
