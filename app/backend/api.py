@@ -176,12 +176,3 @@ def register_api_routes(app):
         return jsonify({"error": "Invalid credentials"}), 401
 
 
-    # ==================== ОБРАБОТКА ОШИБОК ====================
-    @app.errorhandler(404)
-    def not_found(error):
-        return jsonify({"error": "Resource not found"}), 404
-
-
-    @app.errorhandler(405)
-    def method_not_allowed(error):
-        return jsonify({"error": "Method not allowed"}), 405
