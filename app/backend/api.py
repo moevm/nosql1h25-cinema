@@ -143,21 +143,50 @@ def register_api_routes(app):
             title = request.form.get('title')
             year = int(request.form.get('year'))
             description = request.form.get('description', '')
-            director_name = request.form.get('directors')  # пока как строка
+            country = request.form.get('country', '')
+            duration = int(request.form.get('duration', 0))
+            budget = float(request.form.get('budget', 0))
             genres = json.loads(request.form.get('genres', '[]'))
-            rating = float(request.form.get('rating', 0))
 
+            # Получаем режиссёров и актёров как строки
+            directors_raw = json.loads(request.form.get('directors', '[]'))
+            actors_raw = json.loads(request.form.get('actors', '[]'))
+
+            # Найти соответствующие ObjectId из коллекции person
+            def get_person_ids_by_names(names, role):
+                ids = []
+                for name in names:
+                    person = mongo.db.person.find_one({'name': name.strip()})
+                    if person:
+                        ids.append(person['_id'])
+                    else:
+                        new_person = {
+                            "name": name.strip(),
+                            "role": role,
+                            "birth_date": datetime(1900, 1, 1),
+                            "birth_place": "",
+                            "wiki_link": "",
+                            "films_list": []
+                        }
+                        result = mongo.db.person.insert_one(new_person)
+                        ids.append(result.inserted_id)
+                return ids
+
+            # Используем роли
+            director_ids = get_person_ids_by_names(directors_raw, "director")
+            actor_ids = get_person_ids_by_names(actors_raw, "actor")
+
+
+            # Загрузка файлов
             poster_file = request.files.get('poster')
             video_file = request.files.get('video')
 
-            # Сохраняем постер
             poster_path = ''
             if poster_file:
                 filename = secure_filename(poster_file.filename)
                 poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
                 poster_file.save(poster_path)
 
-            # Сохраняем видео
             video_path = ''
             if video_file:
                 filename = secure_filename(video_file.filename)
@@ -167,19 +196,19 @@ def register_api_routes(app):
             film = {
                 "title": title,
                 "year": year,
-                "directors": [director_name],  # в будущем ObjectId
-                "actors": [],
                 "description": description,
-                "country": '',
-                "duration": 0,
+                "country": country,
+                "duration": duration,
+                "budget": budget,
                 "genres": genres,
-                "budget": None,
                 "poster": poster_path,
                 "video_path": video_path,
+                "directors": director_ids,
+                "actors": actor_ids,
+                "ratings": [],
+                "views": [],
                 "created_at": datetime.now(),
-                "updated_at": datetime.now(),
-                "ratings": [rating] if rating else [],
-                "views": []
+                "updated_at": datetime.now()
             }
 
             result = mongo.db.film.insert_one(film)
