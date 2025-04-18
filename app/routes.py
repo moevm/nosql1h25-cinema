@@ -17,4 +17,17 @@ def register_main_routes(app):
     @app.errorhandler(405)
     def method_not_allowed(error):
         return jsonify({"error": "Method not allowed"}), 405
-    
+
+    @app.route('/admin/statistics', endpoint='statistics')
+    def admin_statistics():
+        return render_template('statistics.html')
+
+    @app.route('/admin/editor', endpoint='editor')
+    def editor():
+        return render_template('editor.html')
+
+    @app.route('/admin/backup', endpoint='backup')
+    def backup():
+        return render_template('backup.html')
+
+

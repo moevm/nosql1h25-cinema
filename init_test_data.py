@@ -1,6 +1,6 @@
 import requests
 
-API_URL = "http://localhost:5001"
+API_URL = "http://localhost:5000"
 
 def add_person(name, role, birth_date, birth_place, wiki_link):
     payload = {
