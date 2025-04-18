@@ -1,22 +1,19 @@
-from flask import Flask, render_template
+from flask import send_from_directory, jsonify
+import os
 
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return render_template('../frontend/home/pages/index.html')
-
-@app.route('/films')
-def about():
-    return render_template('../frontend/home/pages/films.html')
-
-@app.route('/series')
-def services():
-    return render_template('../frontend/home/pages/series.html')
-
-@app.route('/recomendations')
-def contact():
-    return render_template('../frontend/home/pages/recomendations.html')
-
-if __name__ == '__main__':
-    app.run(debug=True)
+def register_main_routes(app):
+    @app.route('/')
+    def home():
+        return send_from_directory('../frontend/home/pages', 'home.html')
+    
+    @app.route('/home')
+    def serve_home_page():
+        return send_from_directory('../frontend/home/pages', 'index.html')
+    
+    @app.errorhandler(404)
+    def not_found(error):
+        return jsonify({"error": "Resource not found"}), 404
+    
+    @app.errorhandler(405)
+    def method_not_allowed(error):
+        return jsonify({"error": "Method not allowed"}), 405

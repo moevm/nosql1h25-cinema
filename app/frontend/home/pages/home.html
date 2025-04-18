@@ -18,22 +18,33 @@
             <button class="sorting"></button>
             <nav class="menu">
                 <ul>
-                    <li><a href="" class="menu__link menu__link_active">Популярно сейчас</a></li>
-                    <li><a href="" class="menu__link">Фильмы</a></li>
-                    <li><a href="" class="menu__link">Сериалы</a></li>
-                    <li><a href="" class="menu__link">Рекомендации</a></li>
+                    <li><a href="home.html" class="menu__link menu__link_active">Популярно сейчас</a></li>
+                    <li><a href="home.html" class="menu__link">Фильмы</a></li>
+                    <li><a href="home.html" class="menu__link">Сериалы</a></li>
+                    <li><a href="recomendations.html" class="menu__link">Рекомендации</a></li>
                 </ul>
             </nav>
             <button class="filter"></button>
+        </div>
+        <div class="film-grid" id="filmGrid">
         </div>
         <div class="sheets">
             <button class="sheets__prev-button"></button>
             <button class="sheets__next-button"></button>
         </div>
     </main>
+
     <footer class="footer">
         <img class="footer__icon" src="">
         <p class="footer__message">Спасибо за просмотр!</p>
     </footer>
+
+    <template id="filmTemplate">
+        <div class="film-card">
+            <img class="film-poster" src="" alt="">
+        </div>
+    </template>
+
+    <script src="/home/js/main.js"></script>
 </body>
 </html>
