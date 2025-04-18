@@ -5,6 +5,15 @@ from datetime import datetime
 import json
 import bcrypt
 
+from werkzeug.utils import secure_filename
+from datetime import datetime
+import os
+UPLOAD_FOLDER_POSTERS = 'static/uploads/posters'
+UPLOAD_FOLDER_VIDEOS = 'static/uploads/videos'
+os.makedirs(UPLOAD_FOLDER_POSTERS, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_VIDEOS, exist_ok=True)
+
+
 
 def parse_json(data):
     return json.loads(json_util.dumps(data))
@@ -128,6 +137,59 @@ def register_api_routes(app):
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
 
+    @app.route('/api/films/upload', methods=['POST'])
+    def upload_film():
+        try:
+            title = request.form.get('title')
+            year = int(request.form.get('year'))
+            description = request.form.get('description', '')
+            director_name = request.form.get('directors')  # пока как строка
+            genres = json.loads(request.form.get('genres', '[]'))
+            rating = float(request.form.get('rating', 0))
+
+            poster_file = request.files.get('poster')
+            video_file = request.files.get('video')
+
+            # Сохраняем постер
+            poster_path = ''
+            if poster_file:
+                filename = secure_filename(poster_file.filename)
+                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
+                poster_file.save(poster_path)
+
+            # Сохраняем видео
+            video_path = ''
+            if video_file:
+                filename = secure_filename(video_file.filename)
+                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
+                video_file.save(video_path)
+
+            film = {
+                "title": title,
+                "year": year,
+                "directors": [director_name],  # в будущем ObjectId
+                "actors": [],
+                "description": description,
+                "country": '',
+                "duration": 0,
+                "genres": genres,
+                "budget": None,
+                "poster": poster_path,
+                "video_path": video_path,
+                "created_at": datetime.now(),
+                "updated_at": datetime.now(),
+                "ratings": [rating] if rating else [],
+                "views": []
+            }
+
+            result = mongo.db.film.insert_one(film)
+            return jsonify({
+                "id": str(result.inserted_id),
+                "message": "Фильм успешно добавлен"
+            }), 201
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     # ==================== УДАЛЕНИЕ ФИЛЬМА ====================
     @app.route('/api/films/<film_id>', methods=['DELETE', 'OPTIONS'])

@@ -16,6 +16,97 @@
     <input type="text" id="movieSearch" placeholder="Поиск" autocomplete="off">
     <button id="addMovieBtn">+</button>
 </div>
+
+<div id="add-new-film-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-form">
+        <h3>Добавить фильм</h3>
+
+        <div class="form-group">
+            <label for="new_film">Название:</label>
+            <input type="text" id="new_film" name="film" required>
+            <small class="error" id="title-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="year">Год:</label>
+            <input type="number" id="year" min="1895" required>
+            <small class="error" id="year-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label>Жанры:</label>
+            <div class="custom-multiselect" id="genreSelect">
+                <div class="select-header" id="genreHeader">
+                    Выбрать <span class="arrow">▼</span>
+                </div>
+                <div class="genre-options hidden" id="genreOptions">
+                    <div class="genre-option">Драма</div>
+                    <div class="genre-option">Комедия</div>
+                    <div class="genre-option">Триллер</div>
+                    <div class="genre-option">Ужасы</div>
+                    <div class="genre-option">Мелодрама</div>
+                    <div class="genre-option">Фантастика</div>
+                    <div class="genre-option">Боевик</div>
+                    <div class="genre-option">Анимация</div>
+                </div>
+            </div>
+            <input type="hidden" id="selectedGenres" name="genres">
+        </div>
+
+        <small class="error" id="genres-error"></small>
+
+        <div class="form-group">
+            <label for="director">Режиссёр:</label>
+            <input type="text" id="director" placeholder="Через запятую">
+            <small class="error" id="director-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="actors">Актеры:</label>
+            <input type="text" id="actors" placeholder="Через запятую">
+            <small class="error" id="actors-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="country">Страна:</label>
+            <input type="text" id="country">
+            <small class="error" id="country-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="duration">Длительность:</label>
+            <input type="number" id="duration" min="1">
+            <small class="error" id="duration-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="budget">Бюджет:</label>
+            <input type="number" id="budget" step="0.1">
+            <small class="error" id="budget-error"></small>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Описание:</label>
+            <textarea id="description" rows="4"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label for="poster">Постер:</label>
+            <input type="file" id="poster" accept="image/*">
+        </div>
+
+        <div class="form-group">
+            <label for="video">Видео:</label>
+            <input type="file" id="video" accept="video/*">
+        </div>
+
+        <div class="form-buttons">
+            <button id="new_save-changes">Загрузить</button>
+            <button id="new_cancel-edit">Отмена</button>
+        </div>
+    </div>
+</div>
+
 <div id="films-container" class="films-container">
 
 </div>
