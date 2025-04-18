@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     loadContent('all');
     
+    // TODO: Добавить в бд параметр с типом (фильм или сериал)
     // Обработчики для меню
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {

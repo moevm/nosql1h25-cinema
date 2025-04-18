@@ -16,7 +16,7 @@ def create_app():
     
     # Регистрация роутов
     from .backend.api import register_api_routes
-    from .backend.routes import register_main_routes
+    from .routes import register_main_routes
     
     register_api_routes(app)
     register_main_routes(app)
