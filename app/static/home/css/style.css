@@ -94,7 +94,7 @@
     width: 240px;
     font-size: 14px;
     transition: opacity 0.3s ease;
-    max-height: 70%;
+    max-height: 60%;
     overflow-y: auto;
 }
 

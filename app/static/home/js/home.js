@@ -102,7 +102,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const directorInput = document.querySelector('.filter-form__input--director');
     const actorInput = document.querySelector('.filter-form__input--actor');
     const yearInput = document.querySelector('.filter-form__input--year');
-    const ratingInput = document.querySelector('.filter-form__range--rating');
+    const ratingMinInput = document.querySelector('.filter-form__input_rating-min');
+    const ratingMaxInput = document.querySelector('.filter-form__input_rating-max');
     const addedInput = document.querySelector('.filter-form__input--added');
     const editedInput = document.querySelector('.filter-form__input--edited');
     const applyFilterButton = document.querySelector('.filter-form__apply-button');
@@ -114,7 +115,8 @@ document.addEventListener('DOMContentLoaded', () => {
             director: directorInput.value.trim(),
             actor: actorInput.value.trim(),
             year: yearInput.value.trim(),
-            rating: ratingInput.value,
+            ratingMin: ratingMinInput.value,
+            ratingMax: ratingMaxInput.value,
             added: addedInput.value,
             edited: editedInput.value
         };
@@ -144,7 +146,8 @@ document.addEventListener('DOMContentLoaded', () => {
         directorInput.value = '';
         actorInput.value = '';
         yearInput.value = '';
-        ratingInput.value = 5;
+        ratingMinInput.value = '';
+        ratingMaxInput.value = '';
         addedInput.value = '';
         editedInput.value = '';
 

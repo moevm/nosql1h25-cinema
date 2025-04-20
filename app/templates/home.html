@@ -76,9 +76,15 @@
                 </select>
             </label>
         
-            <label class="side-panel__label">Мин. оценка:
-                <input type="range" min="1" max="10" class="filter-form__range filter-form__range--rating">
+            <label class="side-panel__label">
+                Оценка от:
+                <input type="number" min="1" max="10" class="filter-form__input_rating-min" placeholder="1">
             </label>
+            <label class="side-panel__label">
+                Оценка до:
+                <input type="number" min="1" max="10" class="filter-form__input_rating-max" placeholder="10">
+            </label>
+            
         
             <label class="side-panel__label">Дата добавления:
                 <input type="date" class="filter-form__input filter-form__input--added">
