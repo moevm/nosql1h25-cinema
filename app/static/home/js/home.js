@@ -3,6 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const filmTemplate = document.getElementById('filmTemplate');
     const menuLinks = document.querySelectorAll('.menu__link');
     const noResultsMessage = document.getElementById('noResultsMessage');
+    const genreSelect = document.querySelector('.filter-form__select--genre');
+    const countrySelect = document.querySelector('.filter-form__select--country');
+    const genreTemplate = document.getElementById('genreOptionTemplate');
+    const countryTemplate = document.getElementById('countryOptionTemplate');
+    const sortRadios = document.querySelectorAll('sort-form__input');
+
+    let currentFilms = [];
+    const uniqueGenres = new Set();
+    const uniqueCountries = new Set();
     
     loadContent('all');
     
@@ -22,16 +31,23 @@ document.addEventListener('DOMContentLoaded', () => {
     
     async function loadContent(type) {
         try {
-            const response = await fetch(`/api/content?type=${type}`);
-            const films = await response.json();
+            const response = await fetch(`/api/films?type=${type}`);
+            currentFilms = await response.json();
             
-            if (films.length === 0) {
+            if (currentFilms.length === 0) {
                 noResultsMessage.classList.remove('hidden');
-                return;
+            } else {
+                filmGrid.innerHTML = '';
             }
 
-            filmGrid.innerHTML = '';
-            films.forEach(film => {
+            uniqueGenres.clear();
+            uniqueCountries.clear();
+
+            currentFilms.forEach(film => {
+                if (film.genres) {
+                    film.genres.forEach(genre => uniqueGenres.add(genre));
+                }
+                if (film.country) uniqueCountries.add(film.country);
                 const card = filmTemplate.content.cloneNode(true);
                 const filmCard = card.querySelector('.film-card');
                 
@@ -44,10 +60,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 filmGrid.appendChild(card);
             });
+
+            updateSelectOptions(genreSelect, uniqueGenres, genreTemplate);
+            updateSelectOptions(countrySelect, uniqueCountries, countryTemplate);
         } catch (error) {
             console.error('Ошибка загрузки:', error);
         }
     }
+
+    function updateSelectOptions(selectElement, itemsSet, template) {
+        // Удалить все, кроме первого элемента ("Любой" / "Любая")
+        while (selectElement.options.length > 1) {
+            selectElement.remove(1);
+        }
+    
+        itemsSet.forEach(item => {
+            const option = template.content.cloneNode(true).querySelector('option');
+            option.textContent = item;
+            option.value = item;
+            selectElement.appendChild(option);
+        });
+    };   
 
     // фильтры и сортировка
     const sortingBtn = document.querySelector('.sorting');
@@ -65,5 +98,125 @@ document.addEventListener('DOMContentLoaded', () => {
         sortingPanel.classList.add('hidden');
     });
 
+    // обработка фильтрации
+    const directorInput = document.querySelector('.filter-form__input--director');
+    const actorInput = document.querySelector('.filter-form__input--actor');
+    const yearInput = document.querySelector('.filter-form__input--year');
+    const ratingInput = document.querySelector('.filter-form__range--rating');
+    const addedInput = document.querySelector('.filter-form__input--added');
+    const editedInput = document.querySelector('.filter-form__input--edited');
+    const applyFilterButton = document.querySelector('.filter-form__apply-button');
 
+    applyFilterButton.addEventListener('click', async () => {
+        const query = {
+            genre: genreSelect.value || null,
+            country: countrySelect.value || null,
+            director: directorInput.value.trim(),
+            actor: actorInput.value.trim(),
+            year: yearInput.value.trim(),
+            rating: ratingInput.value,
+            added: addedInput.value,
+            edited: editedInput.value
+        };
+
+        try {
+            const response = await fetch('/api/films/filter', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(query)
+            });
+
+            currentFilms = await response.json();
+            renderSortedFilms(currentFilms);
+        } catch (error) {
+            console.error('Ошибка при применении фильтров:', error);
+        }
+    });
+
+    const clearFilterButton = document.querySelector('.filter-form__clear-button');
+
+    clearFilterButton.addEventListener('click', () => {
+        // Сброс селектов
+        genreSelect.selectedIndex = 0;
+        countrySelect.selectedIndex = 0;
+
+        // Сброс текстовых и других инпутов
+        directorInput.value = '';
+        actorInput.value = '';
+        yearInput.value = '';
+        ratingInput.value = 5;
+        addedInput.value = '';
+        editedInput.value = '';
+
+        loadContent('all');
+    });
+
+    // Функции сортировки
+    function sortByPopularity(films) {
+        return [...films].sort((a, b) => {
+            const viewsA = a.views ? a.views.length : 0;
+            const viewsB = b.views ? b.views.length : 0;
+            return viewsB - viewsA;
+        });
+    }
+
+    function sortByNewest(films) {
+        return [...films].sort((a, b) => b.year - a.year); // Сортировка по убыванию года
+    }
+
+    function sortByRating(films) {
+        return [...films].sort((a, b) => {
+            const ratingA = a.ratings && a.ratings.length > 0 
+                ? a.ratings.reduce((sum, r) => sum + r, 0) / a.ratings.length 
+                : 0;
+            const ratingB = b.ratings && b.ratings.length > 0 
+                ? b.ratings.reduce((sum, r) => sum + r, 0) / b.ratings.length 
+                : 0;
+            return ratingB - ratingA;
+        });
+    }
+
+    // Функция для отрисовки отсортированных фильмов
+    function renderSortedFilms(sortedFilms) {
+        noResultsMessage.classList.toggle('hidden', sortedFilms.length > 0);
+        filmGrid.innerHTML = '';
+
+        sortedFilms.forEach(film => {
+            const card = filmTemplate.content.cloneNode(true);
+            const filmCard = card.querySelector('.film-card');
+
+            card.querySelector('.film-poster').src = film.poster;
+            card.querySelector('.film-poster').alt = film.title;
+
+            filmCard.addEventListener('click', () => {
+                window.location.href = `/movie/${film.id}`;
+            });
+
+            filmGrid.appendChild(card);
+        });
+    }
+
+    // Обработчик для кнопок сортировки
+    sortRadios.forEach(radio => {
+        radio.addEventListener('change', (e) => {
+            if (!currentFilms.length) return;
+
+            let sortedFilms;
+            switch(e.target.value) {
+                case 'popular':
+                    sortedFilms = sortByPopularity(currentFilms);
+                    break;
+                case 'new':
+                    sortedFilms = sortByNewest(currentFilms);
+                    break;
+                case 'rating':
+                    sortedFilms = sortByRating(currentFilms);
+                    break;
+                default:
+                    sortedFilms = currentFilms;
+            }
+            
+            renderSortedFilms(sortedFilms);
+        });
+    });
 });

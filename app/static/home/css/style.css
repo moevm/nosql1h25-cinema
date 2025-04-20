@@ -77,9 +77,14 @@
     background-image: url('../../assets/images/filter-icon.png');
 }
 
+.filter-form__clear-button {
+    background-color: #ccc;
+    color: #023370;
+}
+
 .side-panel {
     position: absolute;
-    top: 100px;
+    top: 120px;
     background-color: #f4f7fb;
     color: #023370;
     padding: 20px;
@@ -89,6 +94,8 @@
     width: 240px;
     font-size: 14px;
     transition: opacity 0.3s ease;
+    max-height: 70%;
+    overflow-y: auto;
 }
 
 .side-panel--left {

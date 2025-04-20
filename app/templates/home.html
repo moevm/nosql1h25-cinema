@@ -38,29 +38,60 @@
         <div id="sortingPanel" class="side-panel side-panel--left hidden">
             <h3>Сортировка</h3>
             <ul>
-                <li><input type="radio" name="sort" value="popular"> По популярности</li>
-                <li><input type="radio" name="sort" value="new"> По новизне</li>
-                <li><input type="radio" name="sort" value="rating"> По рейтингу</li>
+                <li><input type="radio" name="sort" value="popular" class="sort-form__input"> По популярности</li>
+                <li><input type="radio" name="sort" value="new" class="sort-form__input"> По новизне</li>
+                <li><input type="radio" name="sort" value="rating" class="sort-form__input"> По рейтингу</li>
             </ul>
         </div>
         <div id="filterPanel" class="side-panel side-panel--right hidden">
-            <h3>Фильтры</h3>
-            <label>Жанр:
-                <select>
-                    <option>Любой</option>
-                    <option>Боевик</option>
-                    <option>Комедия</option>
+            <h3 class="side-panel__title">Фильтры</h3>
+        
+            <label class="side-panel__label">Жанр:
+                <select class="filter-form__select filter-form__select--genre">
+                    <option value="">Любой</option>
+                    <template id="genreOptionTemplate">
+                        <option></option>
+                    </template>
                 </select>
             </label>
-            <label>Режиссёр:</label><input type="text">
-            <label>Актёр:</label><input type="text">
-            <label>Год:</label><input type="text">
-            <label>Оценка:</label><input type="range" min="1" max="10">
-            <label>Дата добавления:</label><input type="date">
-            <label>Дата редактирования:</label><input type="date">
-            <button>Применить</button>
-            <button style="background-color: #ccc; color: #023370;">Очистить</button>
+        
+            <label class="side-panel__label">Режиссёр:
+                <input type="text" class="filter-form__input filter-form__input--director">
+            </label>
+        
+            <label class="side-panel__label">Актёр:
+                <input type="text" class="filter-form__input filter-form__input--actor">
+            </label>
+        
+            <label class="side-panel__label">Год:
+                <input type="text" class="filter-form__input filter-form__input--year">
+            </label>
+        
+            <label class="side-panel__label">Страна:
+                <select class="filter-form__select filter-form__select--country">
+                    <option value="">Любая</option>
+                    <template id="countryOptionTemplate">
+                        <option></option>
+                    </template>
+                </select>
+            </label>
+        
+            <label class="side-panel__label">Мин. оценка:
+                <input type="range" min="1" max="10" class="filter-form__range filter-form__range--rating">
+            </label>
+        
+            <label class="side-panel__label">Дата добавления:
+                <input type="date" class="filter-form__input filter-form__input--added">
+            </label>
+        
+            <label class="side-panel__label">Дата редактирования:
+                <input type="date" class="filter-form__input filter-form__input--edited">
+            </label>
+        
+            <button class="filter-form__apply-button">Применить</button>
+            <button class="filter-form__clear-button">Очистить</button>
         </div>
+        
     </main>
 
     <footer class="footer">
