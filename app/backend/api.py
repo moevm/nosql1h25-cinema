@@ -267,3 +267,27 @@ def register_api_routes(app):
         return jsonify({"error": "Invalid credentials"}), 401
 
 
+    #фильтрация пример: /api/films/filter?country=USA&genre=drama
+    @app.route('/api/films/filter', methods=['GET'])
+    def filter_films():
+        try:
+            query = {}
+            genre = request.args.get('genre')
+            year = request.args.get('year')
+            country = request.args.get('country')
+
+            if genre:
+                query['genres'] = genre
+            if year:
+                query['year'] = int(year)
+            if country:
+                query['country'] = country
+
+            films = list(mongo.db.film.find(query))
+            return parse_json(films), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+
+
