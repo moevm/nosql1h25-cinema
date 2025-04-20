@@ -4,13 +4,28 @@
     <meta charset="UTF-8">
     <title>Статистика</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/statistics.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 <div class="header">
     <nav>Статистика</nav>
-    <nav><a href="{{ url_for('editor') }}"> Каталог</a></nav>
-    <nav><a href="{{ url_for('backup') }}"> Бэкап </a></nav>
+    <nav><a href="{{ url_for('editor') }}">Каталог</a></nav>
+    <nav><a href="{{ url_for('backup') }}">Бэкап</a></nav>
 </div>
-тут будет статистика
+
+<div class="chart-container">
+    <h2>Выбери параметр для анализа:</h2>
+    <select id="keySelector">
+        <option value="genres">Жанры</option>
+        <option value="year">Годы</option>
+        <option value="country">Страны</option>
+    </select>
+    <div class="chart-wrapper">
+        <canvas id="statsChart"></canvas>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='admin/js/statistics.js') }}"></script>
 </body>
 </html>
