@@ -267,27 +267,85 @@ def register_api_routes(app):
         return jsonify({"error": "Invalid credentials"}), 401
 
 
-    #фильтрация пример: /api/films/filter?country=USA&genre=drama
-    @app.route('/api/films/filter', methods=['GET'])
+    #фильтрация
+    @app.route('/api/films/filter', methods=['POST'])
     def filter_films():
         try:
-            query = {}
-            genre = request.args.get('genre')
-            year = request.args.get('year')
-            country = request.args.get('country')
+            filters = request.get_json()
+            all_films = list(mongo.db.film.find())
 
-            if genre:
-                query['genres'] = genre
-            if year:
-                query['year'] = int(year)
-            if country:
-                query['country'] = country
 
-            films = list(mongo.db.film.find(query))
-            return parse_json(films), 200
+            def match(film):
+                if filters.get('genre') and filters['genre'] not in film.get('genres', []):
+                    return False
+                if filters.get('country') and filters['country'] != film.get('country'):
+                    return False
+                if filters.get('year'):
+                    try:
+                        if int(filters['year']) != film.get('year'):
+                            return False
+                    except ValueError:
+                        return False
+                if filters.get('director'):
+                    director_name = filters['director'].strip().lower()
+                    director_ids = film.get('directors', [])
+                    found = False
+                    for d_id in director_ids:
+                        person = mongo.db.person.find_one({"_id": d_id})
+                        if person and director_name in person['name'].lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+                if filters.get('actor'):
+                    actor_name = filters['actor'].strip().lower()
+                    actor_ids = film.get('actors', [])
+                    found = False
+                    for a_id in actor_ids:
+                        person = mongo.db.person.find_one({"_id": a_id})
+                        if person and actor_name in person['name'].lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+                if filters.get('rating'):
+                    try:
+                        target_rating = float(filters['rating'])
+                        ratings = film.get('ratings', [])
+                        avg_rating = sum(ratings) / len(ratings) if ratings else 0
+                        if avg_rating < target_rating:
+                            return False
+                    except:
+                        return False
+                if filters.get('added'):
+                    try:
+                        if str(film.get('created_at', ''))[:10] != filters['added']:
+                            return False
+                    except:
+                        return False
+                if filters.get('edited'):
+                    try:
+                        if str(film.get('updated_at', ''))[:10] != filters['edited']:
+                            return False
+                    except:
+                        return False
+
+                return True
+
+            filtered = [film for film in all_films if match(film)]
+
+            for film in filtered:
+                film['_id'] = str(film['_id'])
+                if 'created_at' in film:
+                    film['created_at'] = str(film['created_at'])
+                if 'updated_at' in film:
+                    film['updated_at'] = str(film['updated_at'])
+
+            return jsonify(filtered), 200
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
 
 
 
