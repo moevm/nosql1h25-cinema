@@ -27,10 +27,39 @@
             <button class="filter"></button>
         </div>
         <div class="film-grid" id="filmGrid">
+            <p id="noResultsMessage" class="film-grid_no-results hidden">
+                Фильмы не найдены 😔
+            </p>
         </div>
         <div class="sheets">
             <button class="sheets__prev-button"></button>
             <button class="sheets__next-button"></button>
+        </div>
+        <div id="sortingPanel" class="side-panel side-panel--left hidden">
+            <h3>Сортировка</h3>
+            <ul>
+                <li><input type="radio" name="sort" value="popular"> По популярности</li>
+                <li><input type="radio" name="sort" value="new"> По новизне</li>
+                <li><input type="radio" name="sort" value="rating"> По рейтингу</li>
+            </ul>
+        </div>
+        <div id="filterPanel" class="side-panel side-panel--right hidden">
+            <h3>Фильтры</h3>
+            <label>Жанр:
+                <select>
+                    <option>Любой</option>
+                    <option>Боевик</option>
+                    <option>Комедия</option>
+                </select>
+            </label>
+            <label>Режиссёр:</label><input type="text">
+            <label>Актёр:</label><input type="text">
+            <label>Год:</label><input type="text">
+            <label>Оценка:</label><input type="range" min="1" max="10">
+            <label>Дата добавления:</label><input type="date">
+            <label>Дата редактирования:</label><input type="date">
+            <button>Применить</button>
+            <button style="background-color: #ccc; color: #023370;">Очистить</button>
         </div>
     </main>
 

@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const filmGrid = document.getElementById('filmGrid');
     const filmTemplate = document.getElementById('filmTemplate');
     const menuLinks = document.querySelectorAll('.menu__link');
+    const noResultsMessage = document.getElementById('noResultsMessage');
     
     loadContent('all');
     
@@ -24,8 +25,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const response = await fetch(`/api/content?type=${type}`);
             const films = await response.json();
             
+            if (films.length === 0) {
+                noResultsMessage.classList.remove('hidden');
+                return;
+            }
+
             filmGrid.innerHTML = '';
-            
             films.forEach(film => {
                 const card = filmTemplate.content.cloneNode(true);
                 const filmCard = card.querySelector('.film-card');
@@ -43,4 +48,22 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Ошибка загрузки:', error);
         }
     }
+
+    // фильтры и сортировка
+    const sortingBtn = document.querySelector('.sorting');
+    const filterBtn = document.querySelector('.filter');
+    const sortingPanel = document.getElementById('sortingPanel');
+    const filterPanel = document.getElementById('filterPanel');
+
+    sortingBtn.addEventListener('click', () => {
+        sortingPanel.classList.toggle('hidden');
+        filterPanel.classList.add('hidden');
+    });
+
+    filterBtn.addEventListener('click', () => {
+        filterPanel.classList.toggle('hidden');
+        sortingPanel.classList.add('hidden');
+    });
+
+
 });
