@@ -92,7 +92,7 @@ function renderChart(counts, label) {
 
 async function fetchDataAndRender() {
     const selectedKey = document.getElementById('keySelector').value;
-    const response = await fetch('/api/content');
+    const response = await fetch('/api/films');
     const fullData = await response.json();
     const counts = countByKey(fullData, selectedKey);
     renderChart(counts, selectedKey);
