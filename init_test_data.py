@@ -48,8 +48,6 @@ def add_admin(login, password):
 if __name__ == "__main__":
     print("Добавляем режиссёров...")
     nolan_id = add_person(
-    print("Добавляем режиссёров...")
-    nolan_id = add_person(
         name="Christopher Nolan",
         role="director",
         birth_date="1970-07-30",
@@ -57,40 +55,6 @@ if __name__ == "__main__":
         wiki_link="https://en.wikipedia.org/wiki/Christopher_Nolan"
     )
 
-    anderson_id = add_person(
-        name="Wes Anderson",
-        role="director",
-        birth_date="1969-05-01",
-        birth_place="Houston, Texas",
-        wiki_link="https://en.wikipedia.org/wiki/Wes_Anderson"
-    )
-
-    bong_id = add_person(
-        name="Bong Joon-ho",
-        role="director",
-        birth_date="1969-09-14",
-        birth_place="Daegu, South Korea",
-        wiki_link="https://en.wikipedia.org/wiki/Bong_Joon-ho"
-    )
-
-    villeneuve_id = add_person(
-        name="Denis Villeneuve",
-        role="director",
-        birth_date="1967-10-03",
-        birth_place="Gentilly, Quebec",
-        wiki_link="https://en.wikipedia.org/wiki/Denis_Villeneuve"
-    )
-
-    spielberg_id = add_person(
-        name="Steven Spielberg",
-        role="director",
-        birth_date="1946-12-18",
-        birth_place="Cincinnati, Ohio",
-        wiki_link="https://en.wikipedia.org/wiki/Steven_Spielberg"
-    )
-
-    print("Добавляем актёров...")
-    leo_id = add_person(
     anderson_id = add_person(
         name="Wes Anderson",
         role="director",
@@ -165,44 +129,9 @@ if __name__ == "__main__":
     )
 
     print("Добавляем фильмы...")
-    timothee_id = add_person(
-        name="Timothée Chalamet",
-        role="actor",
-        birth_date="1995-12-27",
-        birth_place="New York City, USA",
-        wiki_link="https://en.wikipedia.org/wiki/Timoth%C3%A9e_Chalamet"
-    )
-
-    song_id = add_person(
-        name="Song Kang-ho",
-        role="actor",
-        birth_date="1967-01-17",
-        birth_place="Gimhae, South Korea",
-        wiki_link="https://en.wikipedia.org/wiki/Song_Kang-ho"
-    )
-
-    ralph_id = add_person(
-        name="Ralph Fiennes",
-        role="actor",
-        birth_date="1962-12-22",
-        birth_place="Ipswich, England",
-        wiki_link="https://en.wikipedia.org/wiki/Ralph_Fiennes"
-    )
-
-    tom_id = add_person(
-        name="Tom Hanks",
-        role="actor",
-        birth_date="1956-07-09",
-        birth_place="Concord, California",
-        wiki_link="https://en.wikipedia.org/wiki/Tom_Hanks"
-    )
-
-    print("Добавляем фильмы...")
     add_film(
         title="Inception",
         year=2010,
-        directors=[nolan_id],
-        actors=[leo_id],
         directors=[nolan_id],
         actors=[leo_id],
         description="A thief who steals corporate secrets through dream-sharing technology",
@@ -212,62 +141,6 @@ if __name__ == "__main__":
         budget=160000000,
         poster="inception.jpg",
         video_path="/videos/inception.mp4"
-    )
-
-    add_film(
-        title="Parasite",
-        year=2019,
-        directors=[bong_id],
-        actors=[song_id],
-        description="Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.",
-        country="South Korea",
-        duration=132,
-        genres=["drama", "thriller"],
-        budget=11400000,
-        poster="parasite.jpg",
-        video_path="/videos/parasite.mp4"
-    )
-
-    add_film(
-        title="The Grand Budapest Hotel",
-        year=2014,
-        directors=[anderson_id],
-        actors=[ralph_id],
-        description="A writer encounters the owner of an aging high-class hotel, who tells him of his early years serving as a lobby boy.",
-        country="Germany",
-        duration=99,
-        genres=["comedy", "drama"],
-        budget=25000000,
-        poster="grand_budapest.jpg",
-        video_path="/videos/grand_budapest.mp4"
-    )
-
-    add_film(
-        title="Dune",
-        year=2021,
-        directors=[villeneuve_id],
-        actors=[timothee_id],
-        description="Feature adaptation of Frank Herbert's science fiction novel, about the son of a noble family entrusted with the protection of the most valuable asset and vital element in the galaxy.",
-        country="USA",
-        duration=155,
-        genres=["sci-fi", "adventure"],
-        budget=165000000,
-        poster="dune.jpg",
-        video_path="/videos/dune.mp4"
-    )
-
-    add_film(
-        title="Saving Private Ryan",
-        year=1998,
-        directors=[spielberg_id],
-        actors=[tom_id],
-        description="Following the Normandy Landings, a group of U.S. soldiers go behind enemy lines to retrieve a paratrooper whose brothers have been killed in action.",
-        country="USA",
-        duration=169,
-        genres=["war", "drama"],
-        budget=70000000,
-        poster="saving_ryan.jpg",
-        video_path="/videos/saving_ryan.mp4"
     )
 
     add_film(
