@@ -222,4 +222,44 @@ document.addEventListener('DOMContentLoaded', () => {
             renderSortedFilms(sortedFilms);
         });
     });
+
+    // Поиск по названию фильма
+    const searchInput = document.getElementById('searchInput');
+    const searchButton = document.getElementById('searchButton');
+
+    async function searchFilms() {
+        const title = searchInput.value.trim();
+
+        // Если строка поиска пуста — показать все фильмы
+        if (!title) {
+            await loadContent('all');
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/films/search', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title })
+            });
+
+            const films = await response.json();
+            currentFilms = films;
+            renderSortedFilms(currentFilms);
+        } catch (error) {
+            console.error('Ошибка при поиске фильмов:', error);
+        }
+    }
+
+    searchButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        searchFilms();
+    });
+
+    searchInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            searchFilms();
+        }
+    });
 });

@@ -102,6 +102,51 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("Произошла ошибка при отправке данных.");
         }
     });
+
+    // Поиск фильмов
+    const movieSearchInput = document.getElementById("movieSearch");
+
+    async function searchFilmsByTitle() {
+        const query = movieSearchInput.value.trim();
+
+        // Если поиск пустой — показать все фильмы
+        if (!query) {
+            fetchFilms();
+            return;
+        }
+
+        try {
+            const response = await fetch("http://localhost:5000/api/films/search", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ title: query })
+            });
+
+            if (!response.ok) {
+                throw new Error("Ошибка при поиске");
+            }
+
+            const films = await response.json();
+            displayFilms(films);
+        } catch (error) {
+            console.error("Ошибка поиска:", error);
+            document.getElementById("films-container").innerHTML = "<p>Ошибка при поиске фильмов</p>";
+        }
+    }
+
+    movieSearchInput.addEventListener("keydown", function (e) {
+        if (e.key === "Enter") {
+            e.preventDefault();
+            searchFilmsByTitle();
+        }
+    });
+
+    movieSearchInput.addEventListener("input", function () {
+        if (!movieSearchInput.value.trim()) {
+            fetchFilms();
+        }
+    });
+
 });
 
 // Функция для обновления скрытого поля с выбранными жанрами
