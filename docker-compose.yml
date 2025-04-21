@@ -8,7 +8,7 @@ services:
       - "5000:5000"
     depends_on:
       - db
-    volumes:
+    volumes: # TODO: Убрать в релизе
       - ./:/app
 
   db:

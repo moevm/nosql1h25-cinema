@@ -80,26 +80,21 @@ def register_api_routes(app):
 
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
-    @app.route('/api/content')
-    def get_content():
-        content_type = request.args.get('type', 'all')
-        
-        movies = list(mongo.db.film.find())
-        
-        if content_type == 'all':
-            return jsonify(movies)
-        elif content_type == 'films':
-            return jsonify([m for m in movies if m['type'] == 'film'])
-        elif content_type == 'series':
-            return jsonify([m for m in movies if m['type'] == 'series'])
-        
-        return jsonify([])
-
-
     @app.route('/api/films', methods=['GET', 'POST'])
     def handle_films():
         if request.method == 'GET':
+            content_type = request.args.get('type', 'all')
+        
             films = list(mongo.db.film.find())
+            
+            
+            if content_type == 'all':
+                return parse_json(films), 200
+            # TODO: добавить поле type в базу для фильмов
+            # elif content_type == 'films':
+            #     return jsonify([m for m in movies if m['type'] == 'film'])
+            # elif content_type == 'series':
+            #     return jsonify([m for m in movies if m['type'] == 'series'])
             return parse_json(films), 200
 
         if request.method == 'POST':
@@ -265,5 +260,29 @@ def register_api_routes(app):
             return jsonify({"message": "Login successful"}), 200
 
         return jsonify({"error": "Invalid credentials"}), 401
+
+
+    #фильтрация пример: /api/films/filter?country=USA&genre=drama
+    @app.route('/api/films/filter', methods=['GET'])
+    def filter_films():
+        try:
+            query = {}
+            genre = request.args.get('genre')
+            year = request.args.get('year')
+            country = request.args.get('country')
+
+            if genre:
+                query['genres'] = genre
+            if year:
+                query['year'] = int(year)
+            if country:
+                query['country'] = country
+
+            films = list(mongo.db.film.find(query))
+            return parse_json(films), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
 
 
