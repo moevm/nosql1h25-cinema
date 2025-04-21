@@ -346,7 +346,6 @@ def register_api_routes(app):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
-    #поиск
     @app.route('/api/films/search', methods=['POST'])
     def search_films():
         try:
@@ -354,15 +353,12 @@ def register_api_routes(app):
 
             search_title = query.get('title', '').strip().lower()
 
-            all_films = list(mongo.db.film.find())
+            if not search_title:
+                return jsonify([]), 200
 
-            def match(film):
-                if search_title and search_title not in film.get('title', '').lower():
-                    return False
-                return True
+            all_films = mongo.db.film.find({"title": {"$regex": search_title, "$options": "i"}})
 
-
-            filtered_films = [film for film in all_films if match(film)]
+            filtered_films = list(all_films)
 
             for film in filtered_films:
                 film['_id'] = str(film['_id'])
@@ -375,6 +371,7 @@ def register_api_routes(app):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
 
 
 
