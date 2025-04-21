@@ -133,12 +133,12 @@ document.addEventListener('DOMContentLoaded', () => {
             actor: actorInput.value.trim(),
             yearMin: yearMinInput.value.trim(),
             yearMax: yearMaxInput.value.trim(),
-            ratingMin: ratingMinInput.value,
-            ratingMax: ratingMaxInput.value,
-            addedMin: addedMinInput.value,
-            addedMax: addedMaxInput.value,
-            editedMin: editedMinInput.value,
-            editedMax: editedMaxInput.value
+            ratingMin: ratingMinInput.value.trim() || 1,
+            ratingMax: ratingMaxInput.value.trim() || 10,
+            addedMin: addedMinInput.value.trim() || null,
+            addedMax: addedMaxInput.value.trim() || null,
+            editedMin: editedMinInput.value.trim() || null,
+            editedMax: editedMaxInput.value.trim() || null,
         };
 
         try {

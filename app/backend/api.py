@@ -273,18 +273,26 @@ def register_api_routes(app):
             filters = request.get_json()
             all_films = list(mongo.db.film.find())
 
-
             def match(film):
+                # Жанр
                 if filters.get('genre') and filters['genre'] not in film.get('genres', []):
                     return False
+
+                # Страна
                 if filters.get('country') and filters['country'] != film.get('country'):
                     return False
-                if filters.get('year'):
-                    try:
-                        if int(filters['year']) != film.get('year'):
-                            return False
-                    except ValueError:
+
+                # Год (диапазон)
+                try:
+                    film_year = film.get('year')
+                    year_min = int(filters.get('yearMin', 0)) if filters.get('yearMin') else None
+                    year_max = int(filters.get('yearMax', 9999)) if filters.get('yearMax') else None
+                    if (year_min and film_year < year_min) or (year_max and film_year > year_max):
                         return False
+                except:
+                    return False
+
+                # Режиссёр
                 if filters.get('director'):
                     director_name = filters['director'].strip().lower()
                     director_ids = film.get('directors', [])
@@ -296,6 +304,8 @@ def register_api_routes(app):
                             break
                     if not found:
                         return False
+
+                # Актёр
                 if filters.get('actor'):
                     actor_name = filters['actor'].strip().lower()
                     actor_ids = film.get('actors', [])
@@ -307,27 +317,38 @@ def register_api_routes(app):
                             break
                     if not found:
                         return False
-                if filters.get('rating'):
-                    try:
-                        target_rating = float(filters['rating'])
-                        ratings = film.get('ratings', [])
-                        avg_rating = sum(ratings) / len(ratings) if ratings else 0
-                        if avg_rating < target_rating:
-                            return False
-                    except:
+
+                # Рейтинг (диапазон)
+                try:
+                    ratings = film.get('ratings', [])
+                    avg_rating = sum(ratings) / len(ratings) if ratings else 1
+                    rating_min = float(filters.get('ratingMin', 1))
+                    rating_max = float(filters.get('ratingMax', 10))
+                    print(avg_rating, rating_min, rating_max)
+                    if avg_rating < rating_min or avg_rating > rating_max:
                         return False
-                if filters.get('added'):
-                    try:
-                        if str(film.get('created_at', ''))[:10] != filters['added']:
-                            return False
-                    except:
+                except:
+                    return False
+
+                # Дата добавления (от - до)
+                try:
+                    added_date = str(film.get('created_at', ''))[:10]
+                    if filters.get('addedMin') and added_date < filters['addedMin']:
                         return False
-                if filters.get('edited'):
-                    try:
-                        if str(film.get('updated_at', ''))[:10] != filters['edited']:
-                            return False
-                    except:
+                    if filters.get('addedMax') and added_date > filters['addedMax']:
                         return False
+                except:
+                    return False
+
+                # Дата редактирования (от - до)
+                try:
+                    edited_date = str(film.get('updated_at', ''))[:10]
+                    if filters.get('editedMin') and edited_date < filters['editedMin']:
+                        return False
+                    if filters.get('editedMax') and edited_date > filters['editedMax']:
+                        return False
+                except:
+                    return False
 
                 return True
 

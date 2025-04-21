@@ -16,7 +16,7 @@ def add_person(name, role, birth_date, birth_place, wiki_link):
     print(f"{role.capitalize()} добавлен с ID: {person_id}")
     return person_id
 
-def add_film(title, year, directors, actors, description, country, duration, genres, budget, poster, video_path):
+def add_film(title, year, directors, actors, description, country, duration, genres, budget, poster, video_path, ratings):
     payload = {
         "title": title,
         "year": year,
@@ -28,7 +28,8 @@ def add_film(title, year, directors, actors, description, country, duration, gen
         "genres": genres,
         "budget": budget,
         "poster": poster,
-        "video_path": video_path
+        "video_path": video_path,
+        "ratings": ratings,
     }
     response = requests.post(f"{API_URL}/api/films", json=payload)
     response.raise_for_status()
@@ -140,7 +141,8 @@ if __name__ == "__main__":
         genres=["sci-fi", "action"],
         budget=160000000,
         poster="inception.jpg",
-        video_path="/videos/inception.mp4"
+        video_path="/videos/inception.mp4",
+        ratings=[7],
     )
 
     add_film(
@@ -154,7 +156,8 @@ if __name__ == "__main__":
         genres=["drama", "thriller"],
         budget=11400000,
         poster="parasite.jpg",
-        video_path="/videos/parasite.mp4"
+        video_path="/videos/parasite.mp4",
+        ratings=[7],
     )
 
     add_film(
@@ -168,7 +171,8 @@ if __name__ == "__main__":
         genres=["comedy", "drama"],
         budget=25000000,
         poster="grand_budapest.jpg",
-        video_path="/videos/grand_budapest.mp4"
+        video_path="/videos/grand_budapest.mp4",
+        ratings=[8],
     )
 
     add_film(
@@ -182,7 +186,8 @@ if __name__ == "__main__":
         genres=["sci-fi", "adventure"],
         budget=165000000,
         poster="dune.jpg",
-        video_path="/videos/dune.mp4"
+        video_path="/videos/dune.mp4",
+        ratings=[8],
     )
 
     add_film(
@@ -196,7 +201,8 @@ if __name__ == "__main__":
         genres=["war", "drama"],
         budget=70000000,
         poster="saving_ryan.jpg",
-        video_path="/videos/saving_ryan.mp4"
+        video_path="/videos/saving_ryan.mp4",
+        ratings=[8],
     )
 
     print("Добавляем администратора...")
