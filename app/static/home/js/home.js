@@ -114,11 +114,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // обработка фильтрации
     const directorInput = document.querySelector('.filter-form__input--director');
     const actorInput = document.querySelector('.filter-form__input--actor');
-    const yearInput = document.querySelector('.filter-form__input--year');
+    const yearMinInput = document.querySelector('.filter-form__input--year-min');
+    const yearMaxInput = document.querySelector('.filter-form__input--year-max');
     const ratingMinInput = document.querySelector('.filter-form__input_rating-min');
     const ratingMaxInput = document.querySelector('.filter-form__input_rating-max');
-    const addedInput = document.querySelector('.filter-form__input--added');
-    const editedInput = document.querySelector('.filter-form__input--edited');
+    const addedMinInput = document.querySelector('.filter-form__input--added-min');
+    const addedMaxInput = document.querySelector('.filter-form__input--added-max');
+    const editedMinInput = document.querySelector('.filter-form__input--edited-min');
+    const editedMaxInput = document.querySelector('.filter-form__input--edited-max');
+    
     const applyFilterButton = document.querySelector('.filter-form__apply-button');
 
     applyFilterButton.addEventListener('click', async () => {
@@ -127,11 +131,14 @@ document.addEventListener('DOMContentLoaded', () => {
             country: countrySelect.value || null,
             director: directorInput.value.trim(),
             actor: actorInput.value.trim(),
-            year: yearInput.value.trim(),
+            yearMin: yearMinInput.value.trim(),
+            yearMax: yearMaxInput.value.trim(),
             ratingMin: ratingMinInput.value,
             ratingMax: ratingMaxInput.value,
-            added: addedInput.value,
-            edited: editedInput.value
+            addedMin: addedMinInput.value,
+            addedMax: addedMaxInput.value,
+            editedMin: editedMinInput.value,
+            editedMax: editedMaxInput.value
         };
 
         try {
@@ -159,11 +166,14 @@ document.addEventListener('DOMContentLoaded', () => {
         // Сброс текстовых и других инпутов
         directorInput.value = '';
         actorInput.value = '';
-        yearInput.value = '';
         ratingMinInput.value = '';
         ratingMaxInput.value = '';
-        addedInput.value = '';
-        editedInput.value = '';
+        yearMinInput.value = '';
+        yearMaxInput.value = '';
+        addedMinInput.value = '';
+        addedMaxInput.value = '';
+        editedMinInput.value = '';
+        editedMaxInput.value = '';
 
         filterPanel.classList.add('hidden');
         loadContent('all');

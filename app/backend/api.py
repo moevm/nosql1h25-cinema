@@ -7,7 +7,7 @@ import bcrypt
 from werkzeug.utils import secure_filename
 from datetime import datetime
 import os
-UPLOAD_FOLDER_POSTERS = 'app/static/uploads/posters'
+UPLOAD_FOLDER_POSTERS = 'static/uploads/posters'
 UPLOAD_FOLDER_VIDEOS = 'static/uploads/videos'
 os.makedirs(UPLOAD_FOLDER_POSTERS, exist_ok=True)
 os.makedirs(UPLOAD_FOLDER_VIDEOS, exist_ok=True)

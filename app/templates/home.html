@@ -63,8 +63,11 @@
                 <input type="text" class="filter-form__input filter-form__input--actor">
             </label>
         
-            <label class="side-panel__label">Год:
-                <input type="text" class="filter-form__input filter-form__input--year">
+            <label class="side-panel__label">Год от:
+                <input type="number" class="filter-form__input--year-min" placeholder="например, 2000">
+            </label>
+            <label class="side-panel__label">Год до:
+                <input type="number" class="filter-form__input--year-max" placeholder="например, 2023">
             </label>
         
             <label class="side-panel__label">Страна:
@@ -86,12 +89,18 @@
             </label>
             
         
-            <label class="side-panel__label">Дата добавления:
-                <input type="date" class="filter-form__input filter-form__input--added">
+            <label class="side-panel__label">Дата добавления от:
+                <input type="date" class="filter-form__input--added-min">
             </label>
-        
-            <label class="side-panel__label">Дата редактирования:
-                <input type="date" class="filter-form__input filter-form__input--edited">
+            <label class="side-panel__label">Дата добавления до:
+                <input type="date" class="filter-form__input--added-max">
+            </label>
+            
+            <label class="side-panel__label">Дата редактирования от:
+                <input type="date" class="filter-form__input--edited-min">
+            </label>
+            <label class="side-panel__label">Дата редактирования до:
+                <input type="date" class="filter-form__input--edited-max">
             </label>
         
             <button class="filter-form__apply-button">Применить</button>
