@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const countrySelect = document.querySelector('.filter-form__select--country');
     const genreTemplate = document.getElementById('genreOptionTemplate');
     const countryTemplate = document.getElementById('countryOptionTemplate');
-    const sortRadios = document.querySelectorAll('sort-form__input');
+    const sortRadios = document.querySelectorAll('.sort-form__input');
 
     let currentFilms = [];
     const uniqueGenres = new Set();
@@ -98,6 +98,19 @@ document.addEventListener('DOMContentLoaded', () => {
         sortingPanel.classList.add('hidden');
     });
 
+    document.addEventListener('click', (e) => {
+        const isClickInsideFilter = filterPanel.contains(e.target) || filterBtn.contains(e.target);
+        const isClickInsideSorting = sortingPanel.contains(e.target) || sortingBtn.contains(e.target);
+    
+        if (!isClickInsideFilter) {
+            filterPanel.classList.add('hidden');
+        }
+    
+        if (!isClickInsideSorting) {
+            sortingPanel.classList.add('hidden');
+        }
+    });
+
     // обработка фильтрации
     const directorInput = document.querySelector('.filter-form__input--director');
     const actorInput = document.querySelector('.filter-form__input--actor');
@@ -130,6 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             currentFilms = await response.json();
             renderSortedFilms(currentFilms);
+            filterPanel.classList.add('hidden');
         } catch (error) {
             console.error('Ошибка при применении фильтров:', error);
         }
@@ -151,6 +165,7 @@ document.addEventListener('DOMContentLoaded', () => {
         addedInput.value = '';
         editedInput.value = '';
 
+        filterPanel.classList.add('hidden');
         loadContent('all');
     });
 
@@ -181,7 +196,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Функция для отрисовки отсортированных фильмов
     function renderSortedFilms(sortedFilms) {
-        noResultsMessage.classList.toggle('hidden', sortedFilms.length > 0);
+        if (!sortedFilms.length) {
+            noResultsMessage.classList.add('hidden');
+        }
         filmGrid.innerHTML = '';
 
         sortedFilms.forEach(film => {
