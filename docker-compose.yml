@@ -8,8 +8,6 @@ services:
       - "5000:5000"
     depends_on:
       - db
-    volumes: # TODO: Убрать в релизе
-      - ./:/app
 
   db:
     image: mongo:6.0
