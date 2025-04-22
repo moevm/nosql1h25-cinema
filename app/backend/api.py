@@ -1,7 +1,6 @@
 from .. import mongo
 from flask import jsonify, request
 from bson import json_util, ObjectId
-from datetime import datetime
 import json
 import bcrypt
 
@@ -83,16 +82,16 @@ def register_api_routes(app):
     @app.route('/api/content')
     def get_content():
         content_type = request.args.get('type', 'all')
-        
+
         movies = list(mongo.db.film.find())
-        
+
         if content_type == 'all':
             return jsonify(movies)
         elif content_type == 'films':
             return jsonify([m for m in movies if m['type'] == 'film'])
         elif content_type == 'series':
             return jsonify([m for m in movies if m['type'] == 'series'])
-        
+
         return jsonify([])
 
 
@@ -265,5 +264,136 @@ def register_api_routes(app):
             return jsonify({"message": "Login successful"}), 200
 
         return jsonify({"error": "Invalid credentials"}), 401
+
+
+    #фильтрация
+    @app.route('/api/films/filter', methods=['POST'])
+    def filter_films():
+        try:
+            filters = request.get_json()
+            all_films = list(mongo.db.film.find())
+
+            def match(film):
+                # Жанр
+                if filters.get('genre') and filters['genre'] not in film.get('genres', []):
+                    return False
+
+                # Страна
+                if filters.get('country') and filters['country'] != film.get('country'):
+                    return False
+
+                # Год (диапазон)
+                try:
+                    film_year = film.get('year')
+                    year_min = int(filters.get('yearMin', 0)) if filters.get('yearMin') else None
+                    year_max = int(filters.get('yearMax', 9999)) if filters.get('yearMax') else None
+                    if (year_min and film_year < year_min) or (year_max and film_year > year_max):
+                        return False
+                except:
+                    return False
+
+                # Режиссёр
+                if filters.get('director'):
+                    director_name = filters['director'].strip().lower()
+                    director_ids = film.get('directors', [])
+                    found = False
+                    for d_id in director_ids:
+                        person = mongo.db.person.find_one({"_id": d_id})
+                        if person and director_name in person['name'].lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+
+                # Актёр
+                if filters.get('actor'):
+                    actor_name = filters['actor'].strip().lower()
+                    actor_ids = film.get('actors', [])
+                    found = False
+                    for a_id in actor_ids:
+                        person = mongo.db.person.find_one({"_id": a_id})
+                        if person and actor_name in person['name'].lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+
+                # Рейтинг (диапазон)
+                try:
+                    ratings = film.get('ratings', [])
+                    avg_rating = sum(ratings) / len(ratings) if ratings else 1
+                    rating_min = float(filters.get('ratingMin', 1))
+                    rating_max = float(filters.get('ratingMax', 10))
+                    print(avg_rating, rating_min, rating_max)
+                    if avg_rating < rating_min or avg_rating > rating_max:
+                        return False
+                except:
+                    return False
+
+                # Дата добавления (от - до)
+                try:
+                    added_date = str(film.get('created_at', ''))[:10]
+                    if filters.get('addedMin') and added_date < filters['addedMin']:
+                        return False
+                    if filters.get('addedMax') and added_date > filters['addedMax']:
+                        return False
+                except:
+                    return False
+
+                # Дата редактирования (от - до)
+                try:
+                    edited_date = str(film.get('updated_at', ''))[:10]
+                    if filters.get('editedMin') and edited_date < filters['editedMin']:
+                        return False
+                    if filters.get('editedMax') and edited_date > filters['editedMax']:
+                        return False
+                except:
+                    return False
+
+                return True
+
+            filtered = [film for film in all_films if match(film)]
+
+            for film in filtered:
+                film['_id'] = str(film['_id'])
+                if 'created_at' in film:
+                    film['created_at'] = str(film['created_at'])
+                if 'updated_at' in film:
+                    film['updated_at'] = str(film['updated_at'])
+
+            return jsonify(filtered), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/api/films/search', methods=['POST'])
+    def search_films():
+        try:
+            query = request.get_json()
+
+            search_title = query.get('title', '').strip().lower()
+
+            if not search_title:
+                return jsonify([]), 200
+
+            all_films = mongo.db.film.find({"title": {"$regex": search_title, "$options": "i"}})
+
+            filtered_films = list(all_films)
+
+            for film in filtered_films:
+                film['_id'] = str(film['_id'])
+                if 'created_at' in film:
+                    film['created_at'] = str(film['created_at'])
+                if 'updated_at' in film:
+                    film['updated_at'] = str(film['updated_at'])
+
+            return jsonify(filtered_films), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+
+
+
 
 

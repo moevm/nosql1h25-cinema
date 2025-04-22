@@ -27,11 +27,86 @@
             <button class="filter"></button>
         </div>
         <div class="film-grid" id="filmGrid">
+            <p id="noResultsMessage" class="film-grid_no-results hidden">
+                Фильмы не найдены 😔
+            </p>
         </div>
         <div class="sheets">
             <button class="sheets__prev-button"></button>
             <button class="sheets__next-button"></button>
         </div>
+        <div id="sortingPanel" class="side-panel side-panel--left hidden">
+            <h3>Сортировка</h3>
+            <ul>
+                <li><input type="radio" name="sort" value="popular" class="sort-form__input"> По популярности</li>
+                <li><input type="radio" name="sort" value="new" class="sort-form__input"> По новизне</li>
+                <li><input type="radio" name="sort" value="rating" class="sort-form__input"> По рейтингу</li>
+            </ul>
+        </div>
+        <div id="filterPanel" class="side-panel side-panel--right hidden">
+            <h3 class="side-panel__title">Фильтры</h3>
+        
+            <label class="side-panel__label">Жанр:
+                <select class="filter-form__select filter-form__select--genre">
+                    <option value="">Любой</option>
+                    <template id="genreOptionTemplate">
+                        <option></option>
+                    </template>
+                </select>
+            </label>
+        
+            <label class="side-panel__label">Режиссёр:
+                <input type="text" class="filter-form__input filter-form__input--director">
+            </label>
+        
+            <label class="side-panel__label">Актёр:
+                <input type="text" class="filter-form__input filter-form__input--actor">
+            </label>
+        
+            <label class="side-panel__label">Год от:
+                <input type="number" class="filter-form__input--year-min" placeholder="например, 2000">
+            </label>
+            <label class="side-panel__label">Год до:
+                <input type="number" class="filter-form__input--year-max" placeholder="например, 2023">
+            </label>
+        
+            <label class="side-panel__label">Страна:
+                <select class="filter-form__select filter-form__select--country">
+                    <option value="">Любая</option>
+                    <template id="countryOptionTemplate">
+                        <option></option>
+                    </template>
+                </select>
+            </label>
+        
+            <label class="side-panel__label">
+                Оценка от:
+                <input type="number" min="1" max="10" class="filter-form__input_rating-min" placeholder="1">
+            </label>
+            <label class="side-panel__label">
+                Оценка до:
+                <input type="number" min="1" max="10" class="filter-form__input_rating-max" placeholder="10">
+            </label>
+            
+        
+            <label class="side-panel__label">Дата добавления от:
+                <input type="date" class="filter-form__input--added-min">
+            </label>
+            <label class="side-panel__label">Дата добавления до:
+                <input type="date" class="filter-form__input--added-max">
+            </label>
+            
+            <label class="side-panel__label">Дата редактирования от:
+                <input type="date" class="filter-form__input--edited-min">
+            </label>
+            <label class="side-panel__label">Дата редактирования до:
+                <input type="date" class="filter-form__input--edited-max">
+            </label>
+        
+            <button class="filter-form__apply-button">Применить</button>
+            <button class="filter-form__clear-button">Очистить</button>
+        </div>
+        
     </main>
 
     <footer class="footer">
