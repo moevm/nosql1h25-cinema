@@ -283,17 +283,17 @@ def register_api_routes(app):
         try:
             film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
             if not film:
-                return jsonify({"error": "Film not found"}), 404
+                return jsonify({"error": "Фильм не найден"}), 404
 
-            title = request.form.get('title')
-            year = int(request.form.get('year'))
-            description = request.form.get('description', '')
-            country = request.form.get('country', '')
-            duration = int(request.form.get('duration', 0))
-            budget = float(request.form.get('budget', 0))
-            genres = json.loads(request.form.get('genres', '[]'))
+            title = request.form.get('title', film['title'])
+            year = int(request.form.get('year', film['year']))
+            description = request.form.get('description', film['description'])
+            country = request.form.get('country', film['country'])
+            duration = int(request.form.get('duration', film['duration']))
+            budget = float(request.form.get('budget', film['budget']))
+            genres = json.loads(request.form.get('genres', json.dumps(film['genres'])))
 
-            # --- самое важное ---
+            # Актёры и режиссёры
             directors_raw = json.loads(request.form.get('directors', '[]'))
             actors_raw = json.loads(request.form.get('actors', '[]'))
 
@@ -318,9 +318,24 @@ def register_api_routes(app):
 
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
-            # --- самое важное конец ---
 
-            update_data = {
+            # Загрузка файлов
+            poster_file = request.files.get('poster')
+            video_file = request.files.get('video')
+
+            poster_path = film.get('poster', '')
+            if poster_file:
+                filename = secure_filename(poster_file.filename)
+                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
+                poster_file.save(poster_path)
+
+            video_path = film.get('video_path', '')
+            if video_file:
+                filename = secure_filename(video_file.filename)
+                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
+                video_file.save(video_path)
+
+            updated_film = {
                 "title": title,
                 "year": year,
                 "description": description,
@@ -328,28 +343,15 @@ def register_api_routes(app):
                 "duration": duration,
                 "budget": budget,
                 "genres": genres,
+                "poster": poster_path,
+                "video_path": video_path,
                 "directors": director_ids,
                 "actors": actor_ids,
                 "updated_at": datetime.now()
             }
 
-            poster_file = request.files.get('poster')
-            if poster_file:
-                filename = secure_filename(poster_file.filename)
-                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
-                poster_file.save(poster_path)
-                update_data["poster"] = poster_path
-
-            video_file = request.files.get('video')
-            if video_file:
-                filename = secure_filename(video_file.filename)
-                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
-                video_file.save(video_path)
-                update_data["video_path"] = video_path
-
-            mongo.db.film.update_one({"_id": ObjectId(film_id)}, {"$set": update_data})
-
-            return jsonify({"message": "Фильм успешно обновлен"}), 200
+            mongo.db.film.update_one({"_id": ObjectId(film_id)}, {"$set": updated_film})
+            return jsonify({"message": "Фильм успешно обновлён"}), 200
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500

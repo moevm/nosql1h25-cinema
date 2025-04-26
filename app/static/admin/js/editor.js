@@ -112,13 +112,15 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("budget").classList.add("input-error");
         }
 
-        if (!posterFile) {
+        let isEditing = !!editingFilmId;
+
+        if (!posterFile && !isEditing) {
             valid = false;
             document.getElementById("poster-error").textContent = "Пожалуйста, загрузите постер";
             document.getElementById("poster").closest(".form-group").classList.add("input-error");
         }
 
-        if (!videoFile) {
+        if (!videoFile && !isEditing) {
             valid = false;
             document.getElementById("video-error").textContent = "Пожалуйста, загрузите видео";
             document.getElementById("video").closest(".form-group").classList.add("input-error");
