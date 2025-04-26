@@ -55,8 +55,74 @@ document.addEventListener("DOMContentLoaded", function () {
         const posterFile = document.getElementById("poster").files[0];
         const videoFile = document.getElementById("video").files[0];
 
-        if (!title || !year || !directorsRaw) {
-            alert("Пожалуйста, заполните обязательные поля");
+        // Валидация
+        let valid = true;
+
+        document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
+        document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
+
+
+        if (!title) {
+            valid = false;
+            document.getElementById("title-error").textContent = "Введите название фильма";
+            document.getElementById("new_film").classList.add("input-error");
+        }
+
+        if (!year || year < 1895 || year > new Date().getFullYear()) {
+            valid = false;
+            document.getElementById("year-error").textContent = "Введите корректный год фильма (1895- текущий год)";
+            document.getElementById("year").classList.add("input-error");
+        }
+
+        if (!directorsRaw) {
+            valid = false;
+            document.getElementById("director-error").textContent = "Введите режиссёра/ов";
+            document.getElementById("director").classList.add("input-error");
+        }
+
+        if (!actorsRaw) {
+            valid = false;
+            document.getElementById("actors-error").textContent = "Введите актёра/ов";
+            document.getElementById("actors").classList.add("input-error");
+        }
+
+        if (!country) {
+            valid = false;
+            document.getElementById("country-error").textContent = "Введите страну";
+            document.getElementById("country").classList.add("input-error");
+        }
+
+        if (genres.length === 0) {
+            valid = false;
+            document.getElementById("genres-error").textContent = "Выберите хотя бы один жанр";
+            document.getElementById("genreHeader").classList.add("input-error");
+        }
+
+        if (isNaN(duration) || duration <= 0) {
+            valid = false;
+            document.getElementById("duration-error").textContent = "Введите корректную длительность фильма в минутах";
+            document.getElementById("duration").classList.add("input-error");
+        }
+
+        if (isNaN(budget) || budget < 0) {
+            valid = false;
+            document.getElementById("budget-error").textContent = "Введите бюджет";
+            document.getElementById("budget").classList.add("input-error");
+        }
+
+        if (!posterFile) {
+            valid = false;
+            document.getElementById("poster-error").textContent = "Пожалуйста, загрузите постер";
+            document.getElementById("poster").closest(".form-group").classList.add("input-error");
+        }
+
+        if (!videoFile) {
+            valid = false;
+            document.getElementById("video-error").textContent = "Пожалуйста, загрузите видео";
+            document.getElementById("video").closest(".form-group").classList.add("input-error");
+        }
+
+        if (!valid) {
             return;
         }
 

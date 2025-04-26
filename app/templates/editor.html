@@ -21,16 +21,43 @@
     <div class="modal-form">
         <h3>Добавить фильм</h3>
 
-        <div class="form-group">
-            <label for="new_film">Название:</label>
-            <input type="text" id="new_film" name="film" required>
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="new_film">Название:</label>
+                <input type="text" id="new_film" name="film" required>
+            </div>
             <small class="error" id="title-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="year">Год:</label>
-            <input type="number" id="year" min="1895" required>
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="year">Год:</label>
+                <input type="number" id="year" min="1895" required>
+            </div>
             <small class="error" id="year-error"></small>
+        </div>
+
+        <div class="form-flex">
+            <div class="form-group">
+                <label>Жанры:</label>
+                <div class="custom-multiselect" id="genreSelect">
+                    <div class="select-header" id="genreHeader">
+                        Выбрать <span class="arrow">▼</span>
+                    </div>
+                    <div class="genre-options hidden" id="genreOptions">
+                        <div class="genre-option">Драма</div>
+                        <div class="genre-option">Комедия</div>
+                        <div class="genre-option">Триллер</div>
+                        <div class="genre-option">Ужасы</div>
+                        <div class="genre-option">Мелодрама</div>
+                        <div class="genre-option">Фантастика</div>
+                        <div class="genre-option">Боевик</div>
+                        <div class="genre-option">Анимация</div>
+                    </div>
+                </div>
+                <input type="hidden" id="selectedGenres" name="genres">
+            </div>
+            <small class="error" id="genres-error"></small>
         </div>
 
         <div class="form-group">
@@ -59,46 +86,84 @@
             <label for="director">Режиссёр:</label>
             <input type="text" id="director" placeholder="Через запятую">
             <small class="error" id="director-error"></small>
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="director">Режиссёр:</label>
+                <input type="text" id="director" placeholder="Через запятую">
+            </div>
+            <small class="error" id="director-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="actors">Актеры:</label>
-            <input type="text" id="actors" placeholder="Через запятую">
-            <small class="error" id="actors-error"></small>
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="actors">Актеры:</label>
+                <input type="text" id="actors" placeholder="Через запятую">
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="country">Страна:</label>
-            <input type="text" id="country">
+
+
+<!--        <div class="form-group">-->
+<!--            <label>Режиссёры:</label>-->
+<!--            <div id="directors-container"></div>-->
+<!--            <button type="button" id="add-director">+ Добавить режиссёра</button>-->
+<!--            <small class="error" id="director-error"></small>-->
+<!--        </div>-->
+
+<!--        <div class="form-group">-->
+<!--            <label>Актёры:</label>-->
+<!--            <div id="actors-container"></div>-->
+<!--            <button type="button" id="add-actor">+ Добавить актёра</button>-->
+<!--            <small class="error" id="actors-error"></small>-->
+<!--        </div>-->
+
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="country">Страна:</label>
+                <input type="text" id="country">
+            </div>
             <small class="error" id="country-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="duration">Длительность:</label>
-            <input type="number" id="duration" min="1">
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="duration">Длительность:</label>
+                <input type="number" id="duration" min="1">
+            </div>
             <small class="error" id="duration-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="budget">Бюджет:</label>
-            <input type="number" id="budget" step="0.1">
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="budget">Бюджет:</label>
+                <input type="number" id="budget" step="0.1">
+            </div>
             <small class="error" id="budget-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="description">Описание:</label>
-            <textarea id="description" rows="4"></textarea>
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="description">Описание:</label>
+                <textarea id="description" rows="4"></textarea>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="poster">Постер:</label>
-            <input type="file" id="poster" accept="image/*">
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="poster">Постер:</label>
+                <input type="file" id="poster" accept="image/*">
+            </div>
+            <small class="error" id="poster-error"></small>
         </div>
 
-        <div class="form-group">
-            <label for="video">Видео:</label>
-            <input type="file" id="video" accept="video/*">
+        <div class="form-flex">
+            <div class="form-group">
+                <label for="video">Видео:</label>
+                <input type="file" id="video" accept="video/*">
+            </div>
+            <small class="error" id="video-error"></small>
         </div>
+
 
         <div class="form-buttons">
             <button id="new_save-changes">Загрузить</button>
@@ -107,9 +172,12 @@
     </div>
 </div>
 
+
+
 <div id="films-container" class="films-container">
 
 </div>
+
 <script src="{{ url_for('static', filename='admin/js/editor.js') }}"></script>
 
 </body>
