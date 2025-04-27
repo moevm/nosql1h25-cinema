@@ -245,6 +245,125 @@ def register_api_routes(app):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
+    def safe_objectid(id_str):
+        try:
+            return ObjectId(id_str)
+        except (InvalidId, TypeError):
+            return None
+
+    @app.route('/api/films/<film_id>', methods=['GET'])
+    def get_film_by_id(film_id):
+        try:
+            film = mongo.db.film.find_one_or_404({"_id": ObjectId(film_id)})
+
+            directors = []
+            for director_id in film.get('directors', []):
+                obj_id = safe_objectid(director_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        directors.append(person['name'])
+
+            actors = []
+            for actor_id in film.get('actors', []):
+                obj_id = safe_objectid(actor_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        actors.append(person['name'])
+
+            film_data = {
+                "title": film["title"],
+                "year": film["year"],
+                "description": film["description"],
+                "country": film["country"],
+                "duration": film["duration"],
+                "budget": film["budget"],
+                "genres": film["genres"],
+                "directors": directors,
+                "actors": actors,
+            }
+            return jsonify(film_data)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    @app.route('/api/films/<film_id>', methods=['PUT'])
+    def update_film(film_id):
+        try:
+            film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
+            if not film:
+                return jsonify({"error": "Фильм не найден"}), 404
+
+            title = request.form.get('title', film['title'])
+            year = int(request.form.get('year', film['year']))
+            description = request.form.get('description', film['description'])
+            country = request.form.get('country', film['country'])
+            duration = int(request.form.get('duration', film['duration']))
+            budget = float(request.form.get('budget', film['budget']))
+            genres = json.loads(request.form.get('genres', json.dumps(film['genres'])))
+
+            # Актёры и режиссёры
+            directors_raw = json.loads(request.form.get('directors', '[]'))
+            actors_raw = json.loads(request.form.get('actors', '[]'))
+
+            def get_person_ids_by_names(names, role):
+                ids = []
+                for name in names:
+                    person = mongo.db.person.find_one({'name': name.strip()})
+                    if person:
+                        ids.append(person['_id'])
+                    else:
+                        new_person = {
+                            "name": name.strip(),
+                            "role": role,
+                            "birth_date": datetime(1900, 1, 1),
+                            "birth_place": "",
+                            "wiki_link": "",
+                            "films_list": []
+                        }
+                        result = mongo.db.person.insert_one(new_person)
+                        ids.append(result.inserted_id)
+                return ids
+
+            director_ids = get_person_ids_by_names(directors_raw, "director")
+            actor_ids = get_person_ids_by_names(actors_raw, "actor")
+
+            # Загрузка файлов
+            poster_file = request.files.get('poster')
+            video_file = request.files.get('video')
+
+            poster_path = film.get('poster', '')
+            if poster_file:
+                filename = secure_filename(poster_file.filename)
+                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
+                poster_file.save(poster_path)
+
+            video_path = film.get('video_path', '')
+            if video_file:
+                filename = secure_filename(video_file.filename)
+                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
+                video_file.save(video_path)
+
+            updated_film = {
+                "title": title,
+                "year": year,
+                "description": description,
+                "country": country,
+                "duration": duration,
+                "budget": budget,
+                "genres": genres,
+                "poster": poster_path,
+                "video_path": video_path,
+                "directors": director_ids,
+                "actors": actor_ids,
+                "updated_at": datetime.now()
+            }
+
+            mongo.db.film.update_one({"_id": ObjectId(film_id)}, {"$set": updated_film})
+            return jsonify({"message": "Фильм успешно обновлён"}), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     # ==================== АДМИНИСТРИРОВАНИЕ ====================
     @app.route('/api/admin/register', methods=['POST'])

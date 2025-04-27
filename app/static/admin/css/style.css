@@ -302,3 +302,30 @@ nav a:hover, nav a:active {
 .genre-option:hover {
     background-color: #f0f0f0;
 }
+
+.error {
+    font-size: 0.85em;
+    margin-top: 4px;
+    display: block;
+    background-color: rgba(255, 0, 0, 0.35);
+    padding: 0 2px;
+}
+
+.form-group.file-error {
+    border: 2px solid red;
+    padding: 8px;
+    border-radius: 5px;
+}
+.form-group {
+    margin-bottom: 1em;
+}
+
+
+.input-error {
+    border: 2px solid #ff0000 !important;
+}
+
+.form-flex{
+    display: flex;
+    flex-direction: column;
+}

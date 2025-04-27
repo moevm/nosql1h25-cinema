@@ -8,7 +8,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Открытие модального окна
     addMovieBtn.addEventListener("click", function () {
-        modalOverlay.style.display = "block";
+        // modalOverlay.style.display = "block";
+        editingFilmId = null;
+        openFilmModal(false);
     });
 
 
@@ -55,8 +57,76 @@ document.addEventListener("DOMContentLoaded", function () {
         const posterFile = document.getElementById("poster").files[0];
         const videoFile = document.getElementById("video").files[0];
 
-        if (!title || !year || !directorsRaw) {
-            alert("Пожалуйста, заполните обязательные поля");
+        // Валидация
+        let valid = true;
+
+        document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
+        document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
+
+
+        if (!title) {
+            valid = false;
+            document.getElementById("title-error").textContent = "Введите название фильма";
+            document.getElementById("new_film").classList.add("input-error");
+        }
+
+        if (!year || year < 1895 || year > new Date().getFullYear()) {
+            valid = false;
+            document.getElementById("year-error").textContent = "Введите корректный год фильма (1895- текущий год)";
+            document.getElementById("year").classList.add("input-error");
+        }
+
+        if (!directorsRaw) {
+            valid = false;
+            document.getElementById("director-error").textContent = "Введите режиссёра/ов";
+            document.getElementById("director").classList.add("input-error");
+        }
+
+        if (!actorsRaw) {
+            valid = false;
+            document.getElementById("actors-error").textContent = "Введите актёра/ов";
+            document.getElementById("actors").classList.add("input-error");
+        }
+
+        if (!country) {
+            valid = false;
+            document.getElementById("country-error").textContent = "Введите страну";
+            document.getElementById("country").classList.add("input-error");
+        }
+
+        if (genres.length === 0) {
+            valid = false;
+            document.getElementById("genres-error").textContent = "Выберите хотя бы один жанр";
+            document.getElementById("genreHeader").classList.add("input-error");
+        }
+
+        if (isNaN(duration) || duration <= 0) {
+            valid = false;
+            document.getElementById("duration-error").textContent = "Введите корректную длительность фильма в минутах";
+            document.getElementById("duration").classList.add("input-error");
+        }
+
+        if (isNaN(budget) || budget < 0) {
+            valid = false;
+            document.getElementById("budget-error").textContent = "Введите бюджет";
+            document.getElementById("budget").classList.add("input-error");
+        }
+
+        let isEditing = !!editingFilmId;
+
+        if (!posterFile && !isEditing) {
+            valid = false;
+            document.getElementById("poster-error").textContent = "Пожалуйста, загрузите постер";
+            document.getElementById("poster").closest(".form-group").classList.add("input-error");
+        }
+
+        if (!videoFile && !isEditing) {
+            valid = false;
+            document.getElementById("video-error").textContent = "Пожалуйста, загрузите видео";
+            document.getElementById("video").closest(".form-group").classList.add("input-error");
+        }
+
+        if (!valid) {
             return;
         }
 
@@ -82,19 +152,29 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         try {
-            const response = await fetch("http://localhost:5000/api/films/upload", {
-                method: "POST",
-                body: formData
-            });
+            let response;
+            if (editingFilmId) {
+                // Если редактируем фильм, отправляем PUT запрос
+                response = await fetch(`http://localhost:5000/api/films/${editingFilmId}`, {
+                    method: "PUT",
+                    body: formData
+                });
+            } else {
+                // Если добавляем новый фильм, отправляем POST запрос
+                response = await fetch("http://localhost:5000/api/films/upload", {
+                    method: "POST",
+                    body: formData
+                });
+            }
 
             const result = await response.json();
 
             if (response.ok) {
-                alert("Фильм успешно добавлен!");
+                alert("Фильм успешно " + (editingFilmId ? "обновлён" : "добавлен") + "!");
                 modalOverlay.style.display = "none";
-                fetchFilms();
+                fetchFilms(); // Обновляем список фильмов
             } else {
-                alert("Ошибка при добавлении фильма: " + result.error);
+                alert("Ошибка: " + result.error);
             }
 
         } catch (error) {
@@ -147,6 +227,39 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
+    function clearErrorOnInput(inputId, errorId, className = "input-error") {
+        const input = document.getElementById(inputId);
+        const error = document.getElementById(errorId);
+        input.addEventListener("input", () => {
+            input.classList.remove(className);
+            if (error) error.textContent = "";
+        });
+    }
+
+    function clearErrorOnFileChange(fileId, errorId) {
+        const input = document.getElementById(fileId);
+        const error = document.getElementById(errorId);
+        input.addEventListener("change", () => {
+            input.closest(".form-group").classList.remove("input-error");
+            if (error) error.textContent = "";
+        });
+    }
+
+    clearErrorOnInput("new_film", "title-error");
+    clearErrorOnInput("year", "year-error");
+    clearErrorOnInput("director", "director-error");
+    clearErrorOnInput("actors", "actors-error");
+    clearErrorOnInput("country", "country-error");
+    clearErrorOnInput("duration", "duration-error");
+    clearErrorOnInput("budget", "budget-error");
+
+    clearErrorOnFileChange("poster", "poster-error");
+    clearErrorOnFileChange("video", "video-error");
+
+    document.getElementById("genreHeader").addEventListener("click", () => {
+        document.getElementById("genreHeader").classList.remove("input-error");
+        document.getElementById("genres-error").textContent = "";
+    });
 });
 
 // Функция для обновления скрытого поля с выбранными жанрами
@@ -187,7 +300,7 @@ function displayFilms(films) {
                     <div class="film-header">
                         <p class="film-title-year">${film.title} (${film.year})</p>
                         <div class="film-actions">
-                            <button class="btn btn-edit" onclick="editFilm('${film._id}')">
+                            <button class="btn btn-edit" onclick="editFilm('${film._id.$oid}')">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <button class="btn btn-delete" onclick="deleteFilm('${film._id.$oid}')" title="Delete">
@@ -231,3 +344,66 @@ async function deleteFilm(filmId) {
     }
 }
 
+async function editFilm(filmId) {
+    console.log('Editing film with ID:', filmId);
+    const response = await fetch(`http://localhost:5000/api/films/${filmId}`);
+    const filmData = await response.json();
+
+    openFilmModal(true, filmData);
+    editingFilmId = filmId; // Сохраняем ID редактируемого фильма
+}
+
+function clearFilmForm() {
+    document.getElementById("new_film").value = "";
+    document.getElementById("year").value = "";
+    document.getElementById("director").value = "";
+    document.getElementById("actors").value = "";
+    document.getElementById("country").value = "";
+    document.getElementById("duration").value = "";
+    document.getElementById("budget").value = "";
+    document.getElementById("description").value = "";
+    document.getElementById("selectedGenres").value = "";
+    document.querySelectorAll(".genre-option.selected").forEach(el => el.classList.remove("selected"));
+    document.getElementById("poster").value = "";
+    document.getElementById("video").value = "";
+    document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
+    document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
+    document.querySelectorAll(".error-message").forEach((el) => el.textContent = "");
+}
+
+function openFilmModal(isEditMode, filmData = null) {
+    const modalOverlay = document.getElementById("add-new-film-modal");
+    modalOverlay.style.display = "block";
+
+    if (!isEditMode) {
+        clearFilmForm();
+
+
+        document.getElementById("new_save-changes").textContent = "Добавить фильм";
+        console.log('Film Data:', filmData);
+    } else if (filmData) {
+
+        document.getElementById("new_save-changes").textContent = "Сохранить изменения";
+        console.log('Film Data:', filmData);
+        document.getElementById("new_film").value = filmData.title || "";
+        document.getElementById("year").value = filmData.year || "";
+        document.getElementById("director").value = (filmData.directors || []).join(", ");
+        document.getElementById("actors").value = (filmData.actors || []).join(", ");
+        document.getElementById("country").value = filmData.country || "";
+        document.getElementById("duration").value = filmData.duration || "";
+        document.getElementById("budget").value = filmData.budget || "";
+        document.getElementById("description").value = filmData.description || "";
+
+        // Заполнить жанры
+        const selectedGenres = filmData.genres || [];
+        document.getElementById("selectedGenres").value = selectedGenres.join(", ");
+        document.querySelectorAll(".genre-option").forEach(el => {
+            if (selectedGenres.includes(el.textContent.trim())) {
+                el.classList.add("selected");
+            } else {
+                el.classList.remove("selected");
+            }
+        });
+
+    }
+}
