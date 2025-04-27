@@ -140,7 +140,7 @@ if __name__ == "__main__":
         duration=148,
         genres=["sci-fi", "action"],
         budget=160000000,
-        poster="inception.jpg",
+        poster="https://i.pinimg.com/736x/6f/c5/a3/6fc5a3240f09d882606e55da4a58b2dd.jpg",
         video_path="/videos/inception.mp4",
         ratings=[7],
     )
@@ -155,7 +155,7 @@ if __name__ == "__main__":
         duration=132,
         genres=["drama", "thriller"],
         budget=11400000,
-        poster="parasite.jpg",
+        poster="https://i.pinimg.com/736x/f3/17/a6/f317a612d86d1e324e4bd507cbf160aa.jpg",
         video_path="/videos/parasite.mp4",
         ratings=[7],
     )
@@ -170,7 +170,7 @@ if __name__ == "__main__":
         duration=99,
         genres=["comedy", "drama"],
         budget=25000000,
-        poster="grand_budapest.jpg",
+        poster="https://cdn.ananasposter.ru/image/cache/catalog/poster/pos23/23/68397-1000x830.jpg",
         video_path="/videos/grand_budapest.mp4",
         ratings=[8],
     )
@@ -185,7 +185,7 @@ if __name__ == "__main__":
         duration=155,
         genres=["sci-fi", "adventure"],
         budget=165000000,
-        poster="dune.jpg",
+        poster="https://static.kinoafisha.info/k/movie_posters/1920x1080/upload/movie_posters/4/0/2/8355204/9ff0dfea8286428827af7478fdcd86a7.jpeg",
         video_path="/videos/dune.mp4",
         ratings=[8],
     )
@@ -200,7 +200,7 @@ if __name__ == "__main__":
         duration=169,
         genres=["war", "drama"],
         budget=70000000,
-        poster="saving_ryan.jpg",
+        poster="https://posterspy.com/wp-content/uploads/2019/10/Saving_private_ryan_poster_NEW.jpg",
         video_path="/videos/saving_ryan.mp4",
         ratings=[8],
     )
