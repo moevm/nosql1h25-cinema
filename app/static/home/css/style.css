@@ -252,3 +252,15 @@
 .footer__icon {
     height: 24px;
 }
+
+.footer__admin-link {
+    border-radius: 1em;
+    background-color: rgba(17, 18, 21, 0.5);
+    border: none;
+    color: white;
+    min-width: 100px;
+    box-sizing: border-box;
+    font-size: 1em;
+    padding: 10px;
+    cursor: pointer;
+}
