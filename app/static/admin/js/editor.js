@@ -1,4 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
+    // Инициализация Tagify для поля "Режиссёр"
+    const directorInput = document.querySelector("#director");
+    const tagifyDirector = new Tagify(directorInput);
+    const actorsInput = document.querySelector("#actors");
+    const tagifyActors = new Tagify(actorsInput);
+
     fetchFilms();
 
     // Обработчик клика по кнопке "Добавить фильм"
@@ -8,7 +14,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Открытие модального окна
     addMovieBtn.addEventListener("click", function () {
-        // modalOverlay.style.display = "block";
         editingFilmId = null;
         openFilmModal(false);
     });
@@ -44,8 +49,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const title = document.getElementById("new_film").value.trim();
         const year = parseInt(document.getElementById("year").value);
-        const directorsRaw = document.getElementById("director").value.trim();
-        const actorsRaw = document.getElementById("actors").value.trim();
+        // const directorsRaw = document.getElementById("director").value.trim();
+        // const actorsRaw = document.getElementById("actors").value.trim();
         const country = document.getElementById("country").value.trim();
         const duration = parseInt(document.getElementById("duration").value);
         const budget = parseFloat(document.getElementById("budget").value);
@@ -56,6 +61,9 @@ document.addEventListener("DOMContentLoaded", function () {
             .filter(Boolean);
         const posterFile = document.getElementById("poster").files[0];
         const videoFile = document.getElementById("video").files[0];
+
+        const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
+        const actors = tagifyActors.value.map(tag => tag.value.trim()).filter(Boolean);
 
         // Валидация
         let valid = true;
@@ -76,13 +84,13 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("year").classList.add("input-error");
         }
 
-        if (!directorsRaw) {
+        if (directors.length === 0) {
             valid = false;
             document.getElementById("director-error").textContent = "Введите режиссёра/ов";
             document.getElementById("director").classList.add("input-error");
         }
 
-        if (!actorsRaw) {
+        if (actors.length === 0) {
             valid = false;
             document.getElementById("actors-error").textContent = "Введите актёра/ов";
             document.getElementById("actors").classList.add("input-error");
@@ -139,10 +147,13 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("budget", budget);
         formData.append("genres", JSON.stringify(genres));
 
-        const directors = directorsRaw.split(",").map(name => name.trim()).filter(Boolean);
-        const actors = actorsRaw.split(",").map(name => name.trim()).filter(Boolean);
         formData.append("directors", JSON.stringify(directors));
         formData.append("actors", JSON.stringify(actors));
+
+        // const directors = directorsRaw.split(",").map(name => name.trim()).filter(Boolean);
+        // const actors = actorsRaw.split(",").map(name => name.trim()).filter(Boolean);
+        // formData.append("directors", JSON.stringify(directors));
+        // formData.append("actors", JSON.stringify(actors));
 
         if (posterFile) {
             formData.append("poster", posterFile);

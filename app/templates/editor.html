@@ -5,6 +5,8 @@
     <title>Редактор каталогов</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/style.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@yaireo/tagify/dist/tagify.css">
+    <script src="https://cdn.jsdelivr.net/npm/@yaireo/tagify"></script>
 </head>
 <body>
 <div class="header">
@@ -63,7 +65,7 @@
         <div class="form-flex">
             <div class="form-group">
                 <label for="director">Режиссёр:</label>
-                <input type="text" id="director" placeholder="Через запятую">
+                <input name="directors" id="director" placeholder="Добавьте режиссёров">
             </div>
             <small class="error" id="director-error"></small>
         </div>
@@ -71,26 +73,11 @@
         <div class="form-flex">
             <div class="form-group">
                 <label for="actors">Актеры:</label>
-                <input type="text" id="actors" placeholder="Через запятую">
+                <input name="actors" id="actors" placeholder="Добавьте актёров">
             </div>
             <small class="error" id="actors-error"></small>
         </div>
 
-
-
-<!--        <div class="form-group">-->
-<!--            <label>Режиссёры:</label>-->
-<!--            <div id="directors-container"></div>-->
-<!--            <button type="button" id="add-director">+ Добавить режиссёра</button>-->
-<!--            <small class="error" id="director-error"></small>-->
-<!--        </div>-->
-
-<!--        <div class="form-group">-->
-<!--            <label>Актёры:</label>-->
-<!--            <div id="actors-container"></div>-->
-<!--            <button type="button" id="add-actor">+ Добавить актёра</button>-->
-<!--            <small class="error" id="actors-error"></small>-->
-<!--        </div>-->
 
         <div class="form-flex">
             <div class="form-group">

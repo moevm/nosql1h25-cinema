@@ -329,3 +329,53 @@ nav a:hover, nav a:active {
     display: flex;
     flex-direction: column;
 }
+
+.tagify {
+    border-radius: 0.5em;
+    width: 90%;
+    border: 1px solid #ccc;
+    padding: 4px;
+    min-height: 40px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.tagify__tag {
+    color: white;
+    border-radius: 1em;
+    font-size: 1em;
+    padding: 4px 8px;
+    line-height: 1.2;
+    display: inline-flex;
+    max-width: 100%;
+    align-items: center;
+    background: #ccc;
+    margin: 0;
+    height: auto;
+    min-height: 24px;
+}
+
+.tagify__tag__text {
+    white-space: normal;
+    word-break: break-all;
+    overflow-wrap: anywhere;
+    display: inline;
+    padding-right: 0.5em;
+    hyphens: auto;
+}
+
+.tagify__tag__removeBtn {
+    color: #ffffff;
+    position: relative;
+    margin-left: 4px;
+    flex-shrink: 0;
+}
+
+.tagify__input {
+    font-size: 1em;
+    padding: 5px;
+    flex: 1;
+    min-width: 100px;
+}
