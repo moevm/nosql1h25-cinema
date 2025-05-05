@@ -84,16 +84,15 @@ def register_api_routes(app):
         actors = mongo.db.persons.find(
             {
                 "film_ids": film_id,
-                "role": "actor"  # Фильтр по роли "актер"
+                "role": "actor"
             },
             {"_id": 0}
         )
 
-        # Ищем режиссеров для указанного фильма
         directors = mongo.db.persons.find(
             {
                 "film_ids": film_id,
-                "role": "director"  # Фильтр по роли "режиссер"
+                "role": "director"
             },
             {"_id": 0}
         )
@@ -101,9 +100,8 @@ def register_api_routes(app):
         actors_list = list(actors)
         directors_list = list(directors)
 
-        # Если оба списка пустые - возвращаем ошибку
         if not actors_list and not directors_list:
-            app.abort(404, description=f"No crew found for film ID {film_id}")
+            return jsonify({"error": f"No crew found for film ID {film_id}"}), 404
 
         return jsonify({
             "actors": actors_list,
