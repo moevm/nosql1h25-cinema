@@ -54,6 +54,10 @@
                     </template>
                 </select>
             </label>
+
+            <label class="side-panel__label">Описание:
+                <input type="text" class="filter-form__input--description">
+            </label>
         
             <label class="side-panel__label">Режиссёр:
                 <input type="text" class="filter-form__input filter-form__input--director">
@@ -87,7 +91,20 @@
                 Оценка до:
                 <input type="number" min="1" max="10" class="filter-form__input_rating-max" placeholder="10">
             </label>
+
+            <label class="side-panel__label">Длительность от (мин):
+                <input type="number" class="filter-form__input--duration-min">
+            </label>
+            <label class="side-panel__label">Длительность до (мин):
+                <input type="number" class="filter-form__input--duration-max">
+            </label>
             
+            <label class="side-panel__label">Бюджет от ($):
+                <input type="number" class="filter-form__input--budget-min">
+            </label>
+            <label class="side-panel__label">Бюджет до ($):
+                <input type="number" class="filter-form__input--budget-max">
+            </label>
         
             <label class="side-panel__label">Дата добавления от:
                 <input type="date" class="filter-form__input--added-min">

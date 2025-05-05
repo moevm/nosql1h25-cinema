@@ -122,12 +122,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const addedMaxInput = document.querySelector('.filter-form__input--added-max');
     const editedMinInput = document.querySelector('.filter-form__input--edited-min');
     const editedMaxInput = document.querySelector('.filter-form__input--edited-max');
+    const descriptionInput = document.querySelector('.filter-form__input--description');
+    const durationMinInput = document.querySelector('.filter-form__input--duration-min');
+    const durationMaxInput = document.querySelector('.filter-form__input--duration-max');
+    const budgetMinInput = document.querySelector('.filter-form__input--budget-min');
+    const budgetMaxInput = document.querySelector('.filter-form__input--budget-max');
+
     
     const applyFilterButton = document.querySelector('.filter-form__apply-button');
 
     applyFilterButton.addEventListener('click', async () => {
         const query = {
             genre: genreSelect.value || null,
+            description: descriptionInput.value.trim(),
             country: countrySelect.value || null,
             director: directorInput.value.trim(),
             actor: actorInput.value.trim(),
@@ -135,6 +142,10 @@ document.addEventListener('DOMContentLoaded', () => {
             yearMax: yearMaxInput.value.trim(),
             ratingMin: ratingMinInput.value.trim() || 1,
             ratingMax: ratingMaxInput.value.trim() || 10,
+            durationMin: durationMinInput.value.trim(),
+            durationMax: durationMaxInput.value.trim(),
+            budgetMin: budgetMinInput.value.trim(),
+            budgetMax: budgetMaxInput.value.trim(),
             addedMin: addedMinInput.value.trim() || null,
             addedMax: addedMaxInput.value.trim() || null,
             editedMin: editedMinInput.value.trim() || null,
@@ -174,6 +185,11 @@ document.addEventListener('DOMContentLoaded', () => {
         addedMaxInput.value = '';
         editedMinInput.value = '';
         editedMaxInput.value = '';
+        descriptionInput.value = '';
+        durationMinInput.value = '';
+        durationMaxInput.value = '';
+        budgetMinInput.value = '';
+        budgetMaxInput.value = '';
 
         filterPanel.classList.add('hidden');
         loadContent('all');
