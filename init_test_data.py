@@ -2,13 +2,14 @@ import requests
 
 API_URL = "http://localhost:5000"
 
-def add_person(name, role, birth_date, birth_place, wiki_link):
+def add_person(name, role, birth_date, birth_place, wiki_link, film_ids=None):
     payload = {
         "name": name,
         "role": role,
         "birth_date": birth_date,
         "birth_place": birth_place,
-        "wiki_link": wiki_link
+        "wiki_link": wiki_link,
+        "films": film_ids
     }
     response = requests.post(f"{API_URL}/api/persons", json=payload)
     response.raise_for_status()
