@@ -123,7 +123,7 @@ def register_api_routes(app):
                     "video_path": data.get('video_path'),
                     "created_at": datetime.now(),
                     "updated_at": datetime.now(),
-                    "ratings": [],
+                    "ratings": data.get('ratings', []),
                     "views": []
                 }
 
@@ -364,6 +364,54 @@ def register_api_routes(app):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+
+    @app.route('/api/movies/<movie_id>', methods=['GET'])
+    def get_movie_by_id(movie_id):
+        try:
+            movie = mongo.db.film.find_one_or_404({"_id": ObjectId(movie_id)})
+
+            directors = []
+            for director_id in movie.get('directors', []):
+                obj_id = safe_objectid(director_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        directors.append(person['name'])
+
+            actors = []
+            for actor_id in movie.get('actors', []):
+                obj_id = safe_objectid(actor_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        actors.append(person['name'])
+
+            # Формируем данные фильма для ответа
+            movie_data = {
+                "title": movie["title"],
+                "year": movie["year"],
+                "description": movie["description"],
+                "country": movie["country"],
+                "duration": movie["duration"],
+                "budget": movie["budget"],
+                "genres": movie["genres"],
+                "directors": directors,
+                "actors": actors,
+                "poster": movie.get('poster'),
+                "video": movie.get('video_path'),
+                "created_at": movie.get("created_at").isoformat() if movie.get("created_at") else None,
+                "updated_at": movie.get("updated_at").isoformat() if movie.get("updated_at") else None,
+                "avg_rating": calculate_avg_rating(movie.get("ratings", []))
+            }
+
+            return jsonify(movie_data)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
+    def calculate_avg_rating(ratings):
+        if not ratings:
+            return None
+        return round(sum(ratings) / len(ratings), 1)
 
     # ==================== АДМИНИСТРИРОВАНИЕ ====================
     @app.route('/api/admin/register', methods=['POST'])

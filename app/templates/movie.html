@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Фильм #{{ movie_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='home/css/movie.css') }}">
+</head>
+<body>
+<main class="movie-container">
+    <div class="movie-info">
+        <div class="movie-poster-container">
+            <img id="moviePoster" src="" alt="Постер фильма" class="movie-poster">
+        </div>
+
+        <div class="movie-details">
+            <h1 id="movieTitleYear" class="movie-title">
+            </h1>
+            <div class="info-row">
+                <span class="info-label">Страна:</span>
+                <span id="movieCountry" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Оценка:</span>
+                <span id="movieRating" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Длительность:</span>
+                <span id="movieDuration" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Бюджет:</span>
+                <span id="movieBudget" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Жанр:</span>
+                <span id="movieGenres" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Дата добавления:</span>
+                <span id="movieCreatedAt" class="info-value"></span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Дата редактирования:</span>
+                <span id="movieUpdatedAt" class="info-value"></span>
+            </div>
+
+            <div class="movie-description">
+                <p id="movieDescription" class="movie-synopsis"></p>
+            </div>
+        </div>
+    </div>
+    <div class="movie-player">
+        <div class="rating-container">
+            <div class="rating-stars" id="movieRatingHandler"></div>
+            <span class="rating-value" id="ratingValue"></span>
+        </div>
+
+        <video id="movieVideo" controls class="movie-video">
+            Ваш браузер не поддерживает HTML5 видео
+        </video>
+        <div id="videoPlaceholder" class="video-placeholder hidden">Видео пока недоступно</div>
+
+
+        <div class="info-row">
+            <span class="info-label">Режиссер:</span>
+            <span id="movieDirector" class="info-value"></span>
+        </div>
+        <div class="info-row">
+            <span class="info-label">В ролях:</span>
+            <span id="movieActors" class="info-value"></span>
+            <span id="viewAllActors" class="view-more-link"></span>
+        </div>
+    </div>
+</main>
+<script src="{{ url_for('static', filename='home/js/movie.js') }}"></script>
+</body>
+</html>

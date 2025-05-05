@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function loadContent(type) {
         try {
             const response = await fetch(`/api/films?type=${type}`);
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             currentFilms = await response.json();
             
             if (currentFilms.length === 0) {
@@ -53,9 +54,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 
                 card.querySelector('.film-poster').src = film.poster;
                 card.querySelector('.film-poster').alt = film.title;
-                
+
                 filmCard.addEventListener('click', () => {
-                    window.location.href = `/movie/${film.id}`;
+                    // Используем film._id.$oid для MongoDB
+                    const filmId = film._id?.$oid || film._id;
+
+                    if (!filmId) {
+                        console.error('ID фильма не найден', film);
+                        return;
+                    }
+
+                    console.log('Переход на фильм ID:', filmId);
+                    window.location.href = `/movie/${filmId}`;
                 });
                 
                 filmGrid.appendChild(card);
@@ -65,6 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
             updateSelectOptions(countrySelect, uniqueCountries, countryTemplate);
         } catch (error) {
             console.error('Ошибка загрузки:', error);
+            noResultsMessage.classList.remove('hidden');
+            filmGrid.innerHTML = '';
         }
     }
 
@@ -219,7 +231,8 @@ document.addEventListener('DOMContentLoaded', () => {
             card.querySelector('.film-poster').alt = film.title;
 
             filmCard.addEventListener('click', () => {
-                window.location.href = `/movie/${film.id}`;
+                const filmId = film._id?.$oid || film._id;
+                if (filmId) window.location.href = `/movie/${filmId}`;
             });
 
             filmGrid.appendChild(card);
