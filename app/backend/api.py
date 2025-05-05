@@ -485,7 +485,6 @@ def register_api_routes(app):
                     avg_rating = sum(ratings) / len(ratings) if ratings else 1
                     rating_min = float(filters.get('ratingMin', 1))
                     rating_max = float(filters.get('ratingMax', 10))
-                    print(avg_rating, rating_min, rating_max)
                     if avg_rating < rating_min or avg_rating > rating_max:
                         return False
                 except:
@@ -511,6 +510,42 @@ def register_api_routes(app):
                 except:
                     return False
 
+                # Описание (поиск подстроки)
+                if filters.get('description'):
+                    desc = film.get('description', '')
+                    if not isinstance(desc, str) or filters['description'].strip().lower() not in desc.lower():
+                        return False
+
+                # Длительность (в минутах, диапазон)
+                try:
+                    duration = film.get('duration')
+                    duration_min = int(filters['durationMin']) if filters.get('durationMin') else None
+                    duration_max = int(filters['durationMax']) if filters.get('durationMax') else None
+                    if duration is not None:
+                        if duration_min is not None and duration < duration_min:
+                            return False
+                        if duration_max is not None and duration > duration_max:
+                            return False
+                    elif duration_min is not None or duration_max is not None:
+                        return False
+                except:
+                    return False
+
+                # Бюджет (в миллионах, диапазон)
+                try:
+                    budget = film.get('budget')
+                    budget_min = int(filters['budgetMin']) if filters.get('budgetMin') else None
+                    budget_max = int(filters.get('budgetMax')) if filters.get('budgetMax') else None
+                    if budget is not None:
+                        if budget_min is not None and budget < budget_min:
+                            return False
+                        if budget_max is not None and budget > budget_max:
+                            return False
+                    elif budget_min is not None or budget_max is not None:
+                        return False
+                except:
+                    return False
+
                 return True
 
             filtered = [film for film in all_films if match(film)]
@@ -526,6 +561,7 @@ def register_api_routes(app):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
+        
 
     @app.route('/api/films/search', methods=['POST'])
     def search_films():
