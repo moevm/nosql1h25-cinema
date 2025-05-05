@@ -30,4 +30,6 @@ def register_main_routes(app):
     def backup():
         return render_template('backup.html')
 
-
+    @app.route('/<string:film_title>/persons')
+    def film_actors(film_title):
+        return render_template('persons.html')

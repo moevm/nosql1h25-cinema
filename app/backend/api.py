@@ -1,3 +1,5 @@
+from bson.errors import InvalidId
+
 from .. import mongo
 from flask import jsonify, request, send_from_directory
 from bson import json_util, ObjectId
@@ -76,6 +78,37 @@ def register_api_routes(app):
         if request.method == 'DELETE':
             result = mongo.db.person.delete_one({"_id": ObjectId(person_id)})
             return jsonify({"deleted_count": result.deleted_count}), 200
+
+    @app.route('api/<string:film_id>/persons', methods=['GET'])
+    def get_actors_by_film(film_id):
+        actors = mongo.db.persons.find(
+            {
+                "film_ids": film_id,
+                "role": "actor"  # Фильтр по роли "актер"
+            },
+            {"_id": 0}
+        )
+
+        # Ищем режиссеров для указанного фильма
+        directors = mongo.db.persons.find(
+            {
+                "film_ids": film_id,
+                "role": "director"  # Фильтр по роли "режиссер"
+            },
+            {"_id": 0}
+        )
+
+        actors_list = list(actors)
+        directors_list = list(directors)
+
+        # Если оба списка пустые - возвращаем ошибку
+        if not actors_list and not directors_list:
+            app.abort(404, description=f"No crew found for film ID {film_id}")
+
+        return jsonify({
+            "actors": actors_list,
+            "directors": directors_list
+        })
 
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
