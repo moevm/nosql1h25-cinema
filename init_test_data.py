@@ -9,7 +9,7 @@ def add_person(name, role, birth_date, birth_place, wiki_link, film_ids=None):
         "birth_date": birth_date,
         "birth_place": birth_place,
         "wiki_link": wiki_link,
-        "films": film_ids
+        "films_list": film_ids
     }
     response = requests.post(f"{API_URL}/api/persons", json=payload)
     response.raise_for_status()
