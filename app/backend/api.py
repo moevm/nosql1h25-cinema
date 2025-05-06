@@ -1,5 +1,3 @@
-from app.backend.wiki_api import fetch_wikidata_person_info
-
 from bson.errors import InvalidId
 
 from .. import mongo
@@ -39,7 +37,7 @@ def register_api_routes(app):
             try:
                 # Пытаемся получить данные из Wikidata
                 wikidata_info = fetch_wikidata_person_info(data['name'])
-                
+
                 # Формируем объект персоны
                 person = {
                     "name": data['name'],
@@ -138,6 +136,77 @@ def register_api_routes(app):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
+    @app.route('/api/export')
+    def export_db():
+        try:
+            # Собираем данные из всех коллекций
+            database_data = {}
+
+            # Получаем список всех коллекций в базе данных
+            collections = mongo.db.list_collection_names()
+
+            for collection_name in collections:
+                # Получаем все документы из коллекции
+                collection = mongo.db[collection_name]
+                documents = list(collection.find())
+
+                # Конвертируем ObjectId и другие специальные типы BSON
+                serialized = json.loads(json_util.dumps(documents))
+                database_data[collection_name] = serialized
+
+            # Создаем JSON-ответ
+            response = Response(
+                json.dumps(database_data, indent=2, ensure_ascii=False),
+                mimetype='application/json',
+                headers={
+                    'Content-Disposition': 'attachment; filename=full_database_export.json'
+                }
+            )
+
+            return response
+
+        except Exception as e:
+            return json.dumps({'error': str(e)}), 500
+
+    @app.route('/api/import', methods=['POST'])
+    def import_db():
+        try:
+            # Проверяем наличие файла в запросе
+            if 'file' not in request.files:
+                return jsonify({'error': 'No file provided'}), 400
+
+            uploaded_file = request.files['file']
+
+            # Проверяем расширение файла
+            if uploaded_file.filename.split('.')[-1].lower() != 'json':
+                return jsonify({'error': 'Invalid file format'}), 400
+
+            # Читаем и парсим JSON
+            data = json.loads(uploaded_file.read().decode('utf-8'))
+
+            # Конвертируем специальные типы данных из JSON в BSON
+            converted_data = json_util.loads(json.dumps(data))
+
+            # Очищаем существующие коллекции перед импортом (опционально)
+            # Можно добавить параметр запроса для управления этим поведением
+            for collection_name in converted_data.keys():
+                mongo.db[collection_name].drop()
+
+            # Импортируем данные
+            for collection_name, documents in converted_data.items():
+                collection = mongo.db[collection_name]
+                if isinstance(documents, list):
+                    collection.insert_many(documents)
+                else:
+                    return jsonify({'error': f'Invalid format for collection {collection_name}'}), 400
+
+            return jsonify({'message': 'Database imported successfully',
+                            'collections': list(converted_data.keys())}), 200
+
+        except json.JSONDecodeError:
+            return jsonify({'error': 'Invalid JSON file'}), 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
     @app.route('/api/content')
@@ -223,34 +292,33 @@ def register_api_routes(app):
                     else:
                         # Если нет, пробуем получить данные из Wikidata
                         wikidata_info = fetch_wikidata_person_info(name.strip())
-                        
+
                         new_person = {
                             "name": name.strip(),
                             "role": role,
                             "birth_date": (
-                                datetime.fromisoformat(wikidata_info['birth_date']) 
-                                if wikidata_info and wikidata_info.get('birth_date') 
+                                datetime.fromisoformat(wikidata_info['birth_date'])
+                                if wikidata_info and wikidata_info.get('birth_date')
                                 else datetime(1900, 1, 1)
                             ),
                             "birth_place": (
-                                wikidata_info['birth_place'] 
-                                if wikidata_info and wikidata_info.get('birth_place') 
+                                wikidata_info['birth_place']
+                                if wikidata_info and wikidata_info.get('birth_place')
                                 else ""
                             ),
                             "wiki_link": (
-                                wikidata_info['wiki_link'] 
-                                if wikidata_info and wikidata_info.get('wiki_link') 
+                                wikidata_info['wiki_link']
+                                if wikidata_info and wikidata_info.get('wiki_link')
                                 else ""
                             ),
                             "photo_url": (
-                                wikidata_info['photo_url'] 
-                                if wikidata_info and wikidata_info.get('photo_url') 
+                                wikidata_info['photo_url']
+                                if wikidata_info and wikidata_info.get('photo_url')
                                 else None
                             ),
                             "films_list": [],
                             "data_source": "wikidata" if wikidata_info else "manual"
                         }
-                        
                         result = mongo.db.person.insert_one(new_person)
                         ids.append(result.inserted_id)
                 return ids
@@ -258,6 +326,7 @@ def register_api_routes(app):
             # Используем роли
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
+
 
             # Загрузка файлов
             poster_file = request.files.get('poster')
@@ -456,6 +525,7 @@ def register_api_routes(app):
                             "wiki_link": person.get('wiki_link')
                         })
 
+            # Формируем данные фильма для ответа
             movie_data = {
                 "title": movie["title"],
                 "year": movie["year"],
