@@ -2,14 +2,14 @@ import requests
 
 API_URL = "http://localhost:5000"
 
-def add_person(name, role, birth_date, birth_place, wiki_link, film_ids=None):
+def add_person(name, role, birth_date, birth_place, wiki_link):
     payload = {
         "name": name,
         "role": role,
         "birth_date": birth_date,
         "birth_place": birth_place,
         "wiki_link": wiki_link,
-        "films_list": film_ids
+        "films_list": []
     }
     response = requests.post(f"{API_URL}/api/persons", json=payload)
     response.raise_for_status()
@@ -18,6 +18,7 @@ def add_person(name, role, birth_date, birth_place, wiki_link, film_ids=None):
     return person_id
 
 def add_film(title, year, directors, actors, description, country, duration, genres, budget, poster, video_path, ratings):
+    # Сначала создаем фильм
     payload = {
         "title": title,
         "year": year,
@@ -34,7 +35,26 @@ def add_film(title, year, directors, actors, description, country, duration, gen
     }
     response = requests.post(f"{API_URL}/api/films", json=payload)
     response.raise_for_status()
-    print(f"Фильм '{title}' успешно добавлен!")
+    film_data = response.json()
+    film_id = film_data.get("id")
+    print(f"Фильм '{title}' успешно добавлен с ID: {film_id}!")
+    
+    # Обновляем фильмографии всех режиссеров
+    for director_id in directors:
+        update_person_films(director_id, film_id)
+    
+    # Обновляем фильмографии всех актеров
+    for actor_id in actors:
+        update_person_films(actor_id, film_id)
+    
+    return film_id
+
+def update_person_films(person_id, film_id):
+    # Добавляем film_id в films_list персоны
+    payload = {"add_film": film_id}
+    response = requests.patch(f"{API_URL}/api/persons/{person_id}", json=payload)
+    response.raise_for_status()
+    print(f"Фильм {film_id} добавлен в фильмографию персоны {person_id}")
 
 def add_admin(login, password):
     payload = {
@@ -42,10 +62,9 @@ def add_admin(login, password):
         "password": password
     }
     response = requests.post(f"{API_URL}/api/admin/register", json=payload)
-    response.raise_for_status()  # Проверка на успешность запроса
+    response.raise_for_status()
     print(f"Администратор {login} успешно зарегистрирован!")
-    return login  # Можно вернуть login, или ID, если он возвращается в ответе
-
+    return login
 
 if __name__ == "__main__":
     print("Добавляем режиссёров...")
@@ -178,9 +197,8 @@ if __name__ == "__main__":
         wiki_link="https://en.wikipedia.org/wiki/Heath_Ledger"
     )
 
-
     print("Добавляем фильмы...")
-    add_film(
+    inception_id = add_film(
         title="Inception",
         year=2010,
         directors=[nolan_id],
@@ -195,7 +213,7 @@ if __name__ == "__main__":
         ratings=[7],
     )
 
-    add_film(
+    parasite_id = add_film(
         title="Parasite",
         year=2019,
         directors=[bong_id],
@@ -210,7 +228,7 @@ if __name__ == "__main__":
         ratings=[7],
     )
 
-    add_film(
+    budapest_id = add_film(
         title="The Grand Budapest Hotel",
         year=2014,
         directors=[anderson_id],
@@ -225,7 +243,7 @@ if __name__ == "__main__":
         ratings=[8],
     )
 
-    add_film(
+    dune_id = add_film(
         title="Dune",
         year=2021,
         directors=[villeneuve_id],
@@ -240,7 +258,7 @@ if __name__ == "__main__":
         ratings=[8],
     )
 
-    add_film(
+    ryan_id = add_film(
         title="Saving Private Ryan",
         year=1998,
         directors=[spielberg_id],
@@ -255,7 +273,7 @@ if __name__ == "__main__":
         ratings=[8],
     )
 
-    add_film(
+    fight_club_id = add_film(
         title="Бойцовский клуб",
         year=1999,
         directors=[fincher_id],
@@ -270,7 +288,7 @@ if __name__ == "__main__":
         ratings=[9],
     )
 
-    add_film(
+    dark_knight_id = add_film(
         title="Темный рыцарь",
         year=2008,
         directors=[nolan_id],
