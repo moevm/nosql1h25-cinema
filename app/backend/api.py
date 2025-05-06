@@ -54,7 +54,7 @@ def register_api_routes(app):
                 return jsonify({"error": str(e)}), 500
 
 
-    @app.route('/api/persons/<string:person_id>', methods=['GET', 'PUT', 'DELETE'])
+    @app.route('/api/persons/<string:person_id>', methods=['GET', 'PUT', 'DELETE', 'PATCH'])
     def handle_person(person_id):
         if request.method == 'GET':
             person = mongo.db.person.find_one({"_id": ObjectId(person_id)})
@@ -79,36 +79,48 @@ def register_api_routes(app):
             result = mongo.db.person.delete_one({"_id": ObjectId(person_id)})
             return jsonify({"deleted_count": result.deleted_count}), 200
 
+        if request.method == 'PATCH':
+            data = request.get_json()
+            film_id = data.get('add_film')
+
+            if not film_id:
+                return jsonify({"error": "Missing film ID"}), 400
+
+            result = mongo.db.person.update_one(
+                {"_id": ObjectId(person_id)},
+                {"$addToSet": {"films_list": film_id}}  # Добавит, только если нет
+            )
+            return jsonify({"modified_count": result.modified_count}), 200
+
+
     @app.route('/api/<string:film_id>/persons', methods=['GET'])
     def get_actors_by_film(film_id):
-        actors = mongo.db.persons.find(
-            {
-                "film_ids": film_id,
-                "role": "actor"  # Фильтр по роли "актер"
-            },
-            {"_id": 0}
-        )
+        try:
+            persons = list(mongo.db.person.find({"films_list": film_id}))
 
-        # Ищем режиссеров для указанного фильма
-        directors = mongo.db.persons.find(
-            {
-                "film_ids": film_id,
-                "role": "director"  # Фильтр по роли "режиссер"
-            },
-            {"_id": 0}
-        )
+            actors = []
+            directors = []
 
-        actors_list = list(actors)
-        directors_list = list(directors)
+            for person in persons:
+                person_data = {
+                    "name": person.get("name"),
+                    "birth_date": person.get("birth_date").isoformat() if person.get("birth_date") else None,
+                    "birth_place": person.get("birth_place"),
+                    "wiki_link": person.get("wiki_link"),
+                }
+                role = person.get("role", "").lower()
+                if role == "actor":
+                    actors.append(person_data)
+                elif role == "director":
+                    directors.append(person_data)
 
-        # Если оба списка пустые - возвращаем ошибку
-        if not actors_list and not directors_list:
-            app.abort(404, description=f"No crew found for film ID {film_id}")
+            return jsonify({
+                "actors": actors,
+                "directors": directors
+            }), 200
 
-        return jsonify({
-            "actors": actors_list,
-            "directors": directors_list
-        })
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
