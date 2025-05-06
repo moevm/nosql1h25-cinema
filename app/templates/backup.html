@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Backup</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='admin/css/style.css') }}">
-
 </head>
 <body>
 <div class="header">
@@ -16,5 +15,7 @@
     <button type="button" id="importBtn"> Импорт</button>
     <button type="button" id="exportBtn">Экспорт</button>
 </div>
+
+<script src="{{ url_for('static', filename='admin/js/backup.js') }}"></script>
 </body>
 </html>
