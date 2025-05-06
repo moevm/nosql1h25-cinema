@@ -30,4 +30,7 @@ def register_main_routes(app):
     def backup():
         return render_template('backup.html')
 
+    @app.route('/recommendations', endpoint='recommendations')
+    def backup():
+        return render_template('recommendations.html')
 
