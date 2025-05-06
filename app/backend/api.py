@@ -79,7 +79,7 @@ def register_api_routes(app):
             result = mongo.db.person.delete_one({"_id": ObjectId(person_id)})
             return jsonify({"deleted_count": result.deleted_count}), 200
 
-    @app.route('api/<string:film_id>/persons', methods=['GET'])
+    @app.route('/api/<string:film_id>/persons', methods=['GET'])
     def get_actors_by_film(film_id):
         actors = mongo.db.persons.find(
             {
