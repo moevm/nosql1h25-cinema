@@ -26,15 +26,10 @@
         </nav>
         <button class="filter"></button>
     </div>
-    <div class="card">
-        <h3>Вопрос 1</h3>
-        <p>Если бы твоя жизнь сейчас была фильмом, в каком жанре бы её сняли?</p>
-        <div class="answers">
-            <div class="answer" onclick="selectAnswer(this)">Умная драма с внезапными откровениями</div>
-            <div class="answer" onclick="selectAnswer(this)">Безумная комедия с недосказанным финалом</div>
-            <div class="answer" onclick="selectAnswer(this)">Мрачный триллер с паранойей и дождём</div>
-            <div class="answer" onclick="selectAnswer(this)">Волшебная история с намёком на ностальгию</div>
-        </div>
+    <div class="card" id="quiz-card">
+        <h3 id="question-title">Вопрос 1</h3>
+        <p id="question-text">Если бы твоя жизнь сейчас была фильмом, в каком жанре бы её сняли?</p>
+        <div class="answers" id="answers-container"></div>
     </div>
 </main>
 
@@ -44,6 +39,6 @@
     <a href="/admin" class="footer__admin-link">Перейти в админ-панель</a>
 </footer>
 
-<script src="{{ url_for('static', filename='recommendations/js/home.js') }}"></script>
+<script src="{{ url_for('static', filename='recommendations/js/recommendations.js') }}"></script>
 </body>
 </html>
