@@ -30,11 +30,11 @@ def register_main_routes(app):
     def backup():
         return render_template('backup.html')
 
-    @app.route('/films/<film_id>/persons')
-    def film_actors(film_id):
+    @app.route('/movie/<string:movie_id>/persons')
+    def movie_actors(movie_id):
         return render_template('persons.html')
+    
     @app.route('/movie/<string:movie_id>')
     def movie_page(movie_id):
         print(f"Запрос фильма с ID: {movie_id}")
         return render_template('movie.html', movie_id=movie_id)
-

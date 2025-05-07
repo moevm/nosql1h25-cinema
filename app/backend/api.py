@@ -296,42 +296,6 @@ def register_api_routes(app):
         except (InvalidId, TypeError):
             return None
 
-    @app.route('/api/films/<film_id>', methods=['GET'])
-    def get_film_by_id(film_id):
-        try:
-            film = mongo.db.film.find_one_or_404({"_id": ObjectId(film_id)})
-
-            directors = []
-            for director_id in film.get('directors', []):
-                obj_id = safe_objectid(director_id)
-                if obj_id:
-                    person = mongo.db.person.find_one({"_id": obj_id})
-                    if person:
-                        directors.append(person['name'])
-
-            actors = []
-            for actor_id in film.get('actors', []):
-                obj_id = safe_objectid(actor_id)
-                if obj_id:
-                    person = mongo.db.person.find_one({"_id": obj_id})
-                    if person:
-                        actors.append(person['name'])
-
-            film_data = {
-                "title": film["title"],
-                "year": film["year"],
-                "description": film["description"],
-                "country": film["country"],
-                "duration": film["duration"],
-                "budget": film["budget"],
-                "genres": film["genres"],
-                "directors": directors,
-                "actors": actors,
-            }
-            return jsonify(film_data)
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
-
     @app.route('/api/films/<film_id>', methods=['PUT'])
     def update_film(film_id):
         try:

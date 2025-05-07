@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const movie = await loadMovieData(movieId);
         if (!movie) return redirectToHome();
 
-        renderMoviePage(movie);
+        renderMoviePage(movie, movieId);
 
     } catch (error) {
         console.error('Error:', error);
@@ -20,7 +20,7 @@ async function loadMovieData(movieId) {
     return await response.json();
 }
 
-function renderMoviePage(movie) {
+function renderMoviePage(movie, movieId) {
     document.title = `${movie.title}`;
 
 // Постер и заголовок
@@ -41,7 +41,7 @@ function renderMoviePage(movie) {
     document.getElementById('movieGenres').textContent = movie.genres?.join(', ') || '—';
     document.getElementById('movieCountry').textContent = movie.country || '—';
     document.getElementById('movieBudget').textContent = movie.budget
-        ? `${movie.budget.toLocaleString()} ₽`
+        ? `${movie.budget.toLocaleString()} $`
         : '—';
 
 // Режиссёры
@@ -58,7 +58,7 @@ function renderMoviePage(movie) {
     viewAllLink.textContent = 'Подробнее';
     viewAllLink.style.cursor = 'pointer';
     viewAllLink.addEventListener('click', () => {
-        window.location.href = `/movie/${movie._id}/persons`;
+        window.location.href = `/movie/${movieId}/persons`;
     });
 
 // Видео
