@@ -1,6 +1,6 @@
 function getFilmIdFromPath() {
     const pathParts = window.location.pathname.split('/');
-    const filmIndex = pathParts.indexOf('films');
+    const filmIndex = pathParts.indexOf('movie');
     if (filmIndex !== -1 && pathParts.length > filmIndex + 1) {
       return pathParts[filmIndex + 1];
     }
