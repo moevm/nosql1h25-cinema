@@ -422,6 +422,42 @@ def register_api_routes(app):
             return None
         return round(sum(ratings) / len(ratings), 1)
 
+    # ==================== ОБНОВЛЕНИЕ РЕЙТИНГА ФИЛЬМА ====================
+    @app.route('/api/films/<film_id>/rate', methods=['POST'])
+    def rate_film(film_id):
+        try:
+            data = request.get_json()
+            if not data or 'rating' not in data:
+                return jsonify({"error": "Отсутствует оценка"}), 400
+
+            rating = int(data['rating'])
+            if rating < 1 or rating > 10:
+                return jsonify({"error": "Оценка должна быть от 1 до 10"}), 400
+
+            # Проверяем существование фильма
+            film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
+            if not film:
+                return jsonify({"error": "Фильм не найден"}), 404
+
+            # Просто добавляем новую оценку в массив ratings
+            mongo.db.film.update_one(
+                {"_id": ObjectId(film_id)},
+                {"$push": {"ratings": rating}}
+            )
+
+            # Рассчитываем новый средний рейтинг
+            updated_film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
+            avg_rating = calculate_avg_rating(updated_film.get('ratings', []))
+
+            return jsonify({
+                "success": True,
+                "message": "Оценка сохранена",
+                "newAvgRating": avg_rating
+            }), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
     # ==================== АДМИНИСТРИРОВАНИЕ ====================
     @app.route('/api/admin/register', methods=['POST'])
     def register_admin():
