@@ -3,7 +3,7 @@ from app.backend.wiki_api import fetch_wikidata_person_info
 from bson.errors import InvalidId
 
 from .. import mongo
-from flask import jsonify, request, send_from_directory
+from flask import jsonify, request, send_from_directory, Response
 from bson import json_util, ObjectId
 import json
 import bcrypt
@@ -53,7 +53,7 @@ def register_api_routes(app):
                     "wiki_link": data.get('wiki_link') or (
                         wikidata_info['wiki_link'] if wikidata_info and wikidata_info.get('wiki_link') else ''
                     ),
-                    "photo_url": wikidata_info['photo_url'] if wikidata_info and wikidata_info.get('photo_url') else None,
+                    #"photo_url": wikidata_info['photo_url'] if wikidata_info and wikidata_info.get('photo_url') else None,
                     "films_list": data.get('films_list', []),
                     "data_source": "wikidata" if wikidata_info else "manual"
                 }
@@ -138,6 +138,77 @@ def register_api_routes(app):
         except Exception as e:
             return jsonify({"error": str(e)}), 500
 
+    @app.route('/api/export')
+    def export_db():
+        try:
+            # Собираем данные из всех коллекций
+            database_data = {}
+
+            # Получаем список всех коллекций в базе данных
+            collections = mongo.db.list_collection_names()
+
+            for collection_name in collections:
+                # Получаем все документы из коллекции
+                collection = mongo.db[collection_name]
+                documents = list(collection.find())
+
+                # Конвертируем ObjectId и другие специальные типы BSON
+                serialized = json.loads(json_util.dumps(documents))
+                database_data[collection_name] = serialized
+
+            # Создаем JSON-ответ
+            response = Response(
+                json.dumps(database_data, indent=2, ensure_ascii=False),
+                mimetype='application/json',
+                headers={
+                    'Content-Disposition': 'attachment; filename=full_database_export.json'
+                }
+            )
+
+            return response
+
+        except Exception as e:
+            return json.dumps({'error': str(e)}), 500
+
+    @app.route('/api/import', methods=['POST'])
+    def import_db():
+        try:
+            # Проверяем наличие файла в запросе
+            if 'file' not in request.files:
+                return jsonify({'error': 'No file provided'}), 400
+
+            uploaded_file = request.files['file']
+
+            # Проверяем расширение файла
+            if uploaded_file.filename.split('.')[-1].lower() != 'json':
+                return jsonify({'error': 'Invalid file format'}), 400
+
+            # Читаем и парсим JSON
+            data = json.loads(uploaded_file.read().decode('utf-8'))
+
+            # Конвертируем специальные типы данных из JSON в BSON
+            converted_data = json_util.loads(json.dumps(data))
+
+            # Очищаем существующие коллекции перед импортом (опционально)
+            # Можно добавить параметр запроса для управления этим поведением
+            for collection_name in converted_data.keys():
+                mongo.db[collection_name].drop()
+
+            # Импортируем данные
+            for collection_name, documents in converted_data.items():
+                collection = mongo.db[collection_name]
+                if isinstance(documents, list):
+                    collection.insert_many(documents)
+                else:
+                    return jsonify({'error': f'Invalid format for collection {collection_name}'}), 400
+
+            return jsonify({'message': 'Database imported successfully',
+                            'collections': list(converted_data.keys())}), 200
+
+        except json.JSONDecodeError:
+            return jsonify({'error': 'Invalid JSON file'}), 400
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
     @app.route('/api/content')
