@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const genreTemplate = document.getElementById('genreOptionTemplate');
     const countryTemplate = document.getElementById('countryOptionTemplate');
     const sortRadios = document.querySelectorAll('.sort-form__input');
+    // TODO: добавить ограничение на количество фильмов и сделать рабочими кнопки для страниц ->
+    const prevButton = document.querySelector('.sheets__prev-button');
+    const nextButton = document.querySelector('.sheets__next-button');
 
     let currentFilms = [];
     const uniqueGenres = new Set();

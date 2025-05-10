@@ -1,0 +1,73 @@
+.root {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle, #5A92D6, #023370);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-size: cover;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+  
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .section {
+    margin-bottom: 3rem;
+  }
+  
+  .section h2 {
+    font-size: 1.5rem;
+    border-bottom: 2px solid #ffffff33;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+  }
+  
+  .person-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .person-card {
+    display: flex;
+    align-items: center;
+    background-color: #ffffff11;
+    padding: 1rem;
+    border-radius: 12px;
+  }
+  
+  .person-card img {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 10px;
+    margin-right: 1rem;
+  }
+  
+  .person-info {
+    flex-grow: 1;
+  }
+  
+  .person-name {
+    font-size: 1.2rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .person-details {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+  

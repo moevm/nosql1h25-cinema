@@ -357,7 +357,7 @@ async function deleteFilm(filmId) {
 
 async function editFilm(filmId) {
     console.log('Editing film with ID:', filmId);
-    const response = await fetch(`http://localhost:5000/api/films/${filmId}`);
+    const response = await fetch(`http://localhost:5000/api/movies/${filmId}`);
     const filmData = await response.json();
 
     openFilmModal(true, filmData);
