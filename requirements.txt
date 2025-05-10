@@ -4,6 +4,7 @@ flask_pymongo
 pymongo~=4.10.1
 bcrypt~=4.3.0
 Requests~=2.32.3
+Response~=0.5.0
 
 werkzeug~=3.0.6
 Flask-Cors~=5.0.0

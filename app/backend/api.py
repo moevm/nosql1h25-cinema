@@ -1,4 +1,7 @@
-import Response
+from flask import Response
+
+
+from app.backend.wiki_api import fetch_wikidata_person_info
 from bson.errors import InvalidId
 
 from .. import mongo
