@@ -97,15 +97,17 @@ async function loadFilmsFromQuery(query) {
 
         films.forEach(film => {
             const card = document.createElement("div");
+            console.log(film)
             card.classList.add("film-card");
 
             card.innerHTML = `
         <img src="${film.poster}" alt="${film.title}" class="film-poster">
       `;
 
-            card.onclick = () => {
-                window.location.href = `/movie/${film.id}`;
-            };
+            card.addEventListener('click', () => {
+                const filmId = film._id?.$oid || film._id;
+                if (filmId) window.location.href = `/movie/${filmId}`;
+            });
 
             resultContainer.appendChild(card);
         });
