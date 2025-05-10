@@ -50,6 +50,14 @@ body {
     background: #000;
 }
 
+.view-more-link {
+    display: inline-block;
+    font-weight: 500;
+    text-decoration: none;
+    color: #d0ddff;
+    transition: color 0.2s ease;
+    cursor: pointer;
+}
 
 .hidden {
     display: none;

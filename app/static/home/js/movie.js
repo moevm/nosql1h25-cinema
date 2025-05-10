@@ -48,22 +48,16 @@ function renderMoviePage(movie, movieId) {
         : '—';
 
 // Режиссёры
-    document.getElementById('movieDirector').textContent =
-        movie.directors?.join(', ') || '—';
+    document.getElementById('movieDirector').textContent = 
+        movie.directors?.map(d => d.name).join(', ') || '—';
 
 // Актёры (первые 2 + кнопка "Подробнее")
     const actorsElement = document.getElementById('movieActors');
     const viewAllLink = document.getElementById('viewAllActors');
     const displayedActors = movie.actors?.slice(0, 2) || [];
 
-    actorsElement.textContent = displayedActors.join(', ') || '—';
-    viewAllLink.textContent = 'Подробнее →'; // Добавляем стрелку
-    viewAllLink.style.display = 'inline-block';
-    viewAllLink.style.fontWeight = '500'; // Полужирный
-    viewAllLink.style.textDecoration = 'underline';
-    viewAllLink.style.color = '#d0ddff';
-    viewAllLink.style.textDecoration = 'none';
-    viewAllLink.style.transition = 'color 0.2s ease';
+    actorsElement.textContent = displayedActors.map(a => a.name).join(', ') || '—';
+    viewAllLink.textContent = 'Подробнее →';
 
 // Обработчики событий для hover эффекта
     viewAllLink.addEventListener('mouseenter', () => {
