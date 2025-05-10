@@ -189,6 +189,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     margin-right: auto;
     margin-left: auto;
+    margin-bottom: 20px;
 }
 
 .card h3 {
@@ -223,6 +224,31 @@
 .answer.selected {
     border-color: #3366cc;
     background-color: #cce0ff;
+}
+
+.film-results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 20px;
+    justify-items: center;
+    margin-bottom: 40px;
+    flex-grow: 1;
+}
+
+.film-card {
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.film-card:hover {
+    transform: scale(1.05);
+}
+
+.film-poster {
+    width: 100%;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
 }
 
 .footer {
