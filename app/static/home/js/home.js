@@ -23,15 +23,16 @@ document.addEventListener('DOMContentLoaded', () => {
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
-            const type = e.target.dataset.type;
-            loadContent(type);
-            
-            // Обновление активной ссылки
+            const href = link.getAttribute('href');
+            window.location.href = href;
+
+            // Обновление активной ссылки (опционально)
             menuLinks.forEach(item => item.classList.remove('menu__link_active'));
-            e.target.classList.add('menu__link_active');
+            link.classList.add('menu__link_active');
         });
     });
-    
+
+
     async function loadContent(type) {
         try {
             const response = await fetch(`/api/films?type=${type}`);
