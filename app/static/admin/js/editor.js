@@ -59,7 +59,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .split(",")
             .map(g => g.trim())
             .filter(Boolean);
-        const posterFile = document.getElementById("poster").files[0];
+        const posterUrl = document.getElementById("poster_url").value.trim();
         const videoUrl = document.getElementById("video_url").value.trim();
 
         const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
@@ -122,11 +122,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let isEditing = !!editingFilmId;
 
-        if (!posterFile && !isEditing) {
-            valid = false;
-            document.getElementById("poster-error").textContent = "Пожалуйста, загрузите постер";
-            document.getElementById("poster").closest(".form-group").classList.add("input-error");
-        }
+        if (!posterUrl && !isEditing) {
+    valid = false;
+    document.getElementById("poster-url-error").textContent = "Пожалуйста, вставьте ссылку на постер";
+    document.getElementById("poster_url").classList.add("input-error");
+}
+
 
         if (!videoUrl && !isEditing) {
     valid = false;
@@ -156,9 +157,7 @@ document.addEventListener("DOMContentLoaded", function () {
         // formData.append("directors", JSON.stringify(directors));
         // formData.append("actors", JSON.stringify(actors));
 
-        if (posterFile) {
-            formData.append("poster", posterFile);
-        }
+        formData.append("poster_url", posterUrl);
         if (videoUrl) {
     formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
 }

@@ -261,13 +261,8 @@ def register_api_routes(app):
             # Вместо загрузки файла, получаем ссылку на видео
             video_url = request.form.get('video_url', '')
 
-            # Загрузка постера
-            poster_file = request.files.get('poster')
-            poster_path = ''
-            if poster_file:
-                filename = secure_filename(poster_file.filename)
-                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
-                poster_file.save(poster_path)
+            # Получаем ссылку на постер
+            poster_url = request.form.get('poster_url', '')
 
             film = {
                 "title": title,
@@ -277,7 +272,7 @@ def register_api_routes(app):
                 "duration": duration,
                 "budget": budget,
                 "genres": genres,
-                "poster": poster_path,
+                "poster": poster_url,
                 "video_path": video_url,  # Сохраняем ссылку вместо пути к файлу
                 "directors": director_ids,
                 "actors": actor_ids,
@@ -373,13 +368,7 @@ def register_api_routes(app):
             # Получаем ссылку на видео, если она есть
             video_url = request.form.get('video_url', film.get('video_path', ''))
 
-            # Загрузка постера
-            poster_file = request.files.get('poster')
-            poster_path = film.get('poster', '')
-            if poster_file:
-                filename = secure_filename(poster_file.filename)
-                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
-                poster_file.save(poster_path)
+            poster_url = request.form.get('poster_url', film.get('poster', ''))
 
             updated_film = {
                 "title": title,
@@ -389,7 +378,7 @@ def register_api_routes(app):
                 "duration": duration,
                 "budget": budget,
                 "genres": genres,
-                "poster": poster_path,
+                "poster": poster_url,
                 "video_path": video_url,  # Сохраняем ссылку вместо файла
                 "directors": director_ids,
                 "actors": actor_ids,
