@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     genreHeader.addEventListener("click", function () {
         console.log("Клик по заголовку жанров");
-        genreOptions.classList.toggle("hidden"); 
+        genreOptions.classList.toggle("hidden");
     });
 
     // Обработчик кликов по жанрам
@@ -60,7 +60,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .map(g => g.trim())
             .filter(Boolean);
         const posterFile = document.getElementById("poster").files[0];
-        const videoFile = document.getElementById("video").files[0];
+        const videoUrl = document.getElementById("video_url").value.trim();
 
         const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
         const actors = tagifyActors.value.map(tag => tag.value.trim()).filter(Boolean);
@@ -128,11 +128,11 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("poster").closest(".form-group").classList.add("input-error");
         }
 
-        if (!videoFile && !isEditing) {
-            valid = false;
-            document.getElementById("video-error").textContent = "Пожалуйста, загрузите видео";
-            document.getElementById("video").closest(".form-group").classList.add("input-error");
-        }
+        if (!videoUrl && !isEditing) {
+    valid = false;
+    document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
+    document.getElementById("video_url").classList.add("input-error");
+}
 
         if (!valid) {
             return;
@@ -146,6 +146,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("duration", duration);
         formData.append("budget", budget);
         formData.append("genres", JSON.stringify(genres));
+        formData.append("video_url", videoUrl);
 
         formData.append("directors", JSON.stringify(directors));
         formData.append("actors", JSON.stringify(actors));
@@ -158,9 +159,9 @@ document.addEventListener("DOMContentLoaded", function () {
         if (posterFile) {
             formData.append("poster", posterFile);
         }
-        if (videoFile) {
-            formData.append("video", videoFile);
-        }
+        if (videoUrl) {
+    formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
+}
 
         try {
             let response;
@@ -265,7 +266,7 @@ document.addEventListener("DOMContentLoaded", function () {
     clearErrorOnInput("budget", "budget-error");
 
     clearErrorOnFileChange("poster", "poster-error");
-    clearErrorOnFileChange("video", "video-error");
+    clearErrorOnInput("video_url", "video-url-error");
 
     document.getElementById("genreHeader").addEventListener("click", () => {
         document.getElementById("genreHeader").classList.remove("input-error");
@@ -280,7 +281,7 @@ function updateSelectedGenres() {
     selectedGenreElements.forEach(function (genreElement) {
         selectedGenres.push(genreElement.textContent.trim());
     });
-    
+
     document.getElementById("selectedGenres").value = selectedGenres.join(", ");
 }
 
