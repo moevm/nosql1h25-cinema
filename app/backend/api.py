@@ -394,6 +394,12 @@ def register_api_routes(app):
             if not film:
                 return jsonify({"error": "Фильм не найден"}), 404
 
+            # Получаем текущих актеров и режиссеров как строки
+            current_director_ids = [str(id) for id in film.get('directors', [])]
+            current_actor_ids = [str(id) for id in film.get('actors', [])]
+            all_current_person_ids = current_director_ids + current_actor_ids
+
+            # Получаем обновленные данные фильма
             title = request.form.get('title', film['title'])
             year = int(request.form.get('year', film['year']))
             description = request.form.get('description', film['description'])
@@ -410,36 +416,66 @@ def register_api_routes(app):
                 for name in names:
                     person = mongo.db.person.find_one({'name': name.strip()})
                     if person:
-                        ids.append(person['_id'])
+                        ids.append(str(person['_id']))  # Сохраняем как строку
                     else:
+                        wikidata_info = fetch_wikidata_person_info(name.strip())
+                        
                         new_person = {
                             "name": name.strip(),
                             "role": role,
-                            "birth_date": datetime(1900, 1, 1),
-                            "birth_place": "",
-                            "wiki_link": "",
-                            "films_list": []
+                            "birth_date": (
+                                datetime.fromisoformat(wikidata_info['birth_date']) 
+                                if wikidata_info and wikidata_info.get('birth_date') 
+                                else datetime(1900, 1, 1)
+                            ),
+                            "birth_place": (
+                                wikidata_info['birth_place'] 
+                                if wikidata_info and wikidata_info.get('birth_place') 
+                                else ""
+                            ),
+                            "wiki_link": (
+                                wikidata_info['wiki_link'] 
+                                if wikidata_info and wikidata_info.get('wiki_link') 
+                                else ""
+                            ),
+                            "photo_url": (
+                                wikidata_info['photo_url'] 
+                                if wikidata_info and wikidata_info.get('photo_url') 
+                                else None
+                            ),
+                            "films_list": [film_id],  # Добавляем текущий фильм сразу
+                            "data_source": "wikidata" if wikidata_info else "manual"
                         }
+                        
                         result = mongo.db.person.insert_one(new_person)
-                        ids.append(result.inserted_id)
+                        ids.append(str(result.inserted_id))  # Сохраняем как строку
                 return ids
 
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
-            
-            # Обновляем films_list для всех актеров и режиссеров
-            all_person_ids = director_ids + actor_ids
-            if all_person_ids:
+            all_new_person_ids = director_ids + actor_ids
+
+            # Удаляем фильм из films_list у тех, кто больше не связан с фильмом
+            removed_person_ids = list(set(all_current_person_ids) - set(all_new_person_ids))
+            if removed_person_ids:
                 mongo.db.person.update_many(
-                    {"_id": {"$in": all_person_ids}},
-                    {"$addToSet": {"films_list": str(film_id)}}
+                    {"_id": {"$in": [ObjectId(id) for id in removed_person_ids]}},
+                    {"$pull": {"films_list": film_id}}
                 )
 
-            # Получаем ссылку на видео, если она есть
-            video_url = request.form.get('video_url', film.get('video_path', ''))
+            # Добавляем фильм в films_list у новых связанных персон
+            added_person_ids = list(set(all_new_person_ids) - set(all_current_person_ids))
+            if added_person_ids:
+                mongo.db.person.update_many(
+                    {"_id": {"$in": [ObjectId(id) for id in added_person_ids]}},
+                    {"$addToSet": {"films_list": film_id}}
+                )
 
+            # Получаем ссылку на видео и постер
+            video_url = request.form.get('video_url', film.get('video_path', ''))
             poster_url = request.form.get('poster_url', film.get('poster', ''))
 
+            # Обновляем данные фильма
             updated_film = {
                 "title": title,
                 "year": year,
@@ -449,9 +485,9 @@ def register_api_routes(app):
                 "budget": budget,
                 "genres": genres,
                 "poster": poster_url,
-                "video_path": video_url,  # Сохраняем ссылку вместо файла
-                "directors": director_ids,
-                "actors": actor_ids,
+                "video_path": video_url,
+                "directors": [ObjectId(id) for id in director_ids],  # Сохраняем как ObjectId
+                "actors": [ObjectId(id) for id in actor_ids],       # Сохраняем как ObjectId
                 "updated_at": datetime.now()
             }
 
@@ -460,7 +496,7 @@ def register_api_routes(app):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-
+    
     @app.route('/api/movies/<movie_id>', methods=['GET'])
     def get_movie_by_id(movie_id):
         try:
