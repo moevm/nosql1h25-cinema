@@ -30,7 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     genreHeader.addEventListener("click", function () {
         console.log("Клик по заголовку жанров");
-        genreOptions.classList.toggle("hidden"); 
+        genreOptions.classList.toggle("hidden");
     });
 
     // Обработчик кликов по жанрам
@@ -59,8 +59,8 @@ document.addEventListener("DOMContentLoaded", function () {
             .split(",")
             .map(g => g.trim())
             .filter(Boolean);
-        const posterFile = document.getElementById("poster").files[0];
-        const videoFile = document.getElementById("video").files[0];
+        const posterUrl = document.getElementById("poster_url").value.trim();
+        const videoUrl = document.getElementById("video_url").value.trim();
 
         const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
         const actors = tagifyActors.value.map(tag => tag.value.trim()).filter(Boolean);
@@ -122,17 +122,18 @@ document.addEventListener("DOMContentLoaded", function () {
 
         let isEditing = !!editingFilmId;
 
-        if (!posterFile && !isEditing) {
-            valid = false;
-            document.getElementById("poster-error").textContent = "Пожалуйста, загрузите постер";
-            document.getElementById("poster").closest(".form-group").classList.add("input-error");
-        }
+        if (!posterUrl && !isEditing) {
+    valid = false;
+    document.getElementById("poster-url-error").textContent = "Пожалуйста, вставьте ссылку на постер";
+    document.getElementById("poster_url").classList.add("input-error");
+}
 
-        if (!videoFile && !isEditing) {
-            valid = false;
-            document.getElementById("video-error").textContent = "Пожалуйста, загрузите видео";
-            document.getElementById("video").closest(".form-group").classList.add("input-error");
-        }
+
+        if (!videoUrl && !isEditing) {
+    valid = false;
+    document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
+    document.getElementById("video_url").classList.add("input-error");
+}
 
         if (!valid) {
             return;
@@ -146,6 +147,7 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("duration", duration);
         formData.append("budget", budget);
         formData.append("genres", JSON.stringify(genres));
+        formData.append("video_url", videoUrl);
 
         formData.append("directors", JSON.stringify(directors));
         formData.append("actors", JSON.stringify(actors));
@@ -155,12 +157,10 @@ document.addEventListener("DOMContentLoaded", function () {
         // formData.append("directors", JSON.stringify(directors));
         // formData.append("actors", JSON.stringify(actors));
 
-        if (posterFile) {
-            formData.append("poster", posterFile);
-        }
-        if (videoFile) {
-            formData.append("video", videoFile);
-        }
+        formData.append("poster_url", posterUrl);
+        if (videoUrl) {
+    formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
+}
 
         try {
             let response;
@@ -265,7 +265,7 @@ document.addEventListener("DOMContentLoaded", function () {
     clearErrorOnInput("budget", "budget-error");
 
     clearErrorOnFileChange("poster", "poster-error");
-    clearErrorOnFileChange("video", "video-error");
+    clearErrorOnInput("video_url", "video-url-error");
 
     document.getElementById("genreHeader").addEventListener("click", () => {
         document.getElementById("genreHeader").classList.remove("input-error");
@@ -280,7 +280,7 @@ function updateSelectedGenres() {
     selectedGenreElements.forEach(function (genreElement) {
         selectedGenres.push(genreElement.textContent.trim());
     });
-    
+
     document.getElementById("selectedGenres").value = selectedGenres.join(", ");
 }
 
@@ -357,7 +357,7 @@ async function deleteFilm(filmId) {
 
 async function editFilm(filmId) {
     console.log('Editing film with ID:', filmId);
-    const response = await fetch(`http://localhost:5000/api/films/${filmId}`);
+    const response = await fetch(`http://localhost:5000/api/movies/${filmId}`);
     const filmData = await response.json();
 
     openFilmModal(true, filmData);
@@ -398,8 +398,8 @@ function openFilmModal(isEditMode, filmData = null) {
         console.log('Film Data:', filmData);
         document.getElementById("new_film").value = filmData.title || "";
         document.getElementById("year").value = filmData.year || "";
-        document.getElementById("director").value = (filmData.directors || []).join(", ");
-        document.getElementById("actors").value = (filmData.actors || []).join(", ");
+        document.getElementById("director").value = (filmData.directors || []).map(d => d.name).join(", ");
+        document.getElementById("actors").value = (filmData.actors || []).map(a => a.name).join(", ");
         document.getElementById("country").value = filmData.country || "";
         document.getElementById("duration").value = filmData.duration || "";
         document.getElementById("budget").value = filmData.budget || "";

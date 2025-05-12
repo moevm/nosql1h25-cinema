@@ -13,7 +13,7 @@
 }
 
 .content {
-    max-width: 90%;
+    max-width: 1000px;
     margin: 0 auto;
     padding: 20px;
     display: flex;
@@ -180,57 +180,65 @@
     font-weight: bold;
 }
 
-.film-grid {
-    width: 100%;
+.card {
+    background-color: #e6f0ff;
+    border-radius: 20px;
+    padding: 30px 40px;
+    color: #003366;
+    width: 400px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 20px;
+}
+
+.card h3 {
+    margin-top: 0;
+    font-size: 18px;
+}
+
+.card p {
+    font-weight: bold;
+}
+
+.answers {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.answer {
+    padding: 10px;
+    border-radius: 10px;
+    background-color: #ffffff;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.answer:hover {
+    background-color: #d9e9ff;
+}
+
+.answer.selected {
+    border-color: #3366cc;
+    background-color: #cce0ff;
+}
+
+.film-results-grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    grid-auto-rows: 280px;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
     gap: 20px;
     justify-items: center;
     margin-bottom: 40px;
-}
-
-/* Меньше 1200px — 4 колонки */
-@media (max-width: 1200px) {
-    .film-grid {
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
-
-/* Меньше 992px — 3 колонки */
-@media (max-width: 992px) {
-    .film-grid {
-        grid-template-columns: repeat(3, 1fr);
-    }
-}
-
-/* Меньше 768px — 2 колонки */
-@media (max-width: 768px) {
-    .film-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* Меньше 480px — 1 колонка */
-@media (max-width: 480px) {
-    .film-grid {
-        grid-template-columns: repeat(1, 1fr);
-    }
-}
-
-.film-grid_no-results {
-    text-align: center; 
-    font-size: 18px; 
-    margin-top: 50px;
+    flex-grow: 1;
 }
 
 .film-card {
-    width: 180px;
-    height: 280px;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    width: 150px;
+    cursor: pointer;
+    transition: transform 0.3s ease;
 }
 
 .film-card:hover {
@@ -239,34 +247,8 @@
 
 .film-poster {
     width: 100%;
-    height: 100%;
-    object-fit: cover;
     border-radius: 12px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-}
-
-.sheets {
-    display: flex;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 30px;
-}
-
-.sheets__prev-button,
-.sheets__next-button {
-    width: 20px;
-    height: 20px;
-    background: none;
-    border: none;
-    background-image: url('../../assets/images/left-arrow.png');
-    background-repeat: no-repeat;
-    background-position: center;
-    background-size: contain;
-    cursor: pointer;
-}
-
-.sheets__next-button {
-    background-image: url('../../assets/images/right-arrow.png');
 }
 
 .footer {
