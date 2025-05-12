@@ -30,10 +30,14 @@ def register_main_routes(app):
     def backup():
         return render_template('backup.html')
 
+    @app.route('/recommendations', endpoint='recommendations')
+    def backup():
+        return render_template('recommendations.html')
+
     @app.route('/movie/<string:movie_id>/persons')
     def movie_actors(movie_id):
         return render_template('persons.html')
-    
+
     @app.route('/movie/<string:movie_id>')
     def movie_page(movie_id):
         print(f"Запрос фильма с ID: {movie_id}")
