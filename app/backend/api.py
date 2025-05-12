@@ -7,14 +7,7 @@ from flask import jsonify, request, send_from_directory, Response
 from bson import json_util, ObjectId
 import json
 import bcrypt
-
-from werkzeug.utils import secure_filename
 from datetime import datetime
-import os
-UPLOAD_FOLDER_POSTERS = '/uploads/posters'
-UPLOAD_FOLDER_VIDEOS = '/uploads/videos'
-os.makedirs(UPLOAD_FOLDER_POSTERS, exist_ok=True)
-os.makedirs(UPLOAD_FOLDER_VIDEOS, exist_ok=True)
 
 
 
@@ -362,15 +355,6 @@ def register_api_routes(app):
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-        
-    # Статические роуты для загрузки картинок из локального хранилища
-    @app.route('/uploads/posters/<filename>')
-    def serve_poster(filename):
-        return send_from_directory(UPLOAD_FOLDER_POSTERS, filename)
-
-    @app.route('/uploads/videos/<filename>')
-    def serve_video(filename):
-        return send_from_directory(UPLOAD_FOLDER_VIDEOS, filename)
 
     # ==================== УДАЛЕНИЕ ФИЛЬМА ====================
     @app.route('/api/films/<film_id>', methods=['DELETE', 'OPTIONS'])
