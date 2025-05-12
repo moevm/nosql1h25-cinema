@@ -1,6 +1,7 @@
 import requests
 
 API_URL = "http://localhost:5000"
+ES_URL = "http://92.100.72.29"
 
 def add_person(name, role):
     payload = {
@@ -93,7 +94,7 @@ if __name__ == "__main__":
         genres=["Фантастика", "Боевик"],
         budget=160000000,
         poster="https://i.pinimg.com/736x/6f/c5/a3/6fc5a3240f09d882606e55da4a58b2dd.jpg",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[9],
     )
 
@@ -108,7 +109,7 @@ if __name__ == "__main__":
         genres=["Драма", "Триллер"],
         budget=11400000,
         poster="https://i.pinimg.com/736x/f3/17/a6/f317a612d86d1e324e4bd507cbf160aa.jpg",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[7],
     )
 
@@ -123,7 +124,7 @@ if __name__ == "__main__":
         genres=["Комедия", "Драма"],
         budget=25000000,
         poster="https://cdn.ananasposter.ru/image/cache/catalog/poster/pos23/23/68397-1000x830.jpg",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -138,7 +139,7 @@ if __name__ == "__main__":
         genres=["Фантастика", "Приключения"],
         budget=165000000,
         poster="https://static.kinoafisha.info/k/movie_posters/1920x1080/upload/movie_posters/4/0/2/8355204/9ff0dfea8286428827af7478fdcd86a7.jpeg",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -153,7 +154,7 @@ if __name__ == "__main__":
         genres=["Военный", "Драма"],
         budget=70000000,
         poster="https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -168,7 +169,7 @@ if __name__ == "__main__":
         genres=["Драма", "Триллер"],
         budget=63000000,
         poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1777765/6c5cdb4c-5e28-4552-aac4-beb4efaf718d/3840x",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[9],
     )
 
@@ -183,12 +184,12 @@ if __name__ == "__main__":
         genres=["Боевик", "Криминал", "Драма"],
         budget=185000000,
         poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
-        video_path="http://92.100.72.29/videos/sample.mp4",
+        video_path=f"{ES_URL}/videos/sample.mp4",
         ratings=[9],
     )
 
-    # print("Добавляем администратора...")
-    # add_admin("admin@admin.com", "123456")
+    print("Добавляем администратора...")
+    add_admin("admin@admin.com", "123456")
 
     print("\nВсе тестовые данные успешно добавлены!")
     print("-----------------------------------")
