@@ -5,7 +5,7 @@ services:
     build: .
     container_name: cinema-web
     ports:
-      - "5000:5000"
+      - "127.0.0.1:5000:5000"
     depends_on:
       - db
 
