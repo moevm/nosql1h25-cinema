@@ -398,8 +398,8 @@ function openFilmModal(isEditMode, filmData = null) {
         console.log('Film Data:', filmData);
         document.getElementById("new_film").value = filmData.title || "";
         document.getElementById("year").value = filmData.year || "";
-        document.getElementById("director").value = (filmData.directors || []).join(", ");
-        document.getElementById("actors").value = (filmData.actors || []).join(", ");
+        document.getElementById("director").value = (filmData.directors || []).map(d => d.name).join(", ");
+        document.getElementById("actors").value = (filmData.actors || []).map(a => a.name).join(", ");
         document.getElementById("country").value = filmData.country || "";
         document.getElementById("duration").value = filmData.duration || "";
         document.getElementById("budget").value = filmData.budget || "";
