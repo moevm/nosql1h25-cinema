@@ -208,7 +208,6 @@ def register_api_routes(app):
             budget = float(request.form.get('budget', 0))
             genres = json.loads(request.form.get('genres', '[]'))
 
-            # Получаем режиссёров и актёров как строки
             directors_raw = json.loads(request.form.get('directors', '[]'))
             actors_raw = json.loads(request.form.get('actors', '[]'))
 
@@ -259,21 +258,11 @@ def register_api_routes(app):
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
 
-            # Загрузка файлов
-            poster_file = request.files.get('poster')
-            video_file = request.files.get('video')
+            # Вместо загрузки файла, получаем ссылку на видео
+            video_url = request.form.get('video_url', '')
 
-            poster_path = ''
-            if poster_file:
-                filename = secure_filename(poster_file.filename)
-                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
-                poster_file.save(poster_path)
-
-            video_path = ''
-            if video_file:
-                filename = secure_filename(video_file.filename)
-                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
-                video_file.save(video_path)
+            # Получаем ссылку на постер
+            poster_url = request.form.get('poster_url', '')
 
             film = {
                 "title": title,
@@ -283,8 +272,8 @@ def register_api_routes(app):
                 "duration": duration,
                 "budget": budget,
                 "genres": genres,
-                "poster": poster_path,
-                "video_path": video_path,
+                "poster": poster_url,
+                "video_path": video_url,  # Сохраняем ссылку вместо пути к файлу
                 "directors": director_ids,
                 "actors": actor_ids,
                 "ratings": [],
@@ -293,17 +282,8 @@ def register_api_routes(app):
                 "updated_at": datetime.now()
             }
 
-            # Сначала создаем фильм
             result = mongo.db.film.insert_one(film)
             film_id = result.inserted_id
-
-            # Обновляем films_list для всех актеров и режиссеров
-            all_person_ids = director_ids + actor_ids
-            if all_person_ids:
-                mongo.db.person.update_many(
-                    {"_id": {"$in": all_person_ids}},
-                    {"$addToSet": {"films_list": str(film_id)}}
-                )
 
             return jsonify({
                 "id": str(film_id),
@@ -360,7 +340,6 @@ def register_api_routes(app):
             budget = float(request.form.get('budget', film['budget']))
             genres = json.loads(request.form.get('genres', json.dumps(film['genres'])))
 
-            # Актёры и режиссёры
             directors_raw = json.loads(request.form.get('directors', '[]'))
             actors_raw = json.loads(request.form.get('actors', '[]'))
 
@@ -386,21 +365,10 @@ def register_api_routes(app):
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
 
-            # Загрузка файлов
-            poster_file = request.files.get('poster')
-            video_file = request.files.get('video')
+            # Получаем ссылку на видео, если она есть
+            video_url = request.form.get('video_url', film.get('video_path', ''))
 
-            poster_path = film.get('poster', '')
-            if poster_file:
-                filename = secure_filename(poster_file.filename)
-                poster_path = os.path.join(UPLOAD_FOLDER_POSTERS, filename)
-                poster_file.save(poster_path)
-
-            video_path = film.get('video_path', '')
-            if video_file:
-                filename = secure_filename(video_file.filename)
-                video_path = os.path.join(UPLOAD_FOLDER_VIDEOS, filename)
-                video_file.save(video_path)
+            poster_url = request.form.get('poster_url', film.get('poster', ''))
 
             updated_film = {
                 "title": title,
@@ -410,8 +378,8 @@ def register_api_routes(app):
                 "duration": duration,
                 "budget": budget,
                 "genres": genres,
-                "poster": poster_path,
-                "video_path": video_path,
+                "poster": poster_url,
+                "video_path": video_url,  # Сохраняем ссылку вместо файла
                 "directors": director_ids,
                 "actors": actor_ids,
                 "updated_at": datetime.now()
