@@ -1,7 +1,6 @@
 import requests
 
 API_URL = "http://localhost:5000"
-ES_URL = "http://92.100.72.29"
 
 def add_person(name, role):
     payload = {
@@ -94,7 +93,7 @@ if __name__ == "__main__":
         genres=["Фантастика", "Боевик"],
         budget=160000000,
         poster="https://i.pinimg.com/736x/6f/c5/a3/6fc5a3240f09d882606e55da4a58b2dd.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[9],
     )
 
@@ -109,7 +108,7 @@ if __name__ == "__main__":
         genres=["Драма", "Триллер"],
         budget=11400000,
         poster="https://i.pinimg.com/736x/f3/17/a6/f317a612d86d1e324e4bd507cbf160aa.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[7],
     )
 
@@ -124,7 +123,7 @@ if __name__ == "__main__":
         genres=["Комедия", "Драма"],
         budget=25000000,
         poster="https://cdn.ananasposter.ru/image/cache/catalog/poster/pos23/23/68397-1000x830.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -139,7 +138,7 @@ if __name__ == "__main__":
         genres=["Фантастика", "Приключения"],
         budget=165000000,
         poster="https://static.kinoafisha.info/k/movie_posters/1920x1080/upload/movie_posters/4/0/2/8355204/9ff0dfea8286428827af7478fdcd86a7.jpeg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -153,8 +152,8 @@ if __name__ == "__main__":
         duration=169,
         genres=["Военный", "Драма"],
         budget=70000000,
-        poster="https://kinopoisk-ru.clstorage.net/2k9Q8j399/dc680cQXLs9/wwoOejflX9IqEwH6amZHAdAhLCeTmyPjWC_EKiicd0opJZEUZfijOFNG8dJjjM6cDbApmBEpYIyBS0zsws-oLUIaT23zdgkGvZRTrv1zEpNWI7m01Yk2cF55AGZkkDzA4iyO3G9yqXzFV3eEtNkYTZ2mLM4WebEXT4gar4_FPvzPQQUytrWUHWpKAT4gLAeOCuznKwjcqSXP64rlr9OyxuYvz9PldC4_BVlihbWYWcqfLuIISfswEEqVEmsGDjK5AQPCOnOw3h5tRoz2rO3PhQ6gK-7CX6cuzmeMJ-EZ_wmvo4wd5LEntMBfJoV0GBIA1KDmCcHx95QAG9EvgAQ3tQkMhPy5_lBVZM1C-OMszg0ILuUnQ5yj446sxeEpUbrKLWUJWmd7ID3NW2VEt1PbAV6posBIt3hZg1Ud7AMMcbVPCQx3cffa2a3LAT-tpQpCB27hqIDZrquHK0aiLRF2jairyVyieG51xV-qjbgR0IVcKmwBTD72mc4dWeZLTXJxBckGdPl9Hp1vyUNz5GsNyYGgbysDUKioTy_EIK8e_Egnpc4T4jqnckkWYoS0kloM2uQjDwj-dxUA3l5rSMQwcMbNjvUzdl4Vq8kNdGusjQ6Kbq9sjBvjo0cjRyAt3HKEZyZG1G71p7pA1uDLvlYSTJepYUmJ-33ehlCTZwIMvT3KQ8z9sn4ZXysIDbAs6cqLSi6sIgjaaeRArUQlr5A0wuQtSFTtPmA3SphkjPQU2stepSqNQ_c4UYGVnqcOQfC1B80NuLA2XR9mDgo5YGYCgktmqGMNk25gzWbI6ykd9UpgroRfKzVk8MTYZMB139UIVCysiAgwcBjKWdYvRgW3-IIDTXIytZxQpkIMs6MqBsdAJODnBBZsp0FnS6kg1H2J4GHPHeIyoHGBFOyD_VveyBTmpM3OsfQQSRKQo8_D8_JKRQs7NjXUUSsBSjcorA0HAunsbMFWrmaK7Y3r6JJ8QyanAJRneup7yxokTPiQGoFX7y4GwbQ4XUFZnm8Iyru9zQ0NdLL70tYrRs9-ZO4GC0hnq-IEFizigCWDYO1WfkDupooerjlpvMRU6AL6XpgJ1KWpzskxMtqFFpFhAUfx_MoPRPV5_NaYq0YLtqhvy06GqytmSJcv7EBpw-CoGvFCq2KG3OtwL3pFniFDfJMfghan6wBGffzYSRqTL0cOuDDPCUhz8HjQF63EAzFs6UMDD2ippIbfb-2I6w8to5Y_ia-mQp6sdCS0ABgiT_zfXwwV7WyJw7jw2YgRUqlGRH10yAeEs3W1lhCizIK8Z22Cw4jgoSmDE6zsTuwP4SISuY2n4gBcqzxpv4MX6IW9nJfK32DiSExwvdsKXlYjS0P4sAMMCj2xOpnSI4qFtyttysvBKWnngBAkrMVuQiuiE3QLKe-OlGz8Y3HDF2INexLYgV4qIcUNf3iSTJmbLkKHuPMNAUw2cXSfkuoFz_MkbAWFCKSs7MHcouDIrAqkYNA3iuGjg96u-ib_A57sj38WV4pbKamOCLjx3UHWUKTOx7g9iMzFMLdzH1KjhAI6ZGWCR0kjqGHMki_jwG4D7aBW_01rboHVq_zu-AQf7k13XNGKECWigAh_PVLKmNOnyMq-Pk3OhDL1etwaaIsCfGWtRwnB5uQoSpGra4fugqBj0DRELy-C0GgzaTUL2W4GPhDdz9XsKU-Dez1RgVnbJoLLN_POz8r2-rzRECwFgjrrJotFDmZgoAvab2XG7w0jJxW8TKZviFvrseF7TBlugPzSEA-SbSOHAfY-3YAY0a_KTTbxScINs3G2HZBsBIZ8oGqFTsroLKuNX2Gsiy6M6uPQPsJgI08brXmgsYjfqEp3UJ4FXK0hhog5-lSFGx2nRwf--sqNSneyM93RZgYGM2vii4LHZOtqyhyubwusim3qED0MpS1AmCbwoXHNmyyFvB8YBRagaYSMPvIQBZQZKIMP-nMNT8Q4Nz_eVmOEC3rkLELLySZga8kc5iJNYUegKRV8QWdhBxoie6EzwdGhR_KRVwEWrapCjnl0EwCT1GeFwzh9DoEPePV0mdGvCUUx4uLGA0LhrqkDkOFiw-hAZakef8qrrEPa7X0qO8wRLUq7116B1O5kzAW9sNrA2tWjBYX79M4BQrR1e56bZAtGuaSpQgbDauHowxoh40usxCMmkX6Jr2MHFmv17nzOG2zOuxBeC5Ioo0DGM3zcihEZ5cYFOnRDCYX7c73RlaxLxPOjakLFga-vYAzWJOtALw3qJlS3junuS9OufCP5S1lgAvffmglTYKPMTD85G4pSGeEJhbD5i8pPcDY6XxUnSQTxra-DR4hk4W4GFmrtzi4FI2ra_M5rpkkW7bhsdwRXKcYw0ltInWJsRgN1t9JFm9ikiI05c48MDPRy-t6XbMqKNysnBQyJaWcpSJzgaA0oAqhlUP-JZykHk6R-r7iD2WSNP1-aR96mbg4BvfUaQ5mU6QgH8bMCxIQ0NjoZlWBKDTcvYwrHjmbuqkTf4KRHowWoYl7wTCwky1yveytxxpSpRTNT0UcUp2qHj3G2k41Q06jHhrF4jsxC_nV1WBarRM13ouNEyUPpKGgMmmGnQGiEJ-rd9cwlZYkfZ33mNUNbKMd7nNbF3-9iTcd88JmCXBGtyAW_8ojESLxwNdXW746M8S9miAqG4SBsApoo4gOhB-1pljUJ5acJVqc6ILOK3qVDPtMXT9xvLg0FtzCYylIRrcZK-TSPgQJ2Nb1XU6RFDDDrpg8PQuSrYMWWYy3G4IjqqpI0CuZrwt9iMi5wRtpuBTOTEUxVLuTATTtxEcqam-gOzP-7C4QP9Pm2GtaqQwozZWaMCkqnrySKliosRScO4qpSNEHvZosWYnzm8A1WYQ6wFpZCl20sR00zMBzLHZHoSIFzvEqPTDs6exQeZUqOP6mpQgwH7OtrwVdm5YmpS6_umb2JIeoPW644a_pDme3F8lvZSxpoYM8FO72Uhg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster="https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[8],
     )
 
@@ -168,8 +167,8 @@ if __name__ == "__main__":
         duration=139,
         genres=["Драма", "Триллер"],
         budget=63000000,
-        poster="https://kinopoisk-ru.clstorage.net/2k9Q8j399/dc680cQXLs9/wwoOejflX9IqEwH6amZHAdAhLCeTmyPjWC_EKiicd0opJZEUZfijOFNHsRBiT46czbBo2RBooVkAC1k7Qs-oLUJP2u3lYtwTfZVSr-ixEAdWNztjwUk2cF55AGZkkDzA4iyO3G9yqXzFV3eEtNkYTZ2mLM4WebEXT4gar4_FPvzPQQUytrWUHWpKAT4gLAeOCuznKwjcqSXP64rlr9OyxuYvz9PldC4_BVlihbWYWcqfLuIISfswEEqVEmsGDjK5AQPCOnOw3h5tRoz2rO3PhQ6gK-7CX6cuzmeMJ-EZ_wmvo4wd5LEntMBfJoV0GBIA1KDmCcHx95QAG9EvgAQ3tQkMhPy5_lBVZM1C-OMszg0ILuUnQ5yj446sxeEpUbrKLWUJWmd7ID3NW2VEt1PbAV6posBIt3hZg1Ud7AMMcbVPCQx3cffa2a3LAT-tpQpCB27hqIDZrquHK0aiLRF2jairyVyieG51xV-qjbgR0IVcKmwBTD72mc4dWeZLTXJxBckGdPl9Hp1vyUNz5GsNyYGgbysDUKioTy_EIK8e_Egnpc4T4jqnckkWYoS0kloM2uQjDwj-dxUA3l5rSMQwcMbNjvUzdl4Vq8kNdGusjQ6Kbq9sjBvjo0cjRyAt3HKEZyZG1G71p7pA1uDLvlYSTJepYUmJ-33ehlCTZwIMvT3KQ8z9sn4ZXysIDbAs6cqLSi6sIgjaaeRArUQlr5A0wuQtSFTtPmA3SphkjPQU2stepSqNQ_c4UYGVnqcOQfC1B80NuLA2XR9mDgo5YGYCgktmqGMNk25gzWbI6ykd9UpgroRfKzVk8MTYZMB139UIVCysiAgwcBjKWdYvRgW3-IIDTXIytZxQpkIMs6MqBsdAJODnBBZsp0FnS6kg1H2J4GHPHeIyoHGBFOyD_VveyBTmpM3OsfQQSRKQo8_D8_JKRQs7NjXUUSsBSjcorA0HAunsbMFWrmaK7Y3r6JJ8QyanAJRneup7yxokTPiQGoFX7y4GwbQ4XUFZnm8Iyru9zQ0NdLL70tYrRs9-ZO4GC0hnq-IEFizigCWDYO1WfkDupooerjlpvMRU6AL6XpgJ1KWpzskxMtqFFpFhAUfx_MoPRPV5_NaYq0YLtqhvy06GqytmSJcv7EBpw-CoGvFCq2KG3OtwL3pFniFDfJMfghan6wBGffzYSRqTL0cOuDDPCUhz8HjQF63EAzFs6UMDD2ippIbfb-2I6w8to5Y_ia-mQp6sdCS0ABgiT_zfXwwV7WyJw7jw2YgRUqlGRH10yAeEs3W1lhCizIK8Z22Cw4jgoSmDE6zsTuwP4SISuY2n4gBcqzxpv4MX6IW9nJfK32DiSExwvdsKXlYjS0P4sAMMCj2xOpnSI4qFtyttysvBKWnngBAkrMVuQiuiE3QLKe-OlGz8Y3HDF2INexLYgV4qIcUNf3iSTJmbLkKHuPMNAUw2cXSfkuoFz_MkbAWFCKSs7MHcouDIrAqkYNA3iuGjg96u-ib_A57sj38WV4pbKamOCLjx3UHWUKTOx7g9iMzFMLdzH1KjhAI6ZGWCR0kjqGHMki_jwG4D7aBW_01rboHVq_zu-AQf7k13XNGKECWigAh_PVLKmNOnyMq-Pk3OhDL1etwaaIsCfGWtRwnB5uQoSpGra4fugqBj0DRELy-C0GgzaTUL2W4GPhDdz9XsKU-Dez1RgVnbJoLLN_POz8r2-rzRECwFgjrrJotFDmZgoAvab2XG7w0jJxW8TKZviFvrseF7TBlugPzSEA-SbSOHAfY-3YAY0a_KTTbxScINs3G2HZBsBIZ8oGqFTsroLKuNX2Gsiy6M6uPQPsJgI08brXmgsYjfqEp3UJ4FXK0hhog5-lSFGx2nRwf--sqNSneyM93RZgYGM2vii4LHZOtqyhyubwusim3qED0MpS1AmCbwoXHNmyyFvB8YBRagaYSMPvIQBZQZKIMP-nMNT8Q4Nz_eVmOEC3rkLELLySZga8kc5iJNYUegKRV8QWdhBxoie6EzwdGhR_KRVwEWrapCjnl0EwCT1GeFwzh9DoEPePV0mdGvCUUx4uLGA0LhrqkDkOFiw-hAZakef8qrrEPa7X0qO8wRLUq7116B1O5kzAW9sNrA2tWjBYX79M4BQrR1e56bZAtGuaSpQgbDauHowxoh40usxCMmkX6Jr2MHFmv17nzOG2zOuxBeC5Ioo0DGM3zcihEZ5cYFOnRDCYX7c73RlaxLxPOjakLFga-vYAzWJOtALw3qJlS3junuS9OufCP5S1lgAvffmglTYKPMTD85G4pSGeEJhbD5i8pPcDY6XxUnSQTxra-DR4hk4W4GFmrtzi4FI2ra_M5rpkkW7bhsdwRXKcYw0ltInWJsRgN1t9JFm9ikiI05c48MDPRy-t6XbMqKNysnBQyJaWcpSJzgaA0oAqhlUP-JZykHk6R-r7iD2WSNP1-aR96mbg4BvfUaQ5mU6QgH8bMCxIQ0NjoZlWBKDTcvYwrHjmbuqkTf4KRHowWoYl7wTCwky1yveytxxpSpRTNT0UcUp2qHj3G2k41Q06jHhrF4jsxC_nV1WBarRM13ouNEyUPpKGgMmmGnQGiEJ-rd9cwlZYkfZ33mNUNbKMd7nNbF3-9iTcd88JmCXBGtyAW_8ojESLxwNdXW746M8S9miAqG4SBsApoo4gOhB-1pljUJ5acJVqc6ILOK3qVDPtMXT9xvLg0FtzCYylIRrcZK-TSPgQJ2Nb1XU6RFDDDrpg8PQuSrYMWWYy3G4IjqqpI0CuZrwt9iMi5wRtpuBTOTEUxVLuTATTtxEcqam-gOzP-7C4QP9Pm2GtaqQwozZWaMCkqnrySKliosRScO4qpSNEHvZosWYnzm8A1WYQ6wFpZCl20sR00zMBzLHZHoSIFzvEqPTDs6exQeZUqOP6mpQgwH7OtrwVdm5YmpS6_umb2JIeoPW644a_pDme3F8lvZSxpoYM8FO72Uhg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1777765/6c5cdb4c-5e28-4552-aac4-beb4efaf718d/3840x",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[9],
     )
 
@@ -183,13 +182,13 @@ if __name__ == "__main__":
         duration=152,
         genres=["Боевик", "Криминал", "Драма"],
         budget=185000000,
-        poster="https://kinopoisk-ru.clstorage.net/2k9Q8j399/dc680cQXLs9/wwoOejflX9IqEwH6amZHAdAhLCeTmyPjWC_EKiicd0opJZEUZfijOFNG8dOiTw6cDaXo2MT8YFnVS1l51w8oLVfbDm3zYN0GPYETLv2nElKX93t2Ack2cF55AGZkkDzA4iyO3G9yqXzFV3eEtNkYTZ2mLM4WebEXT4gar4_FPvzPQQUytrWUHWpKAT4gLAeOCuznKwjcqSXP64rlr9OyxuYvz9PldC4_BVlihbWYWcqfLuIISfswEEqVEmsGDjK5AQPCOnOw3h5tRoz2rO3PhQ6gK-7CX6cuzmeMJ-EZ_wmvo4wd5LEntMBfJoV0GBIA1KDmCcHx95QAG9EvgAQ3tQkMhPy5_lBVZM1C-OMszg0ILuUnQ5yj446sxeEpUbrKLWUJWmd7ID3NW2VEt1PbAV6posBIt3hZg1Ud7AMMcbVPCQx3cffa2a3LAT-tpQpCB27hqIDZrquHK0aiLRF2jairyVyieG51xV-qjbgR0IVcKmwBTD72mc4dWeZLTXJxBckGdPl9Hp1vyUNz5GsNyYGgbysDUKioTy_EIK8e_Egnpc4T4jqnckkWYoS0kloM2uQjDwj-dxUA3l5rSMQwcMbNjvUzdl4Vq8kNdGusjQ6Kbq9sjBvjo0cjRyAt3HKEZyZG1G71p7pA1uDLvlYSTJepYUmJ-33ehlCTZwIMvT3KQ8z9sn4ZXysIDbAs6cqLSi6sIgjaaeRArUQlr5A0wuQtSFTtPmA3SphkjPQU2stepSqNQ_c4UYGVnqcOQfC1B80NuLA2XR9mDgo5YGYCgktmqGMNk25gzWbI6ykd9UpgroRfKzVk8MTYZMB139UIVCysiAgwcBjKWdYvRgW3-IIDTXIytZxQpkIMs6MqBsdAJODnBBZsp0FnS6kg1H2J4GHPHeIyoHGBFOyD_VveyBTmpM3OsfQQSRKQo8_D8_JKRQs7NjXUUSsBSjcorA0HAunsbMFWrmaK7Y3r6JJ8QyanAJRneup7yxokTPiQGoFX7y4GwbQ4XUFZnm8Iyru9zQ0NdLL70tYrRs9-ZO4GC0hnq-IEFizigCWDYO1WfkDupooerjlpvMRU6AL6XpgJ1KWpzskxMtqFFpFhAUfx_MoPRPV5_NaYq0YLtqhvy06GqytmSJcv7EBpw-CoGvFCq2KG3OtwL3pFniFDfJMfghan6wBGffzYSRqTL0cOuDDPCUhz8HjQF63EAzFs6UMDD2ippIbfb-2I6w8to5Y_ia-mQp6sdCS0ABgiT_zfXwwV7WyJw7jw2YgRUqlGRH10yAeEs3W1lhCizIK8Z22Cw4jgoSmDE6zsTuwP4SISuY2n4gBcqzxpv4MX6IW9nJfK32DiSExwvdsKXlYjS0P4sAMMCj2xOpnSI4qFtyttysvBKWnngBAkrMVuQiuiE3QLKe-OlGz8Y3HDF2INexLYgV4qIcUNf3iSTJmbLkKHuPMNAUw2cXSfkuoFz_MkbAWFCKSs7MHcouDIrAqkYNA3iuGjg96u-ib_A57sj38WV4pbKamOCLjx3UHWUKTOx7g9iMzFMLdzH1KjhAI6ZGWCR0kjqGHMki_jwG4D7aBW_01rboHVq_zu-AQf7k13XNGKECWigAh_PVLKmNOnyMq-Pk3OhDL1etwaaIsCfGWtRwnB5uQoSpGra4fugqBj0DRELy-C0GgzaTUL2W4GPhDdz9XsKU-Dez1RgVnbJoLLN_POz8r2-rzRECwFgjrrJotFDmZgoAvab2XG7w0jJxW8TKZviFvrseF7TBlugPzSEA-SbSOHAfY-3YAY0a_KTTbxScINs3G2HZBsBIZ8oGqFTsroLKuNX2Gsiy6M6uPQPsJgI08brXmgsYjfqEp3UJ4FXK0hhog5-lSFGx2nRwf--sqNSneyM93RZgYGM2vii4LHZOtqyhyubwusim3qED0MpS1AmCbwoXHNmyyFvB8YBRagaYSMPvIQBZQZKIMP-nMNT8Q4Nz_eVmOEC3rkLELLySZga8kc5iJNYUegKRV8QWdhBxoie6EzwdGhR_KRVwEWrapCjnl0EwCT1GeFwzh9DoEPePV0mdGvCUUx4uLGA0LhrqkDkOFiw-hAZakef8qrrEPa7X0qO8wRLUq7116B1O5kzAW9sNrA2tWjBYX79M4BQrR1e56bZAtGuaSpQgbDauHowxoh40usxCMmkX6Jr2MHFmv17nzOG2zOuxBeC5Ioo0DGM3zcihEZ5cYFOnRDCYX7c73RlaxLxPOjakLFga-vYAzWJOtALw3qJlS3junuS9OufCP5S1lgAvffmglTYKPMTD85G4pSGeEJhbD5i8pPcDY6XxUnSQTxra-DR4hk4W4GFmrtzi4FI2ra_M5rpkkW7bhsdwRXKcYw0ltInWJsRgN1t9JFm9ikiI05c48MDPRy-t6XbMqKNysnBQyJaWcpSJzgaA0oAqhlUP-JZykHk6R-r7iD2WSNP1-aR96mbg4BvfUaQ5mU6QgH8bMCxIQ0NjoZlWBKDTcvYwrHjmbuqkTf4KRHowWoYl7wTCwky1yveytxxpSpRTNT0UcUp2qHj3G2k41Q06jHhrF4jsxC_nV1WBarRM13ouNEyUPpKGgMmmGnQGiEJ-rd9cwlZYkfZ33mNUNbKMd7nNbF3-9iTcd88JmCXBGtyAW_8ojESLxwNdXW746M8S9miAqG4SBsApoo4gOhB-1pljUJ5acJVqc6ILOK3qVDPtMXT9xvLg0FtzCYylIRrcZK-TSPgQJ2Nb1XU6RFDDDrpg8PQuSrYMWWYy3G4IjqqpI0CuZrwt9iMi5wRtpuBTOTEUxVLuTATTtxEcqam-gOzP-7C4QP9Pm2GtaqQwozZWaMCkqnrySKliosRScO4qpSNEHvZosWYnzm8A1WYQ6wFpZCl20sR00zMBzLHZHoSIFzvEqPTDs6exQeZUqOP6mpQgwH7OtrwVdm5YmpS6_umb2JIeoPW644a_pDme3F8lvZSxpoYM8FO72Uhg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path="http://92.100.72.29/videos/sample.mp4",
         ratings=[9],
     )
 
-    print("Добавляем администратора...")
-    add_admin("admin@admin.com", "123456")
+    # print("Добавляем администратора...")
+    # add_admin("admin@admin.com", "123456")
 
     print("\nВсе тестовые данные успешно добавлены!")
     print("-----------------------------------")
