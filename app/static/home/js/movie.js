@@ -6,10 +6,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const movie = await loadMovieData(movieId);
         if (!movie) return redirectToHome();
 
-        renderMoviePage(movie, movieId);
-
-        // Инициализация рейтинга
-        initRatingSystem(movieId);
+        renderMoviePage(movie);
 
     } catch (error) {
         console.error('Error:', error);
@@ -23,7 +20,7 @@ async function loadMovieData(movieId) {
     return await response.json();
 }
 
-function renderMoviePage(movie, movieId) {
+function renderMoviePage(movie) {
     document.title = `${movie.title}`;
 
 // Постер и заголовок
@@ -44,34 +41,24 @@ function renderMoviePage(movie, movieId) {
     document.getElementById('movieGenres').textContent = movie.genres?.join(', ') || '—';
     document.getElementById('movieCountry').textContent = movie.country || '—';
     document.getElementById('movieBudget').textContent = movie.budget
-        ? `${movie.budget.toLocaleString()} $`
+        ? `${movie.budget.toLocaleString()} ₽`
         : '—';
 
 // Режиссёры
-    document.getElementById('movieDirector').textContent = 
-        movie.directors?.map(d => d.name).join(', ') || '—';
+    document.getElementById('movieDirector').textContent =
+        movie.directors?.join(', ') || '—';
 
 // Актёры (первые 2 + кнопка "Подробнее")
     const actorsElement = document.getElementById('movieActors');
     const viewAllLink = document.getElementById('viewAllActors');
     const displayedActors = movie.actors?.slice(0, 2) || [];
 
-    actorsElement.textContent = displayedActors.map(a => a.name).join(', ') || '—';
-    viewAllLink.textContent = 'Подробнее →';
-
-// Обработчики событий для hover эффекта
-    viewAllLink.addEventListener('mouseenter', () => {
-        viewAllLink.style.textDecoration = 'underline';
-        viewAllLink.style.color = '#023370';
-    });
-
-    viewAllLink.addEventListener('mouseleave', () => {
-        viewAllLink.style.textDecoration = 'none';
-        viewAllLink.style.color = '#d0ddff';
-    });
-
+    actorsElement.textContent = displayedActors.join(', ') || '—';
+    viewAllLink.style.display = 'inline';
+    viewAllLink.textContent = 'Подробнее';
+    viewAllLink.style.cursor = 'pointer';
     viewAllLink.addEventListener('click', () => {
-        window.location.href = `/movie/${movieId}/persons`;
+        window.location.href = `/movie/${movie._id}/persons`;
     });
 
 // Видео
@@ -116,71 +103,4 @@ function renderMoviePage(movie, movieId) {
 
 function redirectToHome() {
     window.location.href = '/';
-}
-
-// функция для инициализации системы рейтинга
-function initRatingSystem(movieId) {
-    const ratingGroup = document.querySelector('.rating-group');
-    const inputs = ratingGroup.querySelectorAll('input[name="fst"]');
-
-    // Проверяем, есть ли сохраненная оценка в LocalStorage
-    const savedRating = localStorage.getItem(`movieRating_${movieId}`);
-    if (savedRating) {
-        const savedInput = ratingGroup.querySelector(`#fst-${savedRating}`);
-        if (savedInput) {
-            savedInput.checked = true;
-        }
-    }
-
-    // Добавляем обработчики событий для всех элементов рейтинга
-    inputs.forEach(input => {
-        input.addEventListener('change', async (e) => {
-            if (e.target.value === '0') return; // Пропускаем значение по умолчанию
-
-            const ratingValue = parseInt(e.target.value);
-
-            try {
-                // Отправляем оценку на сервер
-                const response = await submitRating(movieId, ratingValue);
-
-                if (response.success) {
-                    // Сохраняем оценку в LocalStorage
-                    localStorage.setItem(`movieRating_${movieId}`, ratingValue);
-
-                    // Обновляем отображение среднего рейтинга
-                    document.getElementById('movieRating').textContent =
-                        response.newAvgRating.toFixed(1);
-
-                    console.log('Рейтинг успешно сохранен');
-                } else {
-                    console.error('Ошибка при сохранении рейтинга:', response.message);
-                }
-            } catch (error) {
-                console.error('Ошибка при отправке рейтинга:', error);
-            }
-        });
-    });
-}
-
-// Функция для отправки рейтинга на сервер
-async function submitRating(movieId, rating) {
-    localStorage.setItem(`movieRating_${movieId}`, rating);
-    try {
-        const response = await fetch(`/api/films/${movieId}/rate`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ rating })
-        });
-
-        if (!response.ok) {
-            throw new Error('Ошибка сети');
-        }
-
-        return await response.json();
-    } catch (error) {
-        console.error('Ошибка отправки рейтинга:', error);
-        throw error;
-    }
 }
