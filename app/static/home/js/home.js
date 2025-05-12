@@ -66,6 +66,13 @@ document.addEventListener('DOMContentLoaded', () => {
             uniqueGenres.clear();
             uniqueCountries.clear();
 
+            currentFilms.forEach(film => {
+                if (film.genres) {
+                    film.genres.forEach(genre => uniqueGenres.add(genre));
+                }
+                if (film.country) uniqueCountries.add(film.country);
+            });
+
             currentPage = 1;
             renderPage(currentFilms);
 
