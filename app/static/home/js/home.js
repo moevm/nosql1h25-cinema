@@ -8,33 +8,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const genreTemplate = document.getElementById('genreOptionTemplate');
     const countryTemplate = document.getElementById('countryOptionTemplate');
     const sortRadios = document.querySelectorAll('.sort-form__input');
-    const prevButton = document.querySelector('.sheets__prev-button');
-    const nextButton = document.querySelector('.sheets__next-button');
-
-    let currentPage = 1;
-    let itemsPerPage = 15;
 
     let currentFilms = [];
     const uniqueGenres = new Set();
     const uniqueCountries = new Set();
     
     loadContent('all');
-    
-    prevButton.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-            renderPage(currentFilms);
-        }
-    });
-
-    nextButton.addEventListener('click', () => {
-        const maxPage = Math.ceil(currentFilms.length / itemsPerPage);
-        if (currentPage < maxPage) {
-            currentPage++;
-            renderPage(currentFilms);
-        }
-    });
-
     
     // TODO: Добавить в бд параметр с типом (фильм или сериал)
     // Обработчики для меню
@@ -65,8 +44,32 @@ document.addEventListener('DOMContentLoaded', () => {
             uniqueGenres.clear();
             uniqueCountries.clear();
 
-            currentPage = 1;
-            renderPage(currentFilms);
+            currentFilms.forEach(film => {
+                if (film.genres) {
+                    film.genres.forEach(genre => uniqueGenres.add(genre));
+                }
+                if (film.country) uniqueCountries.add(film.country);
+                const card = filmTemplate.content.cloneNode(true);
+                const filmCard = card.querySelector('.film-card');
+                
+                card.querySelector('.film-poster').src = film.poster;
+                card.querySelector('.film-poster').alt = film.title;
+
+                filmCard.addEventListener('click', () => {
+                    // Используем film._id.$oid для MongoDB
+                    const filmId = film._id?.$oid || film._id;
+
+                    if (!filmId) {
+                        console.error('ID фильма не найден', film);
+                        return;
+                    }
+
+                    console.log('Переход на фильм ID:', filmId);
+                    window.location.href = `/movie/${filmId}`;
+                });
+                
+                filmGrid.appendChild(card);
+            });
 
             updateSelectOptions(genreSelect, uniqueGenres, genreTemplate);
             updateSelectOptions(countrySelect, uniqueCountries, countryTemplate);
@@ -75,31 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
             noResultsMessage.classList.remove('hidden');
             filmGrid.innerHTML = '';
         }
-    }
-
-    // Функция для отрисовки конкретной страницы
-    function renderPage(films) {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const pageFilms = films.slice(start, end);
-
-        filmGrid.innerHTML = '';
-        noResultsMessage.classList.toggle('hidden', pageFilms.length !== 0);
-
-        pageFilms.forEach(film => {
-            const card = filmTemplate.content.cloneNode(true);
-            const filmCard = card.querySelector('.film-card');
-
-            card.querySelector('.film-poster').src = film.poster;
-            card.querySelector('.film-poster').alt = film.title;
-
-            filmCard.addEventListener('click', () => {
-                const filmId = film._id?.$oid || film._id;
-                if (filmId) window.location.href = `/movie/${filmId}`;
-            });
-
-            filmGrid.appendChild(card);
-        });
     }
 
     function updateSelectOptions(selectElement, itemsSet, template) {
@@ -259,8 +237,22 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!sortedFilms.length) {
             noResultsMessage.classList.add('hidden');
         }
-        currentPage = 1;
-        renderPage(sortedFilms);
+        filmGrid.innerHTML = '';
+
+        sortedFilms.forEach(film => {
+            const card = filmTemplate.content.cloneNode(true);
+            const filmCard = card.querySelector('.film-card');
+
+            card.querySelector('.film-poster').src = film.poster;
+            card.querySelector('.film-poster').alt = film.title;
+
+            filmCard.addEventListener('click', () => {
+                const filmId = film._id?.$oid || film._id;
+                if (filmId) window.location.href = `/movie/${filmId}`;
+            });
+
+            filmGrid.appendChild(card);
+        });
     }
 
     // Обработчик для кнопок сортировки
