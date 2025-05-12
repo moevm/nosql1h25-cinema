@@ -3,6 +3,7 @@ import requests
 API_URL = "http://localhost:5000"
 ES_URL = "http://92.100.72.29"
 
+
 def add_person(name, role):
     payload = {
         "name": name,
@@ -31,6 +32,7 @@ def add_film(title, year, directors, actors, description, country, duration, gen
     }
     response = requests.post(f"{API_URL}/api/films", json=payload)
     response.raise_for_status()
+
     film_id = response.json().get("id")
     print(f"Фильм '{title}' успешно добавлен с ID: {film_id}")
 
@@ -52,9 +54,10 @@ def add_admin(login, password):
         "password": password
     }
     response = requests.post(f"{API_URL}/api/admin/register", json=payload)
-    response.raise_for_status()
+    response.raise_for_status()  # Проверка на успешность запроса
     print(f"Администратор {login} успешно зарегистрирован!")
-    return login
+    return login  # Можно вернуть login, или ID, если он возвращается в ответе
+
 
 
 if __name__ == "__main__":
@@ -81,8 +84,8 @@ if __name__ == "__main__":
         "Heath Ledger": add_person("Heath Ledger", "actor"),
     }
 
-    print("Добавляем фильмы...")
 
+    print("Добавляем фильмы...")
     add_film(
         title="Inception",
         year=2010,

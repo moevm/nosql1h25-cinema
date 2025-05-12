@@ -1,5 +1,3 @@
-from app.backend.wiki_api import fetch_wikidata_person_info
-
 from bson.errors import InvalidId
 
 from .. import mongo
@@ -24,45 +22,32 @@ def register_api_routes(app):
 
         if request.method == 'POST':
             data = request.get_json()
-            required_fields = ['name', 'role']
+            required_fields = ['name', 'role', 'birth_date']
 
             if not all(field in data for field in required_fields):
                 return jsonify({"error": "Missing required fields"}), 400
 
             try:
-                # Пытаемся получить данные из Wikidata
-                wikidata_info = fetch_wikidata_person_info(data['name'])
-                
-                # Формируем объект персоны
                 person = {
                     "name": data['name'],
                     "role": data['role'],
-                    "birth_date": datetime.fromisoformat(data['birth_date']) if data.get('birth_date') else (
-                        datetime.fromisoformat(wikidata_info['birth_date']) if wikidata_info and wikidata_info.get('birth_date') else None
-                    ),
-                    "birth_place": data.get('birth_place') or (
-                        wikidata_info['birth_place'] if wikidata_info and wikidata_info.get('birth_place') else ''
-                    ),
-                    "wiki_link": data.get('wiki_link') or (
-                        wikidata_info['wiki_link'] if wikidata_info and wikidata_info.get('wiki_link') else ''
-                    ),
-                    "photo_url": wikidata_info['photo_url'] if wikidata_info and wikidata_info.get('photo_url') else None,
-                    "films_list": data.get('films_list', []),
-                    "data_source": "wikidata" if wikidata_info else "manual"
+                    "birth_date": datetime.fromisoformat(data['birth_date']),
+                    "birth_place": data.get('birth_place', ''),
+                    "wiki_link": data.get('wiki_link', ''),
+                    "films_list": data.get('films_list', [])
                 }
 
                 result = mongo.db.person.insert_one(person)
                 return jsonify({
                     "id": str(result.inserted_id),
-                    "message": "Person created",
-                    "data_source": "wikidata" if wikidata_info else "manual"
+                    "message": "Person created"
                 }), 201
 
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
 
 
-    @app.route('/api/persons/<string:person_id>', methods=['GET', 'PUT', 'DELETE', 'PATCH'])
+    @app.route('/api/persons/<string:person_id>', methods=['GET', 'PUT', 'DELETE'])
     def handle_person(person_id):
         if request.method == 'GET':
             person = mongo.db.person.find_one({"_id": ObjectId(person_id)})
@@ -86,20 +71,6 @@ def register_api_routes(app):
         if request.method == 'DELETE':
             result = mongo.db.person.delete_one({"_id": ObjectId(person_id)})
             return jsonify({"deleted_count": result.deleted_count}), 200
-
-        if request.method == 'PATCH':
-            data = request.get_json()
-            film_id = data.get('add_film')
-
-            if not film_id:
-                return jsonify({"error": "Missing film ID"}), 400
-
-            result = mongo.db.person.update_one(
-                {"_id": ObjectId(person_id)},
-                {"$addToSet": {"films_list": film_id}}  # Добавит, только если нет
-            )
-            return jsonify({"modified_count": result.modified_count}), 200
-
 
     @app.route('/api/<string:film_id>/persons', methods=['GET'])
     def get_actors_by_film(film_id):
@@ -278,41 +249,18 @@ def register_api_routes(app):
             def get_person_ids_by_names(names, role):
                 ids = []
                 for name in names:
-                    # Сначала проверяем, есть ли такой человек в базе
                     person = mongo.db.person.find_one({'name': name.strip()})
                     if person:
                         ids.append(person['_id'])
                     else:
-                        # Если нет, пробуем получить данные из Wikidata
-                        wikidata_info = fetch_wikidata_person_info(name.strip())
-                        
                         new_person = {
                             "name": name.strip(),
                             "role": role,
-                            "birth_date": (
-                                datetime.fromisoformat(wikidata_info['birth_date']) 
-                                if wikidata_info and wikidata_info.get('birth_date') 
-                                else datetime(1900, 1, 1)
-                            ),
-                            "birth_place": (
-                                wikidata_info['birth_place'] 
-                                if wikidata_info and wikidata_info.get('birth_place') 
-                                else ""
-                            ),
-                            "wiki_link": (
-                                wikidata_info['wiki_link'] 
-                                if wikidata_info and wikidata_info.get('wiki_link') 
-                                else ""
-                            ),
-                            "photo_url": (
-                                wikidata_info['photo_url'] 
-                                if wikidata_info and wikidata_info.get('photo_url') 
-                                else None
-                            ),
-                            "films_list": [],
-                            "data_source": "wikidata" if wikidata_info else "manual"
+                            "birth_date": datetime(1900, 1, 1),
+                            "birth_place": "",
+                            "wiki_link": "",
+                            "films_list": []
                         }
-                        
                         result = mongo.db.person.insert_one(new_person)
                         ids.append(result.inserted_id)
                 return ids
@@ -357,7 +305,7 @@ def register_api_routes(app):
                 )
 
             return jsonify({
-                "id": str(film_id),
+                "id": str(result.inserted_id),
                 "message": "Фильм успешно добавлен"
             }), 201
 
@@ -386,6 +334,42 @@ def register_api_routes(app):
             return ObjectId(id_str)
         except (InvalidId, TypeError):
             return None
+
+    @app.route('/api/films/<film_id>', methods=['GET'])
+    def get_film_by_id(film_id):
+        try:
+            film = mongo.db.film.find_one_or_404({"_id": ObjectId(film_id)})
+
+            directors = []
+            for director_id in film.get('directors', []):
+                obj_id = safe_objectid(director_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        directors.append(person['name'])
+
+            actors = []
+            for actor_id in film.get('actors', []):
+                obj_id = safe_objectid(actor_id)
+                if obj_id:
+                    person = mongo.db.person.find_one({"_id": obj_id})
+                    if person:
+                        actors.append(person['name'])
+
+            film_data = {
+                "title": film["title"],
+                "year": film["year"],
+                "description": film["description"],
+                "country": film["country"],
+                "duration": film["duration"],
+                "budget": film["budget"],
+                "genres": film["genres"],
+                "directors": directors,
+                "actors": actors,
+            }
+            return jsonify(film_data)
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
 
     @app.route('/api/films/<film_id>', methods=['PUT'])
     def update_film(film_id):
@@ -508,13 +492,7 @@ def register_api_routes(app):
                 if obj_id:
                     person = mongo.db.person.find_one({"_id": obj_id})
                     if person:
-                        directors.append({
-                            "name": person['name'],
-                            "birth_date": person.get('birth_date').isoformat() if person.get('birth_date') else None,
-                            "birth_place": person.get('birth_place'),
-                            "photo_url": person.get('photo_url'),
-                            "wiki_link": person.get('wiki_link')
-                        })
+                        directors.append(person['name'])
 
             actors = []
             for actor_id in movie.get('actors', []):
@@ -522,14 +500,9 @@ def register_api_routes(app):
                 if obj_id:
                     person = mongo.db.person.find_one({"_id": obj_id})
                     if person:
-                        actors.append({
-                            "name": person['name'],
-                            "birth_date": person.get('birth_date').isoformat() if person.get('birth_date') else None,
-                            "birth_place": person.get('birth_place'),
-                            "photo_url": person.get('photo_url'),
-                            "wiki_link": person.get('wiki_link')
-                        })
+                        actors.append(person['name'])
 
+            # Формируем данные фильма для ответа
             movie_data = {
                 "title": movie["title"],
                 "year": movie["year"],
@@ -555,42 +528,6 @@ def register_api_routes(app):
         if not ratings:
             return None
         return round(sum(ratings) / len(ratings), 1)
-
-    # ==================== ОБНОВЛЕНИЕ РЕЙТИНГА ФИЛЬМА ====================
-    @app.route('/api/films/<film_id>/rate', methods=['POST'])
-    def rate_film(film_id):
-        try:
-            data = request.get_json()
-            if not data or 'rating' not in data:
-                return jsonify({"error": "Отсутствует оценка"}), 400
-
-            rating = int(data['rating'])
-            if rating < 1 or rating > 10:
-                return jsonify({"error": "Оценка должна быть от 1 до 10"}), 400
-
-            # Проверяем существование фильма
-            film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
-            if not film:
-                return jsonify({"error": "Фильм не найден"}), 404
-
-            # Просто добавляем новую оценку в массив ratings
-            mongo.db.film.update_one(
-                {"_id": ObjectId(film_id)},
-                {"$push": {"ratings": rating}}
-            )
-
-            # Рассчитываем новый средний рейтинг
-            updated_film = mongo.db.film.find_one({"_id": ObjectId(film_id)})
-            avg_rating = calculate_avg_rating(updated_film.get('ratings', []))
-
-            return jsonify({
-                "success": True,
-                "message": "Оценка сохранена",
-                "newAvgRating": avg_rating
-            }), 200
-
-        except Exception as e:
-            return jsonify({"error": str(e)}), 500
 
     # ==================== АДМИНИСТРИРОВАНИЕ ====================
     @app.route('/api/admin/register', methods=['POST'])

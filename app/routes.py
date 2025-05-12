@@ -42,3 +42,4 @@ def register_main_routes(app):
     def movie_page(movie_id):
         print(f"Запрос фильма с ID: {movie_id}")
         return render_template('movie.html', movie_id=movie_id)
+
