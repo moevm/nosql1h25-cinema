@@ -347,6 +347,14 @@ def register_api_routes(app):
 
             result = mongo.db.film.insert_one(film)
             film_id = result.inserted_id
+            
+            # Обновляем films_list для всех актеров и режиссеров
+            all_person_ids = director_ids + actor_ids
+            if all_person_ids:
+                mongo.db.person.update_many(
+                    {"_id": {"$in": all_person_ids}},
+                    {"$addToSet": {"films_list": str(film_id)}}
+                )
 
             return jsonify({
                 "id": str(film_id),
@@ -418,6 +426,14 @@ def register_api_routes(app):
 
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
+            
+            # Обновляем films_list для всех актеров и режиссеров
+            all_person_ids = director_ids + actor_ids
+            if all_person_ids:
+                mongo.db.person.update_many(
+                    {"_id": {"$in": all_person_ids}},
+                    {"$addToSet": {"films_list": str(film_id)}}
+                )
 
             # Получаем ссылку на видео, если она есть
             video_url = request.form.get('video_url', film.get('video_path', ''))
