@@ -26,19 +26,18 @@ async function loadMovieData(movieId) {
 function renderMoviePage(movie, movieId) {
     document.title = `${movie.title}`;
 
-// Постер и заголовок
+    // Постер и заголовок
     document.getElementById('moviePoster').src = movie.poster;
     document.getElementById('moviePoster').alt = movie.title;
     document.getElementById('movieTitleYear').textContent = `${movie.title} (${movie.year})`;
 
-// Рейтинг
+    // Рейтинг
     document.getElementById('movieRating').textContent =
         movie.avg_rating !== null && movie.avg_rating !== undefined
             ? movie.avg_rating.toFixed(1)
             : '—';
-    console.log("Рейтинг: ",movie.avg_rating)
 
-// Продолжительность, описание, жанры, страна, бюджет
+    // Продолжительность, описание, жанры, страна, бюджет
     document.getElementById('movieDuration').textContent = `${movie.duration} мин`;
     document.getElementById('movieDescription').textContent = movie.description;
     document.getElementById('movieGenres').textContent = movie.genres?.join(', ') || '—';
@@ -47,71 +46,100 @@ function renderMoviePage(movie, movieId) {
         ? `${movie.budget.toLocaleString()} $`
         : '—';
 
-// Режиссёры
-    document.getElementById('movieDirector').textContent = 
+    // Режиссёры
+    document.getElementById('movieDirector').textContent =
         movie.directors?.map(d => d.name).join(', ') || '—';
 
-// Актёры (первые 2 + кнопка "Подробнее")
+    // Актёры
     const actorsElement = document.getElementById('movieActors');
     const viewAllLink = document.getElementById('viewAllActors');
     const displayedActors = movie.actors?.slice(0, 2) || [];
-
     actorsElement.textContent = displayedActors.map(a => a.name).join(', ') || '—';
     viewAllLink.textContent = 'Подробнее →';
 
-// Обработчики событий для hover эффекта
     viewAllLink.addEventListener('mouseenter', () => {
         viewAllLink.style.textDecoration = 'underline';
         viewAllLink.style.color = '#023370';
     });
-
     viewAllLink.addEventListener('mouseleave', () => {
         viewAllLink.style.textDecoration = 'none';
         viewAllLink.style.color = '#d0ddff';
     });
-
     viewAllLink.addEventListener('click', () => {
         window.location.href = `/movie/${movieId}/persons`;
     });
 
-// Видео
-    const videoElement = document.getElementById('movieVideo');
-    const placeholder = document.getElementById('videoPlaceholder');
+    // Сериалы
+    const seriesSelector = document.querySelector('.series-selector');
+    const seriesSelect = document.getElementById('seriesSelect');
 
-    if (movie.video) {
-        videoElement.src = movie.video;
-        videoElement.classList.remove('hidden');
-        placeholder.classList.add('hidden');
+    if (movie.type === 'series' && Array.isArray(movie.episodes) && movie.episodes.length > 0) {
+        seriesSelector.style.display = 'block';
 
-        videoElement.addEventListener('error', () => {
-            videoElement.classList.add('hidden');
-            placeholder.classList.remove('hidden');
+        // Очистка предыдущих опций
+        seriesSelect.innerHTML = '';
+
+        // Заполнение опций
+        movie.episodes.forEach((episode, index) => {
+            const option = document.createElement('option');
+            option.value = index;
+            option.textContent = `Сезон ${episode.season}, Серия ${episode.episode}: ${episode.title}`;
+            seriesSelect.appendChild(option);
         });
 
-        videoElement.addEventListener('canplay', () => {
+        // Автоматическое воспроизведение первой серии
+        const firstEpisode = movie.episodes[0];
+        const videoElement = document.getElementById('movieVideo');
+        videoElement.src = firstEpisode.url;
+
+        // Обработчик изменения выбранной серии
+        seriesSelect.addEventListener('change', (e) => {
+            const selectedIndex = parseInt(e.target.value);
+            const selectedEpisode = movie.episodes[selectedIndex];
+
+            if (selectedEpisode) {
+                videoElement.src = selectedEpisode.url;
+                document.getElementById('movieTitleYear').textContent = 
+                    `${movie.title} - Сезон ${selectedEpisode.season}, Серия ${selectedEpisode.episode}: ${selectedEpisode.title}`;
+            }
+        });
+
+    } else {
+        seriesSelector.style.display = 'none';
+        // Видео
+        const videoElement = document.getElementById('movieVideo');
+        const placeholder = document.getElementById('videoPlaceholder');
+
+        if (movie.video) {
+            videoElement.src = movie.video;
             videoElement.classList.remove('hidden');
             placeholder.classList.add('hidden');
-        });
-    } else {
-        videoElement.classList.add('hidden');
-        placeholder.classList.remove('hidden');
+            videoElement.addEventListener('error', () => {
+                videoElement.classList.add('hidden');
+                placeholder.classList.remove('hidden');
+            });
+            videoElement.addEventListener('canplay', () => {
+                videoElement.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            });
+        } else {
+            videoElement.classList.add('hidden');
+            placeholder.classList.remove('hidden');
+        }
     }
 
-// Даты создания и обновления
+    // Даты создания и обновления
     const options = {
         timeZone: 'Europe/Moscow',
         dateStyle: 'short',
         timeStyle: 'short',
     };
-
     const createdDate = new Date(movie.created_at);
     const updatedDate = new Date(movie.updated_at);
-
     document.getElementById('movieCreatedAt').textContent =
         createdDate.toLocaleString('ru-RU', options);
     document.getElementById('movieUpdatedAt').textContent =
         updatedDate.toLocaleString('ru-RU', options);
-
 }
 
 function redirectToHome() {

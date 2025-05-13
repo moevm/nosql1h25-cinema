@@ -35,18 +35,26 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    
-    // TODO: Добавить в бд параметр с типом (фильм или сериал)
     // Обработчики для меню
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const href = link.getAttribute('href');
-            window.location.href = href;
-
-            // Обновление активной ссылки (опционально)
+            
+            // Обновление активной ссылки
             menuLinks.forEach(item => item.classList.remove('menu__link_active'));
             link.classList.add('menu__link_active');
+            
+            // Переключение между фильмами и сериалами
+            if (link.textContent.trim() === 'Фильмы') {
+                loadContent('films');
+            } else if (link.textContent.trim() === 'Сериалы') {
+                loadContent('series');
+            } else if (href === "#") {
+                loadContent('all');
+            } else {
+                window.location.href = href;
+            }
         });
     });
 
