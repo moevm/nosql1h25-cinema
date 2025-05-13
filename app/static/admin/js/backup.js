@@ -31,7 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const result = await response.json();
 
                 if (response.ok) {
-                    alert(`Успешный импорт! Коллекции: ${result.collections.join(', ')}`);
+                    const count = result.importedCount ?? 'неизвестно';
+                    alert(`Успешный импорт!\nКоллекции: ${result.collections.join(', ')}\nИмпортировано объектов: ${count}`);
                 } else {
                     throw new Error(result.error || 'Неизвестная ошибка');
                 }

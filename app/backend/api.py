@@ -181,8 +181,9 @@ def register_api_routes(app):
             # Конвертируем специальные типы данных из JSON в BSON
             converted_data = json_util.loads(json.dumps(data))
 
-            # Очищаем существующие коллекции перед импортом (опционально)
-            # Можно добавить параметр запроса для управления этим поведением
+            total_imported = 0  # <-- добавим счётчик
+
+            # Очищаем существующие коллекции перед импортом
             for collection_name in converted_data.keys():
                 mongo.db[collection_name].drop()
 
@@ -190,17 +191,22 @@ def register_api_routes(app):
             for collection_name, documents in converted_data.items():
                 collection = mongo.db[collection_name]
                 if isinstance(documents, list):
-                    collection.insert_many(documents)
+                    result = collection.insert_many(documents)
+                    total_imported += len(result.inserted_ids)
                 else:
                     return jsonify({'error': f'Invalid format for collection {collection_name}'}), 400
 
-            return jsonify({'message': 'Database imported successfully',
-                            'collections': list(converted_data.keys())}), 200
+            return jsonify({
+                'message': 'Database imported successfully',
+                'collections': list(converted_data.keys()),
+                'importedCount': total_imported  # <-- добавляем в ответ
+            }), 200
 
         except json.JSONDecodeError:
             return jsonify({'error': 'Invalid JSON file'}), 400
         except Exception as e:
             return jsonify({'error': str(e)}), 500
+
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
     @app.route('/api/content')
