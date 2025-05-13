@@ -261,16 +261,16 @@ def register_api_routes(app):
 
                 # Поля, зависящие от типа
                 if content_type == 'series':
-                    series_info = data.get('series_info', [])
+                    episodes = data.get('episodes', [])
                     # Проверка формата видео-сериалов
-                    for v in series_info:
+                    for v in episodes:
                         if not all(k in v for k in ('season', 'episode', 'title', 'url')):
                             return jsonify({"error": "Invalid video format for series"}), 400
-                    film["series_info"] = series_info
+                    film["episodes"] = episodes
                     film["video_path"] = None  # Не используется для сериалов
                 else:
                     film["video_path"] = data.get('video_path')
-                    film["series_info"] = []  # Не используется для фильмов
+                    film["episodes"] = []  # Не используется для фильмов
 
                 result = mongo.db.film.insert_one(film)
                 return jsonify({

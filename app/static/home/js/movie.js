@@ -73,14 +73,14 @@ function renderMoviePage(movie, movieId) {
     const seriesSelector = document.querySelector('.series-selector');
     const seriesSelect = document.getElementById('seriesSelect');
 
-    if (movie.type === 'series' && Array.isArray(movie.series_info) && movie.series_info.length > 0) {
+    if (movie.type === 'series' && Array.isArray(movie.episodes) && movie.episodes.length > 0) {
         seriesSelector.style.display = 'block';
 
         // Очистка предыдущих опций
         seriesSelect.innerHTML = '';
 
         // Заполнение опций
-        movie.series_info.forEach((episode, index) => {
+        movie.episodes.forEach((episode, index) => {
             const option = document.createElement('option');
             option.value = index;
             option.textContent = `Сезон ${episode.season}, Серия ${episode.episode}: ${episode.title}`;
@@ -88,14 +88,14 @@ function renderMoviePage(movie, movieId) {
         });
 
         // Автоматическое воспроизведение первой серии
-        const firstEpisode = movie.series_info[0];
+        const firstEpisode = movie.episodes[0];
         const videoElement = document.getElementById('movieVideo');
         videoElement.src = firstEpisode.url;
 
         // Обработчик изменения выбранной серии
         seriesSelect.addEventListener('change', (e) => {
             const selectedIndex = parseInt(e.target.value);
-            const selectedEpisode = movie.series_info[selectedIndex];
+            const selectedEpisode = movie.episodes[selectedIndex];
 
             if (selectedEpisode) {
                 videoElement.src = selectedEpisode.url;

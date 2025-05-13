@@ -16,7 +16,7 @@ def add_person(name, role):
     return person_id
 
 
-def add_film(title, year, directors, actors, description, country, duration, genres, budget, poster, video_path, ratings, type="film", series_info=[]):
+def add_film(title, year, directors, actors, description, country, duration, genres, budget, poster, video_path, ratings, type="film", episodes=[]):
     payload = {
         "title": title,
         "year": year,
@@ -35,7 +35,7 @@ def add_film(title, year, directors, actors, description, country, duration, gen
 
     # Если это сериал — добавляем массив серий
     if type == "series":
-        payload["series_info"] = series_info
+        payload["episodes"] = episodes
 
     response = requests.post(f"{API_URL}/api/films", json=payload)
     response.raise_for_status()
@@ -239,7 +239,7 @@ if __name__ == "__main__":
         video_path=None,
         ratings=[9],
         type="series",
-        series_info=breaking_bad_videos
+        episodes=breaking_bad_videos
     )
 
     game_of_thrones_videos = [
@@ -260,7 +260,7 @@ if __name__ == "__main__":
         video_path=None,
         ratings=[9],
         type="series",
-        series_info=game_of_thrones_videos
+        episodes=game_of_thrones_videos
     )
 
     friends_videos = [
@@ -281,7 +281,7 @@ if __name__ == "__main__":
         video_path=None,
         ratings=[8],
         type="series",
-        series_info=friends_videos
+        episodes=friends_videos
     )
 
     stranger_videos = [
@@ -302,7 +302,7 @@ if __name__ == "__main__":
         video_path=None,
         ratings=[8],
         type="series",
-        series_info=stranger_videos
+        episodes=stranger_videos
     )
 
     mandalorian_videos = [
@@ -323,7 +323,7 @@ if __name__ == "__main__":
         video_path=None,
         ratings=[8],
         type="series",
-        series_info=mandalorian_videos
+        episodes=mandalorian_videos
     )
 
     print("Добавляем администратора...")
