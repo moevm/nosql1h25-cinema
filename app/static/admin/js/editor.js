@@ -42,6 +42,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
+    // Обработчик изменения типа фильма (фильм/сериал)
+    document.querySelectorAll('input[name="type"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const episodesSection = document.getElementById('series-episodes');
+            const videoUrlField = document.getElementById('video_url').closest('.form-flex');
+            if (this.value === 'series') {
+                episodesSection.style.display = 'block';
+                videoUrlField.style.display = 'none';
+            } else {
+                episodesSection.style.display = 'none';
+                videoUrlField.style.display = 'block';
+                document.getElementById('episodes-container').innerHTML = '';
+            }
+        });
+    });
+
     const saveBtn = document.getElementById("new_save-changes");
 
     saveBtn.addEventListener("click", async function (e) {
@@ -65,6 +81,25 @@ document.addEventListener("DOMContentLoaded", function () {
         const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
         const actors = tagifyActors.value.map(tag => tag.value.trim()).filter(Boolean);
 
+        const type = document.querySelector('input[name="type"]:checked').value;
+        const episodes = [];
+
+        if (type === 'series') {
+            const episodeForms = document.querySelectorAll('.episode-form');
+            episodeForms.forEach(form => {
+                const season = form.querySelector('input[name*="[season]"]').value;
+                const episode = form.querySelector('input[name*="[episode]"]').value;
+                const title = form.querySelector('input[name*="[title]"]').value;
+                const url = form.querySelector('input[name*="[url]"]').value;
+
+                episodes.push({
+                    season: parseInt(season),
+                    episode: parseInt(episode),
+                    title: title.trim(),
+                    url: url.trim()
+                });
+            });
+        }
         // Валидация
         let valid = true;
 
@@ -123,17 +158,24 @@ document.addEventListener("DOMContentLoaded", function () {
         let isEditing = !!editingFilmId;
 
         if (!posterUrl && !isEditing) {
-    valid = false;
-    document.getElementById("poster-url-error").textContent = "Пожалуйста, вставьте ссылку на постер";
-    document.getElementById("poster_url").classList.add("input-error");
-}
+            valid = false;
+            document.getElementById("poster-url-error").textContent = "Пожалуйста, вставьте ссылку на постер";
+            document.getElementById("poster_url").classList.add("input-error");
+        }
 
 
-        if (!videoUrl && !isEditing) {
-    valid = false;
-    document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
-    document.getElementById("video_url").classList.add("input-error");
-}
+        if (type === 'movie' && !videoUrl && !isEditing) {
+            valid = false;
+            document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
+            document.getElementById("video_url").classList.add("input-error");
+        }
+
+        // Валидация для сериалов
+        if (type === 'series' && episodes.length === 0) {
+            valid = false;
+            document.getElementById("serias-url-error").textContent = "Пожалуйста, добавьте хотя бы одну серию";
+            document.getElementById("video_url").classList.add("input-error");
+        }
 
         if (!valid) {
             return;
@@ -152,15 +194,15 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("directors", JSON.stringify(directors));
         formData.append("actors", JSON.stringify(actors));
 
-        // const directors = directorsRaw.split(",").map(name => name.trim()).filter(Boolean);
-        // const actors = actorsRaw.split(",").map(name => name.trim()).filter(Boolean);
-        // formData.append("directors", JSON.stringify(directors));
-        // formData.append("actors", JSON.stringify(actors));
+        formData.append("type", type);
+        if (type === 'series') {
+            formData.append("episodes", JSON.stringify(episodes));
+        }
 
         formData.append("poster_url", posterUrl);
         if (videoUrl) {
-    formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
-}
+            formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
+        }
 
         try {
             let response;
@@ -377,6 +419,7 @@ function clearFilmForm() {
     document.querySelectorAll(".genre-option.selected").forEach(el => el.classList.remove("selected"));
     document.getElementById("poster").value = "";
     document.getElementById("video").value = "";
+    document.getElementById("episodes-container").innerHTML = "";
     document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
     document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
     document.querySelectorAll(".error-message").forEach((el) => el.textContent = "");
@@ -384,14 +427,16 @@ function clearFilmForm() {
 
 function openFilmModal(isEditMode, filmData = null) {
     const modalOverlay = document.getElementById("add-new-film-modal");
+    const videoUrlField = document.getElementById('video_url').closest('.form-flex');
     modalOverlay.style.display = "block";
 
     if (!isEditMode) {
         clearFilmForm();
-
-
         document.getElementById("new_save-changes").textContent = "Добавить фильм";
         console.log('Film Data:', filmData);
+
+        document.querySelector('input[name="type"][value="movie"]').checked = true;
+        document.getElementById('series-episodes').style.display = 'none';
     } else if (filmData) {
 
         document.getElementById("new_save-changes").textContent = "Сохранить изменения";
@@ -415,6 +460,65 @@ function openFilmModal(isEditMode, filmData = null) {
                 el.classList.remove("selected");
             }
         });
+        if (filmData.type) {
+            document.querySelector(`input[name="type"][value="${filmData.type}"]`).checked = true;
+            if (filmData.type === 'series') {
+                document.getElementById('series-episodes').style.display = 'block';
+                videoUrlField.style.display = 'none';
+                // Здесь можно добавить обработку существующих серий, если они есть
+                if (filmData.episodes && filmData.episodes.length > 0) {
+                    document.getElementById('episodes-container').innerHTML = '';
+                    filmData.episodes.forEach((episode, index) => {
+                        const div = document.createElement('div');
+                        div.classList.add('episode-form');
+                        div.innerHTML = `
+                            <div class="form-flex">
+                                <label>Сезон:</label>
+                                <input type="number" name="episodes[${index}][season]" value="${episode.season}" required>
+                                <label>Эпизод:</label>
+                                <input type="number" name="episodes[${index}][episode]" value="${episode.episode}" required>
+                            </div>
+                            <div class="form-flex">
+                                <label>Название серии:</label>
+                                <input type="text" name="episodes[${index}][title]" value="${episode.title}" required>
+                            </div>
+                            <div class="form-flex">
+                                <label>Ссылка на видео:</label>
+                                <input type="text" name="episodes[${index}][url]" value="${episode.url}" required>
+                            </div>
+                            <hr>
+                        `;
+                        document.getElementById('episodes-container').appendChild(div);
+                    });
+                }
+            }
+        }
 
     }
+}
+
+function addEpisode() {
+    const container = document.getElementById('episodes-container');
+
+    const index = container.children.length;
+    const div = document.createElement('div');
+    div.classList.add('episode-form');
+    div.innerHTML = `
+        <div class="form-flex">
+            <label>Сезон:</label>
+            <input type="number" name="episodes[${index}][season]" required>
+            <label>Эпизод:</label>
+            <input type="number" name="episodes[${index}][episode]" required>
+        </div>
+        <div class="form-flex">
+            <label>Название серии:</label>
+            <input type="text" name="episodes[${index}][title]" required>
+        </div>
+        <div class="form-flex">
+            <label>Ссылка на видео:</label>
+            <input type="text" name="episodes[${index}][url]" required>
+        </div>
+        <hr>
+    `;
+    container.appendChild(div);
 }

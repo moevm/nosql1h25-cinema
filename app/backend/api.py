@@ -276,6 +276,7 @@ def register_api_routes(app):
             duration = int(request.form.get('duration', 0))
             budget = float(request.form.get('budget', 0))
             genres = json.loads(request.form.get('genres', '[]'))
+            type = request.form.get('type', 'movie')
 
             directors_raw = json.loads(request.form.get('directors', '[]'))
             actors_raw = json.loads(request.form.get('actors', '[]'))
@@ -327,11 +328,20 @@ def register_api_routes(app):
             director_ids = get_person_ids_by_names(directors_raw, "director")
             actor_ids = get_person_ids_by_names(actors_raw, "actor")
 
+            # Обработка серий для сериалов
+            episodes = []
+            if type == 'series':
+                episodes_raw = request.form.get('episodes', '[]')
+                try:
+                    episodes = json.loads(episodes_raw)
+                except json.JSONDecodeError:
+                    episodes = []
+
             # Вместо загрузки файла, получаем ссылку на видео
             video_url = request.form.get('video_url', '')
 
             # Получаем ссылку на постер
-            poster_url = request.form.get('poster_url', '')
+            poster_url = request.form.get('poster_url', '') if type == 'movie' else None
 
             film = {
                 "title": title,
@@ -348,7 +358,9 @@ def register_api_routes(app):
                 "ratings": [],
                 "views": [],
                 "created_at": datetime.now(),
-                "updated_at": datetime.now()
+                "updated_at": datetime.now(),
+                "type": type,
+                "episodes": episodes if type == 'series' else None
             }
 
             result = mongo.db.film.insert_one(film)
@@ -364,7 +376,8 @@ def register_api_routes(app):
 
             return jsonify({
                 "id": str(film_id),
-                "message": "Фильм успешно добавлен"
+                "message": "Фильм успешно добавлен",
+                "type": type
             }), 201
 
         except Exception as e:
@@ -413,9 +426,19 @@ def register_api_routes(app):
             duration = int(request.form.get('duration', film['duration']))
             budget = float(request.form.get('budget', film['budget']))
             genres = json.loads(request.form.get('genres', json.dumps(film['genres'])))
+            type = request.form.get('type', film.get('type', 'movie'))
 
             directors_raw = json.loads(request.form.get('directors', '[]'))
             actors_raw = json.loads(request.form.get('actors', '[]'))
+
+            # Обработка серий для сериалов
+            episodes = []
+            if type == 'series':
+                episodes_raw = request.form.get('episodes', '[]')
+                try:
+                    episodes = json.loads(episodes_raw)
+                except json.JSONDecodeError:
+                    episodes = film.get('episodes', [])
 
             def get_person_ids_by_names(names, role):
                 ids = []
@@ -478,8 +501,10 @@ def register_api_routes(app):
                 )
 
             # Получаем ссылку на видео и постер
-            video_url = request.form.get('video_url', film.get('video_path', ''))
+            # video_url = request.form.get('video_url', film.get('video_path', ''))
             poster_url = request.form.get('poster_url', film.get('poster', ''))
+            # Для фильмов получаем ссылку на видео, для сериалов - None
+            video_url = request.form.get('video_url', film.get('video_path', '')) if type == 'movie' else None
 
             # Обновляем данные фильма
             updated_film = {
@@ -494,7 +519,9 @@ def register_api_routes(app):
                 "video_path": video_url,
                 "directors": [ObjectId(id) for id in director_ids],  # Сохраняем как ObjectId
                 "actors": [ObjectId(id) for id in actor_ids],       # Сохраняем как ObjectId
-                "updated_at": datetime.now()
+                "updated_at": datetime.now(),
+                "type": type,
+                "episodes": episodes if type == 'series' else None
             }
 
             mongo.db.film.update_one({"_id": ObjectId(film_id)}, {"$set": updated_film})
@@ -550,7 +577,9 @@ def register_api_routes(app):
                 "video": movie.get('video_path'),
                 "created_at": movie.get("created_at").isoformat() if movie.get("created_at") else None,
                 "updated_at": movie.get("updated_at").isoformat() if movie.get("updated_at") else None,
-                "avg_rating": calculate_avg_rating(movie.get("ratings", []))
+                "avg_rating": calculate_avg_rating(movie.get("ratings", [])),
+                "type": movie.get("type", "movie"),
+                "episodes": movie.get("episodes") if movie.get("type") == "series" else None
             }
 
             return jsonify(movie_data)
