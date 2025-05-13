@@ -93,3 +93,32 @@ body {
 .full-stars .rating-group input:hover ~ label svg {
     fill: #BFE2FF;
 }
+
+.series-selector {
+    margin: 1.5em 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+.series-select {
+    width: 100%;
+    padding: 0.6em;
+    font-size: 1em;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    color: #023370;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    box-sizing: border-box;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24'%3E%3Cpath fill='%23023370' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+    padding-right: 36px;
+}
+
+.series-select:focus {
+    border-color: #023370;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(2, 51, 112, 0.3);
+}

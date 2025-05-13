@@ -209,27 +209,25 @@ def register_api_routes(app):
 
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
-    @app.route('/api/content')
-    def get_content():
-        content_type = request.args.get('type', 'all')
-
-        movies = list(mongo.db.film.find())
-
-        if content_type == 'all':
-            return jsonify(movies)
-        elif content_type == 'films':
-            return jsonify([m for m in movies if m['type'] == 'film'])
-        elif content_type == 'series':
-            return jsonify([m for m in movies if m['type'] == 'series'])
-
-        return jsonify([])
-
-
     @app.route('/api/films', methods=['GET', 'POST'])
     def handle_films():
         if request.method == 'GET':
-            films = list(mongo.db.film.find())
-            return parse_json(films), 200
+            try:
+                # Получаем параметр type из запроса
+                content_type = request.args.get('type', 'all')
+                
+                if content_type == 'all':
+                    films = list(mongo.db.film.find())
+                elif content_type == 'films':
+                    films = list(mongo.db.film.find({"type": "film"}))
+                elif content_type == 'series':
+                    films = list(mongo.db.film.find({"type": "series"}))
+                else:
+                    films = []
+                    
+                return parse_json(films), 200
+            except Exception as e:
+                return jsonify({"error": str(e)}), 500
 
         if request.method == 'POST':
             data = request.get_json()
@@ -239,6 +237,10 @@ def register_api_routes(app):
                 return jsonify({"error": "Missing required fields"}), 400
 
             try:
+                # Определяем тип контента: фильм или сериал
+                content_type = data.get('type', 'film')  # По умолчанию film
+                
+                # Базовые поля
                 film = {
                     "title": data['title'],
                     "year": data['year'],
@@ -250,12 +252,25 @@ def register_api_routes(app):
                     "genres": data.get('genres', []),
                     "budget": data.get('budget'),
                     "poster": data.get('poster'),
-                    "video_path": data.get('video_path'),
                     "created_at": datetime.now(),
                     "updated_at": datetime.now(),
                     "ratings": data.get('ratings', []),
-                    "views": []
+                    "views": [],
+                    "type": content_type
                 }
+
+                # Поля, зависящие от типа
+                if content_type == 'series':
+                    series_info = data.get('series_info', [])
+                    # Проверка формата видео-сериалов
+                    for v in series_info:
+                        if not all(k in v for k in ('season', 'episode', 'title', 'url')):
+                            return jsonify({"error": "Invalid video format for series"}), 400
+                    film["series_info"] = series_info
+                    film["video_path"] = None  # Не используется для сериалов
+                else:
+                    film["video_path"] = data.get('video_path')
+                    film["series_info"] = []  # Не используется для фильмов
 
                 result = mongo.db.film.insert_one(film)
                 return jsonify({
