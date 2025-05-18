@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const href = link.getAttribute('href');
+
+            clearFilters();
             
             // Обновление активной ссылки
             menuLinks.forEach(item => item.classList.remove('menu__link_active'));
@@ -221,6 +223,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearFilterButton = document.querySelector('.filter-form__clear-button');
 
     clearFilterButton.addEventListener('click', () => {
+        clearFilters();
+        loadContent('all');
+    });
+
+    function clearFilters() {
         // Сброс селектов
         genreSelect.selectedIndex = 0;
         countrySelect.selectedIndex = 0;
@@ -241,10 +248,17 @@ document.addEventListener('DOMContentLoaded', () => {
         durationMaxInput.value = '';
         budgetMinInput.value = '';
         budgetMaxInput.value = '';
+        seriesTitleInput.value = '';
 
+        // Сброс сортировки
+        sortRadios.forEach(radio => {
+            radio.checked = false;
+        });
+
+        // Закрытие панелей фильтра и сортировки
         filterPanel.classList.add('hidden');
-        loadContent('all');
-    });
+        sortingPanel.classList.add('hidden');
+    }
 
     // Функции сортировки
     function sortByPopularity(films) {
