@@ -81,6 +81,11 @@ if __name__ == "__main__":
         "Marta Kauffman": add_person("Marta Kauffman", "director"),
         "Matt Duffer": add_person("Matt Duffer", "director"),
         "Jon Favreau": add_person("Jon Favreau", "director"),
+        "Lana Wachowski": add_person("Lana Wachowski", "director"),
+        "Peter Jackson": add_person("Peter Jackson", "director"),
+        "Robert Zemeckis": add_person("Robert Zemeckis", "director"),
+        "Johan Renck": add_person("Johan Renck", "director"),
+        "Peter Morgan": add_person("Peter Morgan", "director")
     }
 
     print("Добавляем актёров...")
@@ -103,6 +108,15 @@ if __name__ == "__main__":
         "Millie Bobby Brown": add_person("Millie Bobby Brown", "actor"),
         "Gaten Matarazzo": add_person("Gaten Matarazzo", "actor"),
         "Pedro Pascal": add_person("Pedro Pascal", "actor"),
+        "Matthew McConaughey": add_person("Matthew McConaughey", "actor"),
+        "Keanu Reeves": add_person("Keanu Reeves", "actor"),
+        "Henry Cavill": add_person("Henry Cavill", "actor"),
+        "Jared Harris": add_person("Jared Harris", "actor"),
+        "Stellan Skarsgård": add_person("Stellan Skarsgård", "actor"),
+        "Claire Foy": add_person("Claire Foy", "actor"),
+        "Matt Smith": add_person("Matt Smith", "actor"),
+        "Elijah Wood": add_person("Elijah Wood", "actor"),
+        "Viggo Mortensen": add_person("Viggo Mortensen", "actor")
     }
 
     print("Добавляем фильмы...")
@@ -218,6 +232,70 @@ if __name__ == "__main__":
         ratings=[9],
         type="film"
     )
+    
+    add_film(
+        title="Interstellar",
+        year=2014,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Matthew McConaughey"]],
+        description="A team of explorers travel through a wormhole in space to ensure humanity's survival.",
+        country="USA",
+        duration=169,
+        genres=["Фантастика", "Приключения"],
+        budget=165000000,
+        poster="https://i.pinimg.com/474x/8e/0d/ab/8e0dab8699be85720ce55845065bf6dc.jpg?nii=t",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[8],
+        type="film"
+    )
+
+    add_film(
+        title="The Matrix",
+        year=1999,
+        directors=[director_ids["Lana Wachowski"]],
+        actors=[actor_ids["Keanu Reeves"]],
+        description="A computer programmer discovers a mysterious world of digital reality.",
+        country="USA",
+        duration=136,
+        genres=["Фантастика", "Боевик"],
+        budget=63000000,
+        poster="https://i.pinimg.com/originals/9e/85/34/9e8534c48e0168fb753057370627db8a.jpg",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+
+    add_film(
+        title="Forrest Gump",
+        year=1994,
+        directors=[director_ids["Robert Zemeckis"]],
+        actors=[actor_ids["Tom Hanks"]],
+        description="The story of a man with low IQ who rose to greatness through sheer persistence.",
+        country="USA",
+        duration=142,
+        genres=["Драма", "Комедия"],
+        budget=55000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/3560b757-9b95-45ec-af8c-623972370f9d/1920x",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+
+    add_film(
+        title="The Lord of the Rings: The Fellowship of the Ring",
+        year=2001,
+        directors=[director_ids["Peter Jackson"]],
+        actors=[actor_ids["Elijah Wood"], actor_ids["Viggo Mortensen"]],
+        description="A meek Hobbit from the Shire and eight companions set out on a journey to destroy the powerful One Ring and save Middle-earth from the Dark Lord Sauron.",
+        country="USA",
+        duration=178,
+        genres=["Фэнтези", "Приключения"],
+        budget=93000000,
+        poster="https://avatars.mds.yandex.net/i?id=3b4fdc2068d8e6018b1b7ce76be47b5b_l-4314299-images-thumbs&n=13",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
 
     print("Добавляем сериалы...")
 
@@ -324,6 +402,72 @@ if __name__ == "__main__":
         ratings=[8],
         type="series",
         episodes=mandalorian_videos
+    )
+    
+    # Сериал 1: The Witcher
+    witcher_videos = [
+        {"season": 1, "episode": 1, "title": "The End's Beginning", "url": f"{ES_URL}/videos/sample.mp4"},
+        {"season": 1, "episode": 2, "title": "Four Marks", "url": f"{ES_URL}/videos/sample.mp4"}
+    ]
+    add_film(
+        title="The Witcher",
+        year=2019,
+        directors=[director_ids["Jon Favreau"]],
+        actors=[actor_ids["Henry Cavill"]],
+        description="A witcher is summoned to protect the kingdom from dark forces.",
+        country="Poland",
+        duration=55,
+        genres=["Фэнтези", "Драма"],
+        budget=7000000,
+        poster="https://i.pinimg.com/736x/4e/e0/c0/4ee0c075b1c33fccc9c2b64e5771c29b.jpg",
+        video_path=None,
+        ratings=[8],
+        type="series",
+        episodes=witcher_videos
+    )
+
+    # Сериал 2: Chernobyl
+    chernobyl_videos = [
+        {"season": 1, "episode": 1, "title": "Взрыв", "url": f"{ES_URL}/videos/sample.mp4"},
+        {"season": 1, "episode": 2, "title": "Спасение", "url": f"{ES_URL}/videos/sample.mp4"}
+    ]
+    add_film(
+        title="Chernobyl",
+        year=2019,
+        directors=[director_ids["Johan Renck"]],
+        actors=[actor_ids["Jared Harris"], actor_ids["Stellan Skarsgård"]],
+        description="Рассказ о катастрофе на Чернобыльской АЭС и ее последствиях для всего мира.",
+        country="UK",
+        duration=60,
+        genres=["Исторический", "Драма"],
+        budget=5000000,
+        poster="https://mir-s3-cdn-cf.behance.net/project_modules/1400/a6f64381852991.5d0baa717de68.jpg",
+        video_path=None,
+        ratings=[9],
+        type="series",
+        episodes=chernobyl_videos
+    )
+
+    # Сериал 3: The Crown
+    crown_videos = [
+        {"season": 1, "episode": 1, "title": "Vergangenheit", "url": f"{ES_URL}/videos/sample.mp4"},
+        {"season": 1, "episode": 2, "title": "Hyde Park Corner", "url": f"{ES_URL}/videos/sample.mp4"}
+    ]
+    add_film(
+        title="The Crown",
+        year=2016,
+        directors=[director_ids["Peter Morgan"]],
+        actors=[actor_ids["Claire Foy"], actor_ids["Matt Smith"]],
+        description="Документальный сериал о жизни королевской семьи Великобритании.",
+        country="UK",
+        duration=60,
+        genres=["Исторический", "Драма"],
+        budget=13000000,
+        poster="https://www.kino-teatr.ru/movie/poster/123479/85770.jpg",
+        video_path=None,
+        ratings=[9],
+        type="series",
+        episodes=crown_videos
     )
 
     print("Добавляем администратора...")
