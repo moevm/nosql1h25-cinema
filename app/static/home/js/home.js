@@ -177,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const durationMaxInput = document.querySelector('.filter-form__input--duration-max');
     const budgetMinInput = document.querySelector('.filter-form__input--budget-min');
     const budgetMaxInput = document.querySelector('.filter-form__input--budget-max');
-
+    const seriesTitleInput = document.querySelector('.filter-form__input--series-title');
     
     const applyFilterButton = document.querySelector('.filter-form__apply-button');
 
@@ -185,6 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = {
             genre: genreSelect.value || null,
             description: descriptionInput.value.trim(),
+            seriesTitle: seriesTitleInput.value.trim(),
             country: countrySelect.value || null,
             director: directorInput.value.trim(),
             actor: actorInput.value.trim(),
