@@ -679,6 +679,19 @@ def register_api_routes(app):
             all_films = list(mongo.db.film.find())
 
             def match(film):
+                # Название серии
+                if filters.get('seriesTitle'):
+                    series_title = filters['seriesTitle'].strip().lower()
+                    if film.get('type') != 'series':
+                        return False
+                    found = False
+                    for episode in film.get('episodes', []):
+                        if series_title in episode.get('title', '').lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+                
                 # Жанр
                 if filters.get('genre') and filters['genre'] not in film.get('genres', []):
                     return False
