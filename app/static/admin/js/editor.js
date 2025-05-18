@@ -58,15 +58,18 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-    const saveBtn = document.getElementById("new_save-changes");
+       const saveBtn = document.getElementById("new_save-changes");
 
     saveBtn.addEventListener("click", async function (e) {
         e.preventDefault();
 
+        // Блокируем кнопку и меняем текст
+        const originalText = saveBtn.textContent;
+        saveBtn.textContent = editingFilmId ? "Сохранение..." : "Добавление...";
+        saveBtn.disabled = true;
+
         const title = document.getElementById("new_film").value.trim();
         const year = parseInt(document.getElementById("year").value);
-        // const directorsRaw = document.getElementById("director").value.trim();
-        // const actorsRaw = document.getElementById("actors").value.trim();
         const country = document.getElementById("country").value.trim();
         const duration = parseInt(document.getElementById("duration").value);
         const budget = parseFloat(document.getElementById("budget").value);
@@ -100,12 +103,12 @@ document.addEventListener("DOMContentLoaded", function () {
                 });
             });
         }
+
         // Валидация
         let valid = true;
 
         document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
         document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
-
 
         if (!title) {
             valid = false;
@@ -163,7 +166,6 @@ document.addEventListener("DOMContentLoaded", function () {
             document.getElementById("poster_url").classList.add("input-error");
         }
 
-
         if (type === 'movie' && !videoUrl && !isEditing) {
             valid = false;
             document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
@@ -178,6 +180,9 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         if (!valid) {
+            // Разблокируем кнопку если валидация не прошла
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
             return;
         }
 
@@ -233,6 +238,10 @@ document.addEventListener("DOMContentLoaded", function () {
         } catch (error) {
             console.error("Ошибка при загрузке:", error);
             alert("Произошла ошибка при отправке данных.");
+        } finally {
+            // В любом случае разблокируем кнопку и восстанавливаем текст
+            saveBtn.textContent = originalText;
+            saveBtn.disabled = false;
         }
     });
 
