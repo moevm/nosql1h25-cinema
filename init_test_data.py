@@ -218,6 +218,86 @@ if __name__ == "__main__":
         ratings=[9],
         type="film"
     )
+    
+    add_film(
+        title="Темный рыцарь",
+        year=2008,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Christian Bale"], actor_ids["Heath Ledger"]],
+        description="Бэтмен сталкивается с новым преступником по прозвищу Джокер, который бросает вызов всей системе правосудия в Готэме.",
+        country="США",
+        duration=152,
+        genres=["Боевик", "Криминал", "Драма"],
+        budget=185000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+    
+    add_film(
+        title="Темный рыцарь",
+        year=2008,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Christian Bale"], actor_ids["Heath Ledger"]],
+        description="Бэтмен сталкивается с новым преступником по прозвищу Джокер, который бросает вызов всей системе правосудия в Готэме.",
+        country="США",
+        duration=152,
+        genres=["Боевик", "Криминал", "Драма"],
+        budget=185000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+    
+    add_film(
+        title="Темный рыцарь",
+        year=2008,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Christian Bale"], actor_ids["Heath Ledger"]],
+        description="Бэтмен сталкивается с новым преступником по прозвищу Джокер, который бросает вызов всей системе правосудия в Готэме.",
+        country="США",
+        duration=152,
+        genres=["Боевик", "Криминал", "Драма"],
+        budget=185000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+    
+    add_film(
+        title="Темный рыцарь",
+        year=2008,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Christian Bale"], actor_ids["Heath Ledger"]],
+        description="Бэтмен сталкивается с новым преступником по прозвищу Джокер, который бросает вызов всей системе правосудия в Готэме.",
+        country="США",
+        duration=152,
+        genres=["Боевик", "Криминал", "Драма"],
+        budget=185000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
+    
+    add_film(
+        title="Темный рыцарь",
+        year=2008,
+        directors=[director_ids["Christopher Nolan"]],
+        actors=[actor_ids["Christian Bale"], actor_ids["Heath Ledger"]],
+        description="Бэтмен сталкивается с новым преступником по прозвищу Джокер, который бросает вызов всей системе правосудия в Готэме.",
+        country="США",
+        duration=152,
+        genres=["Боевик", "Криминал", "Драма"],
+        budget=185000000,
+        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/0fa5bf50-d5ad-446f-a599-b26d070c8b99/600x900",
+        video_path=f"{ES_URL}/videos/sample.mp4",
+        ratings=[9],
+        type="film"
+    )
 
     print("Добавляем сериалы...")
 
