@@ -10,7 +10,6 @@ import bcrypt
 from datetime import datetime
 
 
-
 def parse_json(data):
     return json.loads(json_util.dumps(data))
 
@@ -209,21 +208,39 @@ def register_api_routes(app):
 
 
     # ==================== РОУТЫ ДЛЯ ФИЛЬМОВ ====================
+    @app.route('/api/content')
+    def get_content():
+        try:
+            content_type = request.args.get('type', 'all')
+            page = int(request.args.get('page', 1))
+            limit = int(request.args.get('limit', 15))
+            
+            query = {}
+            if content_type == 'films':
+                query['type'] = 'film'
+            elif content_type == 'series':
+                query['type'] = 'series'
+
+            
+            all_films = list(mongo.db.film.find(query))
+            
+            total_items = len(all_films)
+            start = (page - 1) * limit
+            end = start + limit
+            paginated_films = all_films[start:end]
+            
+            return parse_json({
+                "films": paginated_films,
+                "count": total_items
+                }), 200
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+        
     @app.route('/api/films', methods=['GET', 'POST'])
     def handle_films():
         if request.method == 'GET':
             try:
-                # Получаем параметр type из запроса
-                content_type = request.args.get('type', 'all')
-                
-                if content_type == 'all':
-                    films = list(mongo.db.film.find())
-                elif content_type == 'films':
-                    films = list(mongo.db.film.find({"type": "film"}))
-                elif content_type == 'series':
-                    films = list(mongo.db.film.find({"type": "series"}))
-                else:
-                    films = []
+                films = mongo.db.film.find()
                     
                 return parse_json(films), 200
             except Exception as e:
@@ -676,9 +693,23 @@ def register_api_routes(app):
     def filter_films():
         try:
             filters = request.get_json()
-            all_films = list(mongo.db.film.find())
+            page = int(filters.get('page', 1))
+            limit = int(filters.get('limit', 15))
 
             def match(film):
+                # Название серии
+                if filters.get('seriesTitle'):
+                    series_title = filters['seriesTitle'].strip().lower()
+                    if film.get('type') != 'series':
+                        return False
+                    found = False
+                    for episode in film.get('episodes', []):
+                        if series_title in episode.get('title', '').lower():
+                            found = True
+                            break
+                    if not found:
+                        return False
+                
                 # Жанр
                 if filters.get('genre') and filters['genre'] not in film.get('genres', []):
                     return False
@@ -792,16 +823,25 @@ def register_api_routes(app):
 
                 return True
 
+            all_films = list(mongo.db.film.find())
             filtered = [film for film in all_films if match(film)]
+            
+            total_items = len(filtered)
+            start = (page - 1) * limit
+            end = start + limit
+            paginated_films = filtered[start:end]
 
-            for film in filtered:
+            for film in paginated_films:
                 film['_id'] = str(film['_id'])
                 if 'created_at' in film:
                     film['created_at'] = str(film['created_at'])
                 if 'updated_at' in film:
                     film['updated_at'] = str(film['updated_at'])
 
-            return jsonify(filtered), 200
+            return jsonify({
+                "films": paginated_films,
+                "count": total_items
+            }), 200
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
@@ -811,30 +851,31 @@ def register_api_routes(app):
     def search_films():
         try:
             query = request.get_json()
-
             search_title = query.get('title', '').strip().lower()
-
             if not search_title:
-                return jsonify([]), 200
+                return jsonify({"films": [], "count": 0}), 200
 
             all_films = mongo.db.film.find({"title": {"$regex": search_title, "$options": "i"}})
-
             filtered_films = list(all_films)
 
-            for film in filtered_films:
+            # Пагинация
+            page = int(query.get('page', 1))
+            limit = int(query.get('limit', 15))
+            start = (page - 1) * limit
+            end = start + limit
+            paginated_films = filtered_films[start:end]
+
+            for film in paginated_films:
                 film['_id'] = str(film['_id'])
                 if 'created_at' in film:
                     film['created_at'] = str(film['created_at'])
                 if 'updated_at' in film:
                     film['updated_at'] = str(film['updated_at'])
 
-            return jsonify(filtered_films), 200
+            return jsonify({
+                "films": paginated_films,
+                "count": len(filtered_films)
+            }), 200
 
         except Exception as e:
             return jsonify({"error": str(e)}), 500
-
-
-
-
-
-

@@ -26,7 +26,8 @@ function initControls() {
 async function loadInitialData() {
     try {
         const response = await fetch('/api/films');
-        currentData = await response.json();
+        const result = await response.json();
+        currentData = result.films || result;
         updateChart();
     } catch (error) {
         console.error('Ошибка загрузки данных:', error);
@@ -36,7 +37,8 @@ async function loadInitialData() {
 async function loadFilterOptions() {
     try {
         const filmsResponse = await fetch('/api/films');
-        const films = await filmsResponse.json();
+        const result = await filmsResponse.json();
+        const films = result.films || result;
 
         const genresSet = new Set();
         films.forEach(film => {
@@ -107,7 +109,8 @@ async function applyFilters() {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(filters)
         });
-        currentData = await response.json();
+        const result = await response.json();
+        currentData = result.films;
         updateChart();
     } catch (error) {
         console.error('Ошибка фильтрации:', error);

@@ -12,38 +12,56 @@ document.addEventListener('DOMContentLoaded', () => {
     const nextButton = document.querySelector('.sheets__next-button');
 
     let currentPage = 1;
-    let itemsPerPage = 15;
+    const itemsPerPage = 15;
 
     let currentFilms = [];
+    let totalPages = 0;
     const uniqueGenres = new Set();
     const uniqueCountries = new Set();
+
+    function getCurrentContentType() {
+        const activeLink = document.querySelector('.menu__link_active');
+        if (activeLink.textContent.trim() === 'Фильмы') return 'films';
+        if (activeLink.textContent.trim() === 'Сериалы') return 'series';
+        return 'all';
+    }
     
+    function getTotalPages(count) {
+        return Math.ceil(count / itemsPerPage);
+    }
+
     loadContent('all');
     
     prevButton.addEventListener('click', () => {
         if (currentPage > 1) {
+            const currentType = getCurrentContentType();
             currentPage--;
-            renderPage(currentFilms);
+            loadContent(currentType);
         }
     });
 
     nextButton.addEventListener('click', () => {
-        const maxPage = Math.ceil(currentFilms.length / itemsPerPage);
-        if (currentPage < maxPage) {
+        if (currentPage < totalPages) {
+            const currentType = getCurrentContentType();
             currentPage++;
-            renderPage(currentFilms);
+            loadContent(currentType);
         }
     });
+
 
     // Обработчики для меню
     menuLinks.forEach(link => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const href = link.getAttribute('href');
+
+            clearFilters();
             
             // Обновление активной ссылки
             menuLinks.forEach(item => item.classList.remove('menu__link_active'));
             link.classList.add('menu__link_active');
+
+            currentPage = 1;
             
             // Переключение между фильмами и сериалами
             if (link.textContent.trim() === 'Фильмы') {
@@ -61,9 +79,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     async function loadContent(type) {
         try {
-            const response = await fetch(`/api/films?type=${type}`);
+            const response = await fetch(`/api/content?type=${type}&page=${currentPage}&limit=${itemsPerPage}`);
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            currentFilms = await response.json();
+            const data = await response.json();
+            currentFilms = data.films;
+            totalPages = getTotalPages(data.count);
             
             if (currentFilms.length === 0) {
                 noResultsMessage.classList.remove('hidden');
@@ -81,7 +101,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (film.country) uniqueCountries.add(film.country);
             });
 
-            currentPage = 1;
             renderPage(currentFilms);
 
             updateSelectOptions(genreSelect, uniqueGenres, genreTemplate);
@@ -95,14 +114,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Функция для отрисовки конкретной страницы
     function renderPage(films) {
-        const start = (currentPage - 1) * itemsPerPage;
-        const end = start + itemsPerPage;
-        const pageFilms = films.slice(start, end);
-
         filmGrid.innerHTML = '';
-        noResultsMessage.classList.toggle('hidden', pageFilms.length !== 0);
+        noResultsMessage.classList.toggle('hidden', films.length !== 0);
 
-        pageFilms.forEach(film => {
+        films.forEach(film => {
             const card = filmTemplate.content.cloneNode(true);
             const filmCard = card.querySelector('.film-card');
 
@@ -177,7 +192,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const durationMaxInput = document.querySelector('.filter-form__input--duration-max');
     const budgetMinInput = document.querySelector('.filter-form__input--budget-min');
     const budgetMaxInput = document.querySelector('.filter-form__input--budget-max');
-
+    const seriesTitleInput = document.querySelector('.filter-form__input--series-title');
     
     const applyFilterButton = document.querySelector('.filter-form__apply-button');
 
@@ -185,6 +200,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const query = {
             genre: genreSelect.value || null,
             description: descriptionInput.value.trim(),
+            seriesTitle: seriesTitleInput.value.trim(),
             country: countrySelect.value || null,
             director: directorInput.value.trim(),
             actor: actorInput.value.trim(),
@@ -200,6 +216,8 @@ document.addEventListener('DOMContentLoaded', () => {
             addedMax: addedMaxInput.value.trim() || null,
             editedMin: editedMinInput.value.trim() || null,
             editedMax: editedMaxInput.value.trim() || null,
+            page: currentPage,
+            limit: itemsPerPage
         };
 
         try {
@@ -209,7 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify(query)
             });
 
-            currentFilms = await response.json();
+            const data = await response.json();
+            currentFilms = data.films;
+            totalPages = getTotalPages(data.count);
             renderSortedFilms(currentFilms);
             filterPanel.classList.add('hidden');
         } catch (error) {
@@ -220,6 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const clearFilterButton = document.querySelector('.filter-form__clear-button');
 
     clearFilterButton.addEventListener('click', () => {
+        clearFilters();
+        loadContent('all');
+    });
+
+    function clearFilters() {
         // Сброс селектов
         genreSelect.selectedIndex = 0;
         countrySelect.selectedIndex = 0;
@@ -240,10 +265,17 @@ document.addEventListener('DOMContentLoaded', () => {
         durationMaxInput.value = '';
         budgetMinInput.value = '';
         budgetMaxInput.value = '';
+        seriesTitleInput.value = '';
 
+        // Сброс сортировки
+        sortRadios.forEach(radio => {
+            radio.checked = false;
+        });
+
+        // Закрытие панелей фильтра и сортировки
         filterPanel.classList.add('hidden');
-        loadContent('all');
-    });
+        sortingPanel.classList.add('hidden');
+    }
 
     // Функции сортировки
     function sortByPopularity(films) {
@@ -323,8 +355,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: JSON.stringify({ title })
             });
 
-            const films = await response.json();
-            currentFilms = films;
+            const data = await response.json();
+            currentFilms = data.films;
+            totalPages = getTotalPages(data.count);
             renderSortedFilms(currentFilms);
         } catch (error) {
             console.error('Ошибка при поиске фильмов:', error);
