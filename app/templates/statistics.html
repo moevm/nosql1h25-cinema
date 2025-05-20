@@ -13,6 +13,21 @@
     <nav><a href="{{ url_for('editor') }}">Каталог</a></nav>
     <nav><a href="{{ url_for('backup') }}">Бэкап</a></nav>
 </div>
+<div class="filters">
+    <select id="genreFilter" class="filter-form__select">
+        <option value="">Любой жанр</option>
+    </select>
+
+    <select id="countryFilter" class="filter-form__select">
+        <option value="">Любая страна</option>
+    </select>
+
+    <input type="number" id="yearMin" class="filter-form__input" placeholder="Год от">
+    <input type="number" id="yearMax" class="filter-form__input" placeholder="Год до">
+
+    <button id="applyFilters" class="filter-form__apply-button">Применить</button>
+    <button id="clearFilters" class="filter-form__clear-button">Сбросить</button>
+</div>
 
 <div class="chart-container">
     <h2>Выбери параметр для анализа:</h2>

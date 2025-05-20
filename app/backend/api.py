@@ -298,6 +298,37 @@ def register_api_routes(app):
             except Exception as e:
                 return jsonify({"error": str(e)}), 500
 
+    @app.route('/api/films_filter', methods=['GET'])
+    def handle_films():
+        try:
+            # Получаем параметры фильтрации
+            filters = request.args.to_dict()
+
+            query = {}
+
+            # Жанр
+            if 'genre' in filters:
+                query['genres'] = filters['genre']
+
+            # Страна
+            if 'country' in filters:
+                query['country'] = filters['country']
+
+            # Год
+            if 'yearMin' in filters or 'yearMax' in filters:
+                year_query = {}
+                if 'yearMin' in filters:
+                    year_query['$gte'] = int(filters['yearMin'])
+                if 'yearMax' in filters:
+                    year_query['$lte'] = int(filters['yearMax'])
+                query['year'] = year_query
+
+            films = mongo.db.film.find(query)
+            return parse_json(films), 200
+
+        except Exception as e:
+            return jsonify({"error": str(e)}), 500
+
     @app.route('/api/films/upload', methods=['POST'])
     def upload_film():
         try:
