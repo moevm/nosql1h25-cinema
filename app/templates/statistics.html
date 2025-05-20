@@ -14,15 +14,126 @@
     <nav><a href="{{ url_for('backup') }}">Бэкап</a></nav>
 </div>
 
-<div class="chart-container">
-    <h2>Выбери параметр для анализа:</h2>
-    <select id="keySelector">
-        <option value="genres">Жанры</option>
-        <option value="year">Годы</option>
-        <option value="country">Страны</option>
-    </select>
-    <div class="chart-wrapper">
-        <canvas id="statsChart"></canvas>
+<div class="analytics-container">
+    <div id="filterPanel" class="filter-panel">
+        <h3 class="panel-title">Фильтры</h3>
+        <div class="filter-form">
+            <label class="filter-label">Жанр:
+                <select class="filter-select filter-select--genre">
+                    <option value="">Любой</option>
+                    <template id="genreOptionTemplate">
+                        <option></option>
+                    </template>
+                </select>
+            </label>
+
+            <label class="filter-label">Год:
+                <div class="range-inputs">
+                    <input type="number" class="filter-input filter-input--year-min" placeholder="От">
+                    <input type="number" class="filter-input filter-input--year-max" placeholder="До">
+                </div>
+            </label>
+
+            <label class="filter-label">Страна:
+                <select class="filter-select filter-select--country">
+                    <option value="">Любая</option>
+                    <template id="countryOptionTemplate">
+                        <option></option>
+                    </template>
+                </select>
+            </label>
+
+            <label class="filter-label">Рейтинг:
+                <div class="range-inputs">
+                    <input type="number" min="1" max="10" class="filter-input filter-input--rating-min" placeholder="От">
+                    <input type="number" min="1" max="10" class="filter-input filter-input--rating-max" placeholder="До">
+                </div>
+            </label>
+
+            <label class="filter-label">Режиссёр:
+                <input type="text" class="filter-input filter-input--director" placeholder="Имя режиссёра">
+            </label>
+
+            <label class="filter-label">Актёр:
+                <input type="text" class="filter-input filter-input--actor" placeholder="Имя актёра">
+            </label>
+
+            <label class="filter-label">Длительность (мин):
+                <div class="range-inputs">
+                    <input type="number" class="filter-input filter-input--duration-min" placeholder="От">
+                    <input type="number" class="filter-input filter-input--duration-max" placeholder="До">
+                </div>
+            </label>
+
+            <label class="filter-label">Бюджет ($):
+                <div class="range-inputs">
+                    <input type="number" class="filter-input filter-input--budget-min" placeholder="От">
+                    <input type="number" class="filter-input filter-input--budget-max" placeholder="До">
+                </div>
+            </label>
+
+            <label class="filter-label">Дата добавления:
+                <div class="range-inputs">
+                    <input type="date" class="filter-input filter-input--added-min" placeholder="От">
+                    <input type="date" class="filter-input filter-input--added-max" placeholder="До">
+                </div>
+            </label>
+
+            <label class="filter-label">Дата редактирования:
+                <div class="range-inputs">
+                    <input type="date" class="filter-input filter-input--edited-min" placeholder="От">
+                    <input type="date" class="filter-input filter-input--edited-max" placeholder="До">
+                </div>
+            </label>
+
+            <div class="filter-buttons">
+                <button class="filter-button filter-button--apply">Применить</button>
+                <button class="filter-button filter-button--clear">Сбросить</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-area">
+        <div class="chart-controls">
+            <button id="chartSettingsBtn" class="settings-button">Настройки графика</button>
+        </div>
+
+        <div id="chartSettingsPanel" class="settings-panel hidden">
+            <h3>Настройки отображения</h3>
+            <div class="settings-form">
+                <div class="setting-group">
+                    <label>Ось X:</label>
+                    <select id="xAxis" class="setting-select">
+                        <option value="year">Год</option>
+                        <option value="country">Страна</option>
+                        <option value="genres">Жанр</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>Ось Y:</label>
+                    <select id="yAxis" class="setting-select">
+                        <option value="count">Количество</option>
+                        <option value="rating">Средний рейтинг</option>
+                    </select>
+                </div>
+
+                <div class="setting-group">
+                    <label>Тип графика:</label>
+                    <select id="chartType" class="setting-select">
+                        <option value="bar">Столбчатая</option>
+                        <option value="line">Линейная</option>
+                        <option value="pie">Круговая</option>
+                    </select>
+                </div>
+
+                <button id="applyChartSettings" class="apply-button">Обновить график</button>
+            </div>
+        </div>
+
+        <div class="chart-wrapper">
+            <canvas id="statsChart"></canvas>
+        </div>
     </div>
 </div>
 
