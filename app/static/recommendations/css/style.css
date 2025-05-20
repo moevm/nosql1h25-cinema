@@ -257,10 +257,11 @@
     align-items: center;
     margin-top: auto;
     padding: 15px 0;
+    flex-direction: column;
 }
 
 .footer__message {
-    margin: auto;
+    margin: 10px auto;
     font-size: 14px;
     color: #fff;
 }
@@ -276,7 +277,7 @@
     color: white;
     min-width: 100px;
     box-sizing: border-box;
-    font-size: 1em;
+    font-size: 14px;
     padding: 10px;
     cursor: pointer;
 }
