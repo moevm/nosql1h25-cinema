@@ -131,7 +131,7 @@ if __name__ == "__main__":
         duration=148,
         genres=["Фантастика", "Боевик"],
         budget=160000000,
-        poster=f"{ES_URL}/posters/Inception.2010.jpg,
+        poster=f"{ES_URL}/posters/Inception.2010.jpg",
         video_path=f"{ES_URL}/videos/Inception.2010.mp4",
         ratings=[9],
         type="film"
@@ -147,7 +147,7 @@ if __name__ == "__main__":
         duration=132,
         genres=["Драма", "Триллер"],
         budget=11400000,
-        poster=f"{ES_URL}/posters/Parasite.2019.jpg,
+        poster=f"{ES_URL}/posters/Parasite.2019.jpg",
         video_path=f"{ES_URL}/videos/Parasite.2019.mkv",
         ratings=[7],
         type="film"
