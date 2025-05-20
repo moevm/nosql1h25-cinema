@@ -131,8 +131,8 @@ if __name__ == "__main__":
         duration=148,
         genres=["Фантастика", "Боевик"],
         budget=160000000,
-        poster="https://i.pinimg.com/736x/6f/c5/a3/6fc5a3240f09d882606e55da4a58b2dd.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/Inception.2010.jpg,
+        video_path=f"{ES_URL}/videos/Inception.2010.mp4",
         ratings=[9],
         type="film"
     )
@@ -147,8 +147,8 @@ if __name__ == "__main__":
         duration=132,
         genres=["Драма", "Триллер"],
         budget=11400000,
-        poster="https://i.pinimg.com/736x/f3/17/a6/f317a612d86d1e324e4bd507cbf160aa.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/Parasite.2019.jpg,
+        video_path=f"{ES_URL}/videos/Parasite.2019.mkv",
         ratings=[7],
         type="film"
     )
