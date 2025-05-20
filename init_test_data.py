@@ -163,8 +163,8 @@ if __name__ == "__main__":
         duration=99,
         genres=["Комедия", "Драма"],
         budget=25000000,
-        poster="https://cdn.ananasposter.ru/image/cache/catalog/poster/pos23/23/68397-1000x830.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/The.Grand.Budapest.Hotel.2014.jpg",
+        video_path=f"{ES_URL}/videos/Grand.Budapest.Hotel.2014.mkv",
         ratings=[8],
         type="film"
     )
@@ -211,8 +211,8 @@ if __name__ == "__main__":
         duration=139,
         genres=["Драма", "Триллер"],
         budget=63000000,
-        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1777765/6c5cdb4c-5e28-4552-aac4-beb4efaf718d/3840x",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/Fight.Club.1999.webp",
+        video_path=f"{ES_URL}/videos/Fight.Club.1999.mkv",
         ratings=[9],
         type="film"
     )
@@ -243,8 +243,8 @@ if __name__ == "__main__":
         duration=169,
         genres=["Фантастика", "Приключения"],
         budget=165000000,
-        poster="https://i.pinimg.com/474x/8e/0d/ab/8e0dab8699be85720ce55845065bf6dc.jpg?nii=t",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/Interstellar.2014.jpg",
+        video_path=f"{ES_URL}/videos/Interstellar.2014.mkv",
         ratings=[8],
         type="film"
     )
@@ -259,8 +259,8 @@ if __name__ == "__main__":
         duration=136,
         genres=["Фантастика", "Боевик"],
         budget=63000000,
-        poster="https://i.pinimg.com/originals/9e/85/34/9e8534c48e0168fb753057370627db8a.jpg",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/The.Matrix.1999.jpg",
+        video_path=f"{ES_URL}/videos/The.Matrix.1999.mkv",
         ratings=[9],
         type="film"
     )
@@ -275,8 +275,8 @@ if __name__ == "__main__":
         duration=142,
         genres=["Драма", "Комедия"],
         budget=55000000,
-        poster="https://avatars.mds.yandex.net/get-kinopoisk-image/1599028/3560b757-9b95-45ec-af8c-623972370f9d/1920x",
-        video_path=f"{ES_URL}/videos/sample.mp4",
+        poster=f"{ES_URL}/posters/Forrest.Gump.1994.webp",
+        video_path=f"{ES_URL}/videos/Forrest.Gump.1994.mkv",
         ratings=[9],
         type="film"
     )
@@ -300,8 +300,8 @@ if __name__ == "__main__":
     print("Добавляем сериалы...")
 
     breaking_bad_videos = [
-        {"season": 1, "episode": 1, "title": "Пилот", "url": f"{ES_URL}/videos/sample.mp4"},
-        {"season": 1, "episode": 2, "title": "Кошелек или жизнь", "url": f"{ES_URL}/videos/sample.mp4"}
+        {"season": 1, "episode": 1, "title": "Пилот", "url": f"{ES_URL}/videos/Breaking.Bad.S01.E01.BDRip.1080p-SOFCJ.mkv"},
+        {"season": 1, "episode": 2, "title": "Кошелек или жизнь", "url": f"{ES_URL}/videos/Breaking.Bad.S01.E02.BDRip.1080p-SOFCJ.mkv"}
     ]
     add_film(
         title="Breaking Bad",
@@ -313,7 +313,7 @@ if __name__ == "__main__":
         duration=47,
         genres=["Драма", "Криминал"],
         budget=3000000,
-        poster="https://basket-12.wbbasket.ru/vol1841/part184133/184133381/images/big/1.webp",
+        poster=f"{ES_URL}/posters/Breaking.Bad.webp",
         video_path=None,
         ratings=[9],
         type="series",
