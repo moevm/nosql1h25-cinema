@@ -60,6 +60,8 @@ document.addEventListener('DOMContentLoaded', () => {
             // Обновление активной ссылки
             menuLinks.forEach(item => item.classList.remove('menu__link_active'));
             link.classList.add('menu__link_active');
+
+            currentPage = 1;
             
             // Переключение между фильмами и сериалами
             if (link.textContent.trim() === 'Фильмы') {
