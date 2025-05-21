@@ -11,6 +11,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const prevButton = document.querySelector('.sheets__prev-button');
     const nextButton = document.querySelector('.sheets__next-button');
 
+    const urlParams = new URLSearchParams(window.location.search);
+    const typeParam = urlParams.get('type');
+    const type = typeParam || 'all';
+
     let currentPage = 1;
     const itemsPerPage = 15;
 
@@ -30,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return Math.ceil(count / itemsPerPage);
     }
 
-    loadContent('all');
+    loadContent(type);
     
     prevButton.addEventListener('click', () => {
         if (currentPage > 1) {
@@ -65,10 +69,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             // Переключение между фильмами и сериалами
             if (link.textContent.trim() === 'Фильмы') {
+                window.history.pushState(null, '', '/?type=films');
                 loadContent('films');
             } else if (link.textContent.trim() === 'Сериалы') {
+                window.history.pushState(null, '', '/?type=series');
                 loadContent('series');
             } else if (href === "#") {
+                window.history.pushState(null, '', '/');
                 loadContent('all');
             } else {
                 window.location.href = href;
