@@ -1,23 +1,30 @@
+let currentPage = 1;
+const itemsPerPage = 5;
+let totalPages = 0;
+let editingFilmId = null;
+
 document.addEventListener("DOMContentLoaded", function () {
-    // Инициализация Tagify для поля "Режиссёр"
+    // Инициализация Tagify для полей
     const directorInput = document.querySelector("#director");
     const tagifyDirector = new Tagify(directorInput);
     const actorsInput = document.querySelector("#actors");
     const tagifyActors = new Tagify(actorsInput);
 
+    // Загрузка фильмов при открытии страницы
     fetchFilms();
 
-    // Обработчик клика по кнопке "Добавить фильм"
+    // Элементы управления
     const addMovieBtn = document.getElementById("addMovieBtn");
     const modalOverlay = document.getElementById("add-new-film-modal");
     const cancelEditBtn = document.getElementById("new_cancel-edit");
+    const saveBtn = document.getElementById("new_save-changes");
+    const movieSearchInput = document.getElementById("movieSearch");
 
-    // Открытие модального окна
+    // Открытие модального окна для добавления фильма
     addMovieBtn.addEventListener("click", function () {
         editingFilmId = null;
         openFilmModal(false);
     });
-
 
     // Закрытие модального окна
     cancelEditBtn.addEventListener("click", function () {
@@ -29,13 +36,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const genreOptions = document.getElementById("genreOptions");
 
     genreHeader.addEventListener("click", function () {
-        console.log("Клик по заголовку жанров");
         genreOptions.classList.toggle("hidden");
     });
 
     // Обработчик кликов по жанрам
-    const genreElements = document.querySelectorAll(".genre-option");
-    genreElements.forEach(function (genreElement) {
+    document.querySelectorAll(".genre-option").forEach(function (genreElement) {
         genreElement.addEventListener("click", function () {
             genreElement.classList.toggle("selected");
             updateSelectedGenres();
@@ -58,224 +63,13 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     });
 
-       const saveBtn = document.getElementById("new_save-changes");
-
+    // Сохранение фильма
     saveBtn.addEventListener("click", async function (e) {
         e.preventDefault();
-
-        // Блокируем кнопку и меняем текст
-        const originalText = saveBtn.textContent;
-        saveBtn.textContent = editingFilmId ? "Сохранение..." : "Добавление...";
-        saveBtn.disabled = true;
-
-        const title = document.getElementById("new_film").value.trim();
-        const year = parseInt(document.getElementById("year").value);
-        const country = document.getElementById("country").value.trim();
-        const duration = parseInt(document.getElementById("duration").value);
-        const budget = parseFloat(document.getElementById("budget").value);
-        const description = document.getElementById("description").value.trim();
-        const genres = document.getElementById("selectedGenres").value
-            .split(",")
-            .map(g => g.trim())
-            .filter(Boolean);
-        const posterUrl = document.getElementById("poster_url").value.trim();
-        const videoUrl = document.getElementById("video_url").value.trim();
-
-        const directors = tagifyDirector.value.map(tag => tag.value.trim()).filter(Boolean);
-        const actors = tagifyActors.value.map(tag => tag.value.trim()).filter(Boolean);
-
-        const type = document.querySelector('input[name="type"]:checked').value;
-        const episodes = [];
-
-        if (type === 'series') {
-            const episodeForms = document.querySelectorAll('.episode-form');
-            episodeForms.forEach(form => {
-                const season = form.querySelector('input[name*="[season]"]').value;
-                const episode = form.querySelector('input[name*="[episode]"]').value;
-                const title = form.querySelector('input[name*="[title]"]').value;
-                const url = form.querySelector('input[name*="[url]"]').value;
-
-                episodes.push({
-                    season: parseInt(season),
-                    episode: parseInt(episode),
-                    title: title.trim(),
-                    url: url.trim()
-                });
-            });
-        }
-
-        // Валидация
-        let valid = true;
-
-        document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
-        document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
-
-        if (!title) {
-            valid = false;
-            document.getElementById("title-error").textContent = "Введите название фильма";
-            document.getElementById("new_film").classList.add("input-error");
-        }
-
-        if (!year || year < 1895 || year > new Date().getFullYear()) {
-            valid = false;
-            document.getElementById("year-error").textContent = "Введите корректный год фильма (1895- текущий год)";
-            document.getElementById("year").classList.add("input-error");
-        }
-
-        if (directors.length === 0) {
-            valid = false;
-            document.getElementById("director-error").textContent = "Введите режиссёра/ов";
-            document.getElementById("director").classList.add("input-error");
-        }
-
-        if (actors.length === 0) {
-            valid = false;
-            document.getElementById("actors-error").textContent = "Введите актёра/ов";
-            document.getElementById("actors").classList.add("input-error");
-        }
-
-        if (!country) {
-            valid = false;
-            document.getElementById("country-error").textContent = "Введите страну";
-            document.getElementById("country").classList.add("input-error");
-        }
-
-        if (genres.length === 0) {
-            valid = false;
-            document.getElementById("genres-error").textContent = "Выберите хотя бы один жанр";
-            document.getElementById("genreHeader").classList.add("input-error");
-        }
-
-        if (isNaN(duration) || duration <= 0) {
-            valid = false;
-            document.getElementById("duration-error").textContent = "Введите корректную длительность фильма в минутах";
-            document.getElementById("duration").classList.add("input-error");
-        }
-
-        if (isNaN(budget) || budget < 0) {
-            valid = false;
-            document.getElementById("budget-error").textContent = "Введите бюджет";
-            document.getElementById("budget").classList.add("input-error");
-        }
-
-        let isEditing = !!editingFilmId;
-
-        if (!posterUrl && !isEditing) {
-            valid = false;
-            document.getElementById("poster-url-error").textContent = "Пожалуйста, вставьте ссылку на постер";
-            document.getElementById("poster_url").classList.add("input-error");
-        }
-
-        if (type === 'movie' && !videoUrl && !isEditing) {
-            valid = false;
-            document.getElementById("video-url-error").textContent = "Пожалуйста, вставьте ссылку на видео";
-            document.getElementById("video_url").classList.add("input-error");
-        }
-
-        // Валидация для сериалов
-        if (type === 'series' && episodes.length === 0) {
-            valid = false;
-            document.getElementById("serias-url-error").textContent = "Пожалуйста, добавьте хотя бы одну серию";
-            document.getElementById("video_url").classList.add("input-error");
-        }
-
-        if (!valid) {
-            // Разблокируем кнопку если валидация не прошла
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
-            return;
-        }
-
-        const formData = new FormData();
-        formData.append("title", title);
-        formData.append("year", year);
-        formData.append("description", description);
-        formData.append("country", country);
-        formData.append("duration", duration);
-        formData.append("budget", budget);
-        formData.append("genres", JSON.stringify(genres));
-        formData.append("video_url", videoUrl);
-
-        formData.append("directors", JSON.stringify(directors));
-        formData.append("actors", JSON.stringify(actors));
-
-        formData.append("type", type);
-        if (type === 'series') {
-            formData.append("episodes", JSON.stringify(episodes));
-        }
-
-        formData.append("poster_url", posterUrl);
-        if (videoUrl) {
-            formData.append("video_url", videoUrl);  // Сохраняем ссылку на видео
-        }
-
-        try {
-            let response;
-            if (editingFilmId) {
-                // Если редактируем фильм, отправляем PUT запрос
-                response = await fetch(`http://localhost:5000/api/films/${editingFilmId}`, {
-                    method: "PUT",
-                    body: formData
-                });
-            } else {
-                // Если добавляем новый фильм, отправляем POST запрос
-                response = await fetch("http://localhost:5000/api/films/upload", {
-                    method: "POST",
-                    body: formData
-                });
-            }
-
-            const result = await response.json();
-
-            if (response.ok) {
-                alert("Фильм успешно " + (editingFilmId ? "обновлён" : "добавлен") + "!");
-                modalOverlay.style.display = "none";
-                fetchFilms(); // Обновляем список фильмов
-            } else {
-                alert("Ошибка: " + result.error);
-            }
-
-        } catch (error) {
-            console.error("Ошибка при загрузке:", error);
-            alert("Произошла ошибка при отправке данных.");
-        } finally {
-            // В любом случае разблокируем кнопку и восстанавливаем текст
-            saveBtn.textContent = originalText;
-            saveBtn.disabled = false;
-        }
+        await saveFilm();
     });
 
     // Поиск фильмов
-    const movieSearchInput = document.getElementById("movieSearch");
-
-    async function searchFilmsByTitle() {
-        const query = movieSearchInput.value.trim();
-
-        // Если поиск пустой — показать все фильмы
-        if (!query) {
-            fetchFilms();
-            return;
-        }
-
-        try {
-            const response = await fetch("http://localhost:5000/api/films/search", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title: query })
-            });
-
-            if (!response.ok) {
-                throw new Error("Ошибка при поиске");
-            }
-
-            const films = await response.json();
-            displayFilms(films);
-        } catch (error) {
-            console.error("Ошибка поиска:", error);
-            document.getElementById("films-container").innerHTML = "<p>Ошибка при поиске фильмов</p>";
-        }
-    }
-
     movieSearchInput.addEventListener("keydown", function (e) {
         if (e.key === "Enter") {
             e.preventDefault();
@@ -289,22 +83,30 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    function clearErrorOnInput(inputId, errorId, className = "input-error") {
+    // Очистка ошибок при вводе
+    setupInputErrorHandlers();
+});
+
+// Функция для обновления скрытого поля с выбранными жанрами
+function updateSelectedGenres() {
+    const selectedGenres = [];
+    document.querySelectorAll(".genre-option.selected").forEach(function (genreElement) {
+        selectedGenres.push(genreElement.textContent.trim());
+    });
+    document.getElementById("selectedGenres").value = selectedGenres.join(", ");
+}
+
+// Настройка обработчиков ошибок
+function setupInputErrorHandlers() {
+    function clearErrorOnInput(inputId, errorId) {
         const input = document.getElementById(inputId);
         const error = document.getElementById(errorId);
-        input.addEventListener("input", () => {
-            input.classList.remove(className);
-            if (error) error.textContent = "";
-        });
-    }
-
-    function clearErrorOnFileChange(fileId, errorId) {
-        const input = document.getElementById(fileId);
-        const error = document.getElementById(errorId);
-        input.addEventListener("change", () => {
-            input.closest(".form-group").classList.remove("input-error");
-            if (error) error.textContent = "";
-        });
+        if (input && error) {
+            input.addEventListener("input", () => {
+                input.classList.remove("input-error");
+                error.textContent = "";
+            });
+        }
     }
 
     clearErrorOnInput("new_film", "title-error");
@@ -314,219 +116,451 @@ document.addEventListener("DOMContentLoaded", function () {
     clearErrorOnInput("country", "country-error");
     clearErrorOnInput("duration", "duration-error");
     clearErrorOnInput("budget", "budget-error");
-
-    clearErrorOnFileChange("poster", "poster-error");
+    clearErrorOnInput("poster_url", "poster-url-error");
     clearErrorOnInput("video_url", "video-url-error");
 
     document.getElementById("genreHeader").addEventListener("click", () => {
         document.getElementById("genreHeader").classList.remove("input-error");
         document.getElementById("genres-error").textContent = "";
     });
-});
-
-// Функция для обновления скрытого поля с выбранными жанрами
-function updateSelectedGenres() {
-    const selectedGenres = [];
-    const selectedGenreElements = document.querySelectorAll(".genre-option.selected");
-    selectedGenreElements.forEach(function (genreElement) {
-        selectedGenres.push(genreElement.textContent.trim());
-    });
-
-    document.getElementById("selectedGenres").value = selectedGenres.join(", ");
 }
 
-async function fetchFilms(){
-    try{
-        const response = await fetch('http://localhost:5000/api/films');
-        if (!response.ok){
-            throw new Error("Сервер не отвечает");
-        }
-        const films = await response.json();
-        displayFilms(films);
-    } catch (error){
-        console.log("Ошибка загрузки фильмов:", error);
-        document.getElementById('films-container').innerHTML= '<p>Ошибка загрузки фильмов</p>';
-    }
-}
-
-function displayFilms(films) {
-    const container = document.getElementById('films-container');
-
-    if (films.length === 0) {
-        container.innerHTML = '<p>No films found.</p>';
-        return;
-    }
-
-    container.innerHTML = films.map(film => `
-                <div class="film-card" data-id="${film._id}">
-                    <div class="film-header">
-                        <p class="film-title-year">${film.title} (${film.year})</p>
-                        <div class="film-actions">
-                            <button class="btn btn-edit" onclick="editFilm('${film._id.$oid}')">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-delete" onclick="deleteFilm('${film._id.$oid}')" title="Delete">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-}
-
-async function deleteFilm(filmId) {
-    if (!confirm("Are you sure you want to delete this film?")) return;
+// Загрузка фильмов
+async function fetchFilms(page = 1) {
+    currentPage = page;
+    const spinner = document.getElementById("loadingSpinner");
+    spinner.style.display = "block";
 
     try {
-        console.log("Deleting film:", filmId);
+        const response = await fetch(`http://localhost:5000/api/content?page=${currentPage}&limit=${itemsPerPage}`);
+        if (!response.ok) throw new Error("Ошибка загрузки фильмов");
 
+        const data = await response.json();
+        totalPages = Math.ceil(data.count / itemsPerPage);
+        displayFilms(data.films);
+        updatePaginationButtons();
+    } catch (error) {
+        console.error("Ошибка:", error);
+        document.getElementById('films-container').innerHTML = '<p>Ошибка загрузки фильмов</p>';
+    } finally {
+        spinner.style.display = "none";
+    }
+}
+
+// Отображение фильмов
+function displayFilms(films) {
+    const container = document.getElementById('films-container');
+    container.innerHTML = films.length === 0 
+        ? '<p>Фильмы не найдены</p>'
+        : films.map(film => `
+            <div class="film-card" data-id="${film._id}">
+                <div class="film-header">
+                    <p class="film-title-year">${film.title} (${film.year})</p>
+                    <div class="film-actions">
+                        <button class="btn btn-edit" onclick="editFilm('${film._id.$oid}')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-delete" onclick="deleteFilm('${film._id.$oid}')" title="Удалить">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+}
+
+// Обновление кнопок пагинации
+function updatePaginationButtons() {
+    const prevBtn = document.querySelector(".sheets__prev-button");
+    const nextBtn = document.querySelector(".sheets__next-button");
+
+    if (prevBtn && nextBtn) {
+        prevBtn.disabled = currentPage === 1;
+        nextBtn.disabled = currentPage === totalPages;
+
+        prevBtn.onclick = () => currentPage > 1 && fetchFilms(currentPage - 1);
+        nextBtn.onclick = () => currentPage < totalPages && fetchFilms(currentPage + 1);
+    }
+}
+
+// Удаление фильма
+async function deleteFilm(filmId) {
+    if (!confirm("Вы уверены, что хотите удалить этот фильм?")) return;
+
+    try {
         const response = await fetch(`http://localhost:5000/api/films/${filmId}`, {
             method: 'DELETE',
         });
 
-        const contentType = response.headers.get("content-type");
-
-        let result;
-        if (contentType && contentType.includes("application/json")) {
-            result = await response.json();
-        } else {
-            throw new Error("Server returned non-JSON response");
-        }
-
+        const result = await response.json();
         if (response.ok) {
             alert(result.message);
             fetchFilms();
         } else {
-            alert(`Error: ${result.error || "Unknown error"}`);
+            alert(`Ошибка: ${result.error || "Неизвестная ошибка"}`);
         }
-
     } catch (error) {
-        alert(`Request failed: ${error.message}`);
-        console.error("Full error:", error);
+        alert(`Ошибка запроса: ${error.message}`);
+        console.error("Полная ошибка:", error);
     }
 }
 
+// Редактирование фильма
 async function editFilm(filmId) {
-    console.log('Editing film with ID:', filmId);
-    const response = await fetch(`http://localhost:5000/api/movies/${filmId}`);
-    const filmData = await response.json();
-
-    openFilmModal(true, filmData);
-    editingFilmId = filmId; // Сохраняем ID редактируемого фильма
+    try {
+        const response = await fetch(`http://localhost:5000/api/movies/${filmId}`);
+        const filmData = await response.json();
+        openFilmModal(true, filmData);
+        editingFilmId = filmId;
+    } catch (error) {
+        console.error('Ошибка при загрузке данных фильма:', error);
+        alert('Не удалось загрузить данные фильма');
+    }
 }
 
-function clearFilmForm() {
-    document.getElementById("new_film").value = "";
-    document.getElementById("year").value = "";
-    document.getElementById("director").value = "";
-    document.getElementById("actors").value = "";
-    document.getElementById("country").value = "";
-    document.getElementById("duration").value = "";
-    document.getElementById("budget").value = "";
-    document.getElementById("description").value = "";
-    document.getElementById("selectedGenres").value = "";
-    document.querySelectorAll(".genre-option.selected").forEach(el => el.classList.remove("selected"));
-    document.getElementById("poster").value = "";
-    document.getElementById("video").value = "";
-    document.getElementById("episodes-container").innerHTML = "";
-    document.querySelectorAll(".input-error").forEach((el) => el.classList.remove("input-error"));
-    document.querySelectorAll(".file-error").forEach((el) => el.classList.remove("file-error"));
-    document.querySelectorAll(".error-message").forEach((el) => el.textContent = "");
-}
-
+// Открытие модального окна
 function openFilmModal(isEditMode, filmData = null) {
     const modalOverlay = document.getElementById("add-new-film-modal");
     const videoUrlField = document.getElementById('video_url').closest('.form-flex');
+    const episodesSection = document.getElementById('series-episodes');
+    
+    // Сброс состояния формы
+    clearFilmForm();
+    document.querySelector('input[name="type"][value="movie"]').checked = true;
+    episodesSection.style.display = 'none';
+    videoUrlField.style.display = 'block';
+
     modalOverlay.style.display = "block";
+    document.getElementById("new_save-changes").textContent = isEditMode ? "Сохранить изменения" : "Добавить фильм";
 
-    if (!isEditMode) {
-        clearFilmForm();
-        document.getElementById("new_save-changes").textContent = "Добавить фильм";
-        console.log('Film Data:', filmData);
-
-        document.querySelector('input[name="type"][value="movie"]').checked = true;
-        document.getElementById('series-episodes').style.display = 'none';
-    } else if (filmData) {
-
-        document.getElementById("new_save-changes").textContent = "Сохранить изменения";
-        console.log('Film Data:', filmData);
-        document.getElementById("new_film").value = filmData.title || "";
-        document.getElementById("year").value = filmData.year || "";
-        document.getElementById("director").value = (filmData.directors || []).map(d => d.name).join(", ");
-        document.getElementById("actors").value = (filmData.actors || []).map(a => a.name).join(", ");
-        document.getElementById("country").value = filmData.country || "";
-        document.getElementById("duration").value = filmData.duration || "";
-        document.getElementById("budget").value = filmData.budget || "";
-        document.getElementById("description").value = filmData.description || "";
-
-        // Заполнить жанры
-        const selectedGenres = filmData.genres || [];
-        document.getElementById("selectedGenres").value = selectedGenres.join(", ");
-        document.querySelectorAll(".genre-option").forEach(el => {
-            if (selectedGenres.includes(el.textContent.trim())) {
-                el.classList.add("selected");
-            } else {
-                el.classList.remove("selected");
-            }
-        });
-        if (filmData.type) {
-            document.querySelector(`input[name="type"][value="${filmData.type}"]`).checked = true;
-            if (filmData.type === 'series') {
-                document.getElementById('series-episodes').style.display = 'block';
-                videoUrlField.style.display = 'none';
-                // Здесь можно добавить обработку существующих серий, если они есть
-                if (filmData.episodes && filmData.episodes.length > 0) {
-                    document.getElementById('episodes-container').innerHTML = '';
-                    filmData.episodes.forEach((episode, index) => {
-                        const div = document.createElement('div');
-                        div.classList.add('episode-form');
-                        div.innerHTML = `
-                            <div class="form-flex">
-                                <label>Сезон:</label>
-                                <input type="number" name="episodes[${index}][season]" value="${episode.season}" required>
-                                <label>Эпизод:</label>
-                                <input type="number" name="episodes[${index}][episode]" value="${episode.episode}" required>
-                            </div>
-                            <div class="form-flex">
-                                <label>Название серии:</label>
-                                <input type="text" name="episodes[${index}][title]" value="${episode.title}" required>
-                            </div>
-                            <div class="form-flex">
-                                <label>Ссылка на видео:</label>
-                                <input type="text" name="episodes[${index}][url]" value="${episode.url}" required>
-                            </div>
-                            <hr>
-                        `;
-                        document.getElementById('episodes-container').appendChild(div);
-                    });
-                }
-            }
-        }
-
+    if (isEditMode && filmData) {
+        fillFilmForm(filmData);
     }
 }
 
-function addEpisode() {
-    const container = document.getElementById('episodes-container');
+// Заполнение формы данными фильма
+function fillFilmForm(filmData) {
+    document.getElementById("new_film").value = filmData.title || "";
+    document.getElementById("year").value = filmData.year || "";
+    document.getElementById("director").value = (filmData.directors || []).map(d => d.name).join(", ");
+    document.getElementById("actors").value = (filmData.actors || []).map(a => a.name).join(", ");
+    document.getElementById("country").value = filmData.country || "";
+    document.getElementById("duration").value = filmData.duration || "";
+    document.getElementById("budget").value = filmData.budget || "";
+    document.getElementById("description").value = filmData.description || "";
+    document.getElementById("poster_url").value = filmData.poster_url || "";
+    document.getElementById("video_url").value = filmData.video_url || "";
 
+    // Жанры
+    const selectedGenres = filmData.genres || [];
+    document.getElementById("selectedGenres").value = selectedGenres.join(", ");
+    document.querySelectorAll(".genre-option").forEach(el => {
+        el.classList.toggle("selected", selectedGenres.includes(el.textContent.trim()));
+    });
+
+    // Тип (фильм/сериал)
+    if (filmData.type) {
+        document.querySelector(`input[name="type"][value="${filmData.type}"]`).checked = true;
+        
+        if (filmData.type === 'series') {
+            document.getElementById('series-episodes').style.display = 'block';
+            document.getElementById('video_url').closest('.form-flex').style.display = 'none';
+            
+            if (filmData.episodes?.length > 0) {
+                document.getElementById('episodes-container').innerHTML = '';
+                filmData.episodes.forEach((episode, index) => {
+                    addEpisode(episode.season, episode.episode, episode.title, episode.url);
+                });
+            }
+        }
+    }
+}
+
+// Очистка формы
+function clearFilmForm() {
+    const formFields = [
+        "new_film", "year", "country", "duration", "budget", 
+        "description", "poster_url", "video_url", "selectedGenres"
+    ];
+    
+    formFields.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.value = "";
+    });
+
+    document.querySelectorAll(".genre-option.selected").forEach(el => {
+        el.classList.remove("selected");
+    });
+
+    document.getElementById('episodes-container').innerHTML = '';
+    editingFilmId = null;
+
+    // Очистка ошибок
+    document.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+    document.querySelectorAll(".file-error").forEach(el => el.classList.remove("file-error"));
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
+
+    // Очистка Tagify
+    const directorInput = document.querySelector("#director");
+    if (directorInput?.tagify) directorInput.tagify.removeAllTags();
+    
+    const actorsInput = document.querySelector("#actors");
+    if (actorsInput?.tagify) actorsInput.tagify.removeAllTags();
+}
+
+// Сохранение фильма
+async function saveFilm() {
+    const saveBtn = document.getElementById("new_save-changes");
+    const originalText = saveBtn.textContent;
+    saveBtn.textContent = editingFilmId ? "Сохранение..." : "Добавление...";
+    saveBtn.disabled = true;
+
+    try {
+        const formData = collectFormData();
+        const validationResult = validateFormData(formData);
+        
+        if (!validationResult.valid) {
+            showValidationErrors(validationResult.errors);
+            return;
+        }
+
+        const response = await sendFilmData(formData);
+        const result = await response.json();
+
+        if (response.ok) {
+            alert(`Фильм успешно ${editingFilmId ? "обновлён" : "добавлен"}!`);
+            document.getElementById("add-new-film-modal").style.display = "none";
+            fetchFilms();
+        } else {
+            alert("Ошибка: " + (result.error || "Неизвестная ошибка"));
+        }
+    } catch (error) {
+        console.error("Ошибка при сохранении:", error);
+        alert("Произошла ошибка при отправке данных.");
+    } finally {
+        saveBtn.textContent = originalText;
+        saveBtn.disabled = false;
+    }
+}
+
+// Сбор данных формы
+function collectFormData() {
+    const type = document.querySelector('input[name="type"]:checked').value;
+    const formData = new FormData();
+
+    // Основные данные
+    formData.append("title", document.getElementById("new_film").value.trim());
+    formData.append("year", parseInt(document.getElementById("year").value));
+    formData.append("country", document.getElementById("country").value.trim());
+    formData.append("duration", parseInt(document.getElementById("duration").value));
+    formData.append("budget", parseFloat(document.getElementById("budget").value));
+    formData.append("description", document.getElementById("description").value.trim());
+    formData.append("poster_url", document.getElementById("poster_url").value.trim());
+    formData.append("type", type);
+
+    // Жанры
+    const genres = document.getElementById("selectedGenres").value
+        .split(",")
+        .map(g => g.trim())
+        .filter(Boolean);
+    formData.append("genres", JSON.stringify(genres));
+
+    // Tagify поля
+    const directorInput = document.querySelector("#director");
+    const actorsInput = document.querySelector("#actors");
+    
+    if (directorInput?.tagify) {
+        const directors = directorInput.tagify.value.map(tag => tag.value.trim()).filter(Boolean);
+        formData.append("directors", JSON.stringify(directors));
+    }
+
+    if (actorsInput?.tagify) {
+        const actors = actorsInput.tagify.value.map(tag => tag.value.trim()).filter(Boolean);
+        formData.append("actors", JSON.stringify(actors));
+    }
+
+    // Для фильмов
+    if (type === 'movie') {
+        formData.append("video_url", document.getElementById("video_url").value.trim());
+    }
+
+    // Для сериалов
+    if (type === 'series') {
+        const episodes = [];
+        document.querySelectorAll('.episode-form').forEach(form => {
+            const season = form.querySelector('input[name*="[season]"]').value;
+            const episode = form.querySelector('input[name*="[episode]"]').value;
+            const title = form.querySelector('input[name*="[title]"]').value;
+            const url = form.querySelector('input[name*="[url]"]').value;
+
+            episodes.push({
+                season: parseInt(season),
+                episode: parseInt(episode),
+                title: title.trim(),
+                url: url.trim()
+            });
+        });
+        formData.append("episodes", JSON.stringify(episodes));
+    }
+
+    return formData;
+}
+
+// Валидация данных формы
+function validateFormData(formData) {
+    const errors = {};
+    let valid = true;
+
+    // Проверка обязательных полей
+    if (!formData.get("title")) {
+        errors.title = "Введите название фильма";
+        valid = false;
+    }
+
+    const year = parseInt(formData.get("year"));
+    if (isNaN(year) || year < 1895 || year > new Date().getFullYear()) {
+        errors.year = "Введите корректный год (1895-текущий год)";
+        valid = false;
+    }
+
+    if (!formData.get("country")) {
+        errors.country = "Введите страну";
+        valid = false;
+    }
+
+    const duration = parseInt(formData.get("duration"));
+    if (isNaN(duration) || duration <= 0) {
+        errors.duration = "Введите корректную длительность";
+        valid = false;
+    }
+
+    const budget = parseFloat(formData.get("budget"));
+    if (isNaN(budget) || budget < 0) {
+        errors.budget = "Введите корректный бюджет";
+        valid = false;
+    }
+
+    const genres = JSON.parse(formData.get("genres"));
+    if (genres.length === 0) {
+        errors.genres = "Выберите хотя бы один жанр";
+        valid = false;
+    }
+
+    const directors = JSON.parse(formData.get("directors"));
+    if (directors.length === 0) {
+        errors.director = "Введите режиссёра/ов";
+        valid = false;
+    }
+
+    const actors = JSON.parse(formData.get("actors"));
+    if (actors.length === 0) {
+        errors.actors = "Введите актёра/ов";
+        valid = false;
+    }
+
+    if (!editingFilmId) {
+        if (!formData.get("poster_url")) {
+            errors.poster_url = "Введите ссылку на постер";
+            valid = false;
+        }
+
+        if (formData.get("type") === 'movie' && !formData.get("video_url")) {
+            errors.video_url = "Введите ссылку на видео";
+            valid = false;
+        }
+
+        if (formData.get("type") === 'series') {
+            const episodes = JSON.parse(formData.get("episodes"));
+            if (episodes.length === 0) {
+                errors.episodes = "Добавьте хотя бы одну серию";
+                valid = false;
+            }
+        }
+    }
+
+    return { valid, errors };
+}
+
+// Отображение ошибок валидации
+function showValidationErrors(errors) {
+    // Сначала очищаем все ошибки
+    document.querySelectorAll(".input-error").forEach(el => el.classList.remove("input-error"));
+    document.querySelectorAll(".error").forEach(el => el.textContent = "");
+
+    // Показываем новые ошибки
+    for (const [field, message] of Object.entries(errors)) {
+        const errorElement = document.getElementById(`${field}-error`);
+        const inputElement = document.getElementById(field) || 
+                            document.querySelector(`[name="${field}"]`) ||
+                            document.getElementById(field.replace('_', '-'));
+
+        if (errorElement) errorElement.textContent = message;
+        if (inputElement) inputElement.classList.add("input-error");
+    }
+}
+
+// Отправка данных на сервер
+async function sendFilmData(formData) {
+    const url = editingFilmId 
+        ? `http://localhost:5000/api/films/${editingFilmId}`
+        : "http://localhost:5000/api/films/upload";
+
+    return await fetch(url, {
+        method: editingFilmId ? "PUT" : "POST",
+        body: formData
+    });
+}
+
+// Поиск фильмов
+async function searchFilmsByTitle() {
+    const query = document.getElementById("movieSearch").value.trim();
+    if (!query) {
+        fetchFilms();
+        return;
+    }
+
+    try {
+        const response = await fetch("http://localhost:5000/api/films/search", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ title: query })
+        });
+
+        if (response.ok) {
+            const films = await response.json();
+            displayFilms(films);
+        } else {
+            throw new Error("Ошибка при поиске");
+        }
+    } catch (error) {
+        console.error("Ошибка поиска:", error);
+        document.getElementById("films-container").innerHTML = "<p>Ошибка при поиске фильмов</p>";
+    }
+}
+
+// Добавление серии
+function addEpisode(season = "", episode = "", title = "", url = "") {
+    const container = document.getElementById('episodes-container');
     const index = container.children.length;
+    
     const div = document.createElement('div');
     div.classList.add('episode-form');
     div.innerHTML = `
         <div class="form-flex">
             <label>Сезон:</label>
-            <input type="number" name="episodes[${index}][season]" required>
+            <input type="number" name="episodes[${index}][season]" value="${season}" required>
             <label>Эпизод:</label>
-            <input type="number" name="episodes[${index}][episode]" required>
+            <input type="number" name="episodes[${index}][episode]" value="${episode}" required>
         </div>
         <div class="form-flex">
             <label>Название серии:</label>
-            <input type="text" name="episodes[${index}][title]" required>
+            <input type="text" name="episodes[${index}][title]" value="${title}" required>
         </div>
         <div class="form-flex">
             <label>Ссылка на видео:</label>
-            <input type="text" name="episodes[${index}][url]" required>
+            <input type="text" name="episodes[${index}][url]" value="${url}" required>
         </div>
+        <button type="button" class="remove-episode" onclick="this.closest('.episode-form').remove()">Удалить серию</button>
         <hr>
     `;
     container.appendChild(div);
