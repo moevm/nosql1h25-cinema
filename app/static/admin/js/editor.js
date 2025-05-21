@@ -1,3 +1,7 @@
+let currentPage = 1;
+const itemsPerPage = 5;
+let totalPages = 0;
+
 document.addEventListener("DOMContentLoaded", function () {
     // Инициализация Tagify для поля "Режиссёр"
     const directorInput = document.querySelector("#director");
@@ -335,17 +339,26 @@ function updateSelectedGenres() {
     document.getElementById("selectedGenres").value = selectedGenres.join(", ");
 }
 
-async function fetchFilms(){
-    try{
-        const response = await fetch('http://localhost:5000/api/films');
-        if (!response.ok){
-            throw new Error("Сервер не отвечает");
-        }
-        const films = await response.json();
-        displayFilms(films);
-    } catch (error){
-        console.log("Ошибка загрузки фильмов:", error);
-        document.getElementById('films-container').innerHTML= '<p>Ошибка загрузки фильмов</p>';
+
+async function fetchFilms(page = 1) {
+    currentPage = page;
+
+    const spinner = document.getElementById("loadingSpinner");
+    spinner.style.display = "block";
+
+    try {
+        const response = await fetch(`http://localhost:5000/api/content?page=${currentPage}&limit=${itemsPerPage}`);
+        if (!response.ok) throw new Error("Ошибка загрузки фильмов");
+
+        const data = await response.json();
+        totalPages = Math.ceil(data.count / itemsPerPage);
+        displayFilms(data.films);
+        updatePaginationButtons();
+    } catch (error) {
+        console.error("Ошибка:", error);
+        document.getElementById('films-container').innerHTML = '<p>Ошибка загрузки фильмов</p>';
+    } finally {
+        spinner.style.display = "none";
     }
 }
 
@@ -372,6 +385,22 @@ function displayFilms(films) {
                     </div>
                 </div>
             `).join('');
+}
+
+function updatePaginationButtons() {
+    const prevBtn = document.querySelector(".sheets__prev-button");
+    const nextBtn = document.querySelector(".sheets__next-button");
+
+    prevBtn.disabled = currentPage === 1;
+    nextBtn.disabled = currentPage === totalPages;
+
+    prevBtn.onclick = () => {
+        if (currentPage > 1) fetchFilms(currentPage - 1);
+    };
+
+    nextBtn.onclick = () => {
+        if (currentPage < totalPages) fetchFilms(currentPage + 1);
+    };
 }
 
 async function deleteFilm(filmId) {
