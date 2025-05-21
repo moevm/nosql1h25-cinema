@@ -258,13 +258,19 @@ function fillFilmForm(filmData) {
         el.classList.toggle("selected", selectedGenres.includes(el.textContent.trim()));
     });
 
-    // Тип (фильм/сериал)
-    if (filmData.type) {
-        document.querySelector(`input[name="type"][value="${filmData.type}"]`).checked = true;
+    // Тип (фильм/сериал) - исправленная часть
+    const type = filmData.type || 'movie';
+    const typeRadio = document.querySelector(`input[name="type"][value="${type}"]`);
+    
+    if (typeRadio) {
+        typeRadio.checked = true;
         
-        if (filmData.type === 'series') {
-            document.getElementById('series-episodes').style.display = 'block';
-            document.getElementById('video_url').closest('.form-flex').style.display = 'none';
+        const episodesSection = document.getElementById('series-episodes');
+        const videoUrlField = document.getElementById('video_url').closest('.form-flex');
+        
+        if (type === 'series') {
+            episodesSection.style.display = 'block';
+            videoUrlField.style.display = 'none';
             
             if (filmData.episodes?.length > 0) {
                 document.getElementById('episodes-container').innerHTML = '';
@@ -272,6 +278,9 @@ function fillFilmForm(filmData) {
                     addEpisode(episode.season, episode.episode, episode.title, episode.url);
                 });
             }
+        } else {
+            episodesSection.style.display = 'none';
+            videoUrlField.style.display = 'block';
         }
     }
 }
